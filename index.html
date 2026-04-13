@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Daffa Rizky — Aspiring Digital Business Strategist. Portfolio showcasing branding, analytics, growth systems, and real project case studies.">
+    <meta name="keywords" content="Daffa Rizky, Digital Business, Portfolio, Branding, Analytics, SEO, Marketing">
+    <meta name="author" content="Daffa Rizky">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Daffa Rizky — Digital Business Portfolio">
+    <meta property="og:description" content="Aspiring Digital Business Strategist focused on branding, analytics, and growth systems.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://daffarezky.github.io/">
+    <meta property="og:image" content="assets/images/og-image.png">
+
+    <title>Daffa Rizky — Digital Business Portfolio</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- NAVBAR                                       -->
+    <!-- ═══════════════════════════════════════════ -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#hero" class="nav-logo">
+                <span class="logo-dot"></span>
+                Daffa<span class="logo-accent">Rizky</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#skills" class="nav-link">Skills</a></li>
+                <li><a href="#projects" class="nav-link">Projects</a></li>
+                <li><a href="#gallery" class="nav-link">Gallery</a></li>
+                <li><a href="#journey" class="nav-link">Journey</a></li>
+                <li><a href="#contact" class="nav-link nav-link--cta">Contact</a></li>
+            </ul>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- 1. HERO SECTION                              -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="hero" id="hero">
+        <div class="hero-container">
+            <div class="hero-content reveal">
+                <p class="hero-label">Portfolio</p>
+                <h1 class="hero-title">
+                    Daffa Rizky
+                    <span class="hero-subtitle" id="typingText"></span>
+                </h1>
+                <p class="hero-description">
+                    Building brands, analytics, and growth systems — preparing for the future of digital business.
+                </p>
+                <div class="hero-cta">
+                    <a href="#projects" class="btn btn-primary">
+                        <i data-lucide="folder-open" class="btn-icon"></i>
+                        View Projects
+                    </a>
+                    <a href="#contact" class="btn btn-outline">
+                        <i data-lucide="mail" class="btn-icon"></i>
+                        Contact
+                    </a>
+                    <a href="#" class="btn btn-ghost" id="downloadCV">
+                        <i data-lucide="download" class="btn-icon"></i>
+                        Download CV
+                    </a>
+                </div>
+                <div class="hero-social">
+                    <a href="https://instagram.com/m.daffarizkyy_" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
+                        <i data-lucide="instagram"></i>
+                    </a>
+                    <a href="https://github.com/daffarezky" target="_blank" rel="noopener" class="social-link" aria-label="GitHub">
+                        <i data-lucide="github"></i>
+                    </a>
+                    <a href="mailto:mdrizky240708@gmail.com" class="social-link" aria-label="Email">
+                        <i data-lucide="mail"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual reveal reveal-delay-1">
+                <div class="hero-image-wrapper">
+                    <div class="hero-image-ring"></div>
+                    <div class="hero-image-ring hero-image-ring--2"></div>
+                    <img src="assets/images/profile.jpg" alt="Daffa Rizky" class="hero-image" id="heroImage">
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-card">
+                        <span class="stat-number">4+</span>
+                        <span class="stat-label">Projects</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">10+</span>
+                        <span class="stat-label">Tools</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">∞</span>
+                        <span class="stat-label">Passion</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-scroll">
+            <span>Scroll to explore</span>
+            <i data-lucide="chevron-down" class="scroll-arrow"></i>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- 2. ABOUT ME                                  -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="section about" id="about">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-tag">About Me</span>
+                <h2 class="section-title">Crafting the future,<br>one strategy at a time.</h2>
+            </div>
+            <div class="about-grid">
+                <div class="about-text reveal">
+                    <p class="about-lead">
+                        Saya adalah siswa SMK yang fokus membangun skill di bidang <strong>bisnis digital</strong>, 
+                        <strong>branding</strong>, <strong>funnel strategy</strong>, <strong>SEO</strong>, dan 
+                        <strong>data analytics</strong> untuk persiapan kuliah dan karier di dunia startup.
+                    </p>
+                    <p class="about-body">
+                        Dengan pendekatan berbasis data dan kreativitas, saya membangun project-project nyata 
+                        yang menunjukkan kemampuan strategis — bukan hanya teori, tapi eksekusi. Target saya: 
+                        masuk jurusan Bisnis Digital dan membangun startup yang berdampak.
+                    </p>
+                </div>
+                <div class="about-cards reveal reveal-delay-1">
+                    <div class="about-card">
+                        <i data-lucide="target" class="about-card-icon"></i>
+                        <h3>Target Karier</h3>
+                        <p>Digital Business Strategist & Startup Founder</p>
+                    </div>
+                    <div class="about-card">
+                        <i data-lucide="rocket" class="about-card-icon"></i>
+                        <h3>Passion</h3>
+                        <p>Growth hacking, brand building, dan data-driven decisions</p>
+                    </div>
+                    <div class="about-card">
+                        <i data-lucide="graduation-cap" class="about-card-icon"></i>
+                        <h3>Visi</h3>
+                        <p>Kuliah Bisnis Digital & building impactful ventures</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- 3. SKILLS & TOOLS                            -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="section skills" id="skills">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-tag">Skills & Tools</span>
+                <h2 class="section-title">What I bring to the table.</h2>
+            </div>
+            <div class="skills-grid">
+                <div class="skills-column reveal">
+                    <h3 class="skills-group-title">
+                        <i data-lucide="zap" class="skills-icon"></i>
+                        Core Skills
+                    </h3>
+                    <div class="skill-pills">
+                        <span class="skill-pill">Digital Marketing</span>
+                        <span class="skill-pill">Branding & Positioning</span>
+                        <span class="skill-pill">Funnel Strategy</span>
+                        <span class="skill-pill">SEO Optimization</span>
+                        <span class="skill-pill">Data Analytics</span>
+                        <span class="skill-pill">AI for Business</span>
+                        <span class="skill-pill">Content Strategy</span>
+                        <span class="skill-pill">CTA Copywriting</span>
+                        <span class="skill-pill">Growth Hacking</span>
+                    </div>
+                </div>
+                <div class="skills-column reveal reveal-delay-1">
+                    <h3 class="skills-group-title">
+                        <i data-lucide="wrench" class="skills-icon"></i>
+                        Tools I Use
+                    </h3>
+                    <div class="tools-grid">
+                        <div class="tool-card">
+                            <div class="tool-icon-wrapper">
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/canva/canva-original.svg" alt="Canva" class="tool-icon-img" loading="lazy">
+                            </div>
+                            <span>Canva</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-icon-wrapper">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/3/30/Google_Sheets_logo_%282014-2020%29.svg" alt="Sheets" class="tool-icon-img" loading="lazy">
+                            </div>
+                            <span>Google Sheets</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-icon-wrapper">
+                                <img src="https://www.svgrepo.com/show/353813/google-analytics.svg" alt="Looker" class="tool-icon-img" loading="lazy">
+                            </div>
+                            <span>Looker Studio</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-icon-wrapper">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Notion-logo.svg" alt="Notion" class="tool-icon-img" loading="lazy">
+                            </div>
+                            <span>Notion</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-icon-wrapper">
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn" class="tool-icon-img" loading="lazy">
+                            </div>
+                            <span>LinkedIn</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-icon-wrapper">
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/wordpress/wordpress-plain.svg" alt="WordPress" class="tool-icon-img" loading="lazy">
+                            </div>
+                            <span>WordPress</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-icon-wrapper">
+                                <svg class="tool-icon-img" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.282 9.821a5.985 5.985 0 0 0-.516-4.91 6.046 6.046 0 0 0-6.51-2.9A6.065 6.065 0 0 0 4.981 4.18a5.985 5.985 0 0 0-3.998 2.9 6.046 6.046 0 0 0 .743 7.097 5.98 5.98 0 0 0 .51 4.911 6.051 6.051 0 0 0 6.515 2.9A5.985 5.985 0 0 0 13.26 24a6.056 6.056 0 0 0 5.772-4.206 5.99 5.99 0 0 0 3.997-2.9 6.056 6.056 0 0 0-.747-7.073zM13.26 22.43a4.476 4.476 0 0 1-2.876-1.04l.141-.081 4.779-2.758a.795.795 0 0 0 .392-.681v-6.737l2.02 1.168a.071.071 0 0 1 .038.052v5.583a4.504 4.504 0 0 1-4.494 4.494zM3.6 18.304a4.47 4.47 0 0 1-.535-3.014l.142.085 4.783 2.759a.771.771 0 0 0 .78 0l5.843-3.369v2.332a.08.08 0 0 1-.033.062L9.74 19.95a4.5 4.5 0 0 1-6.14-1.646zM2.34 7.896a4.485 4.485 0 0 1 2.366-1.973V11.6a.766.766 0 0 0 .388.676l5.815 3.355-2.02 1.168a.076.076 0 0 1-.071 0l-4.83-2.786A4.504 4.504 0 0 1 2.34 7.872zm16.597 3.855l-5.833-3.387L15.119 7.2a.076.076 0 0 1 .071 0l4.83 2.791a4.494 4.494 0 0 1-.676 8.105v-5.678a.79.79 0 0 0-.407-.667zm2.01-3.023l-.141-.085-4.774-2.782a.776.776 0 0 0-.785 0L9.409 9.23V6.897a.066.066 0 0 1 .028-.061l4.83-2.787a4.5 4.5 0 0 1 6.68 4.66zm-12.64 4.135l-2.02-1.164a.08.08 0 0 1-.038-.057V6.075a4.5 4.5 0 0 1 7.375-3.453l-.142.08L8.704 5.46a.795.795 0 0 0-.393.681zm1.097-2.365l2.602-1.5 2.607 1.5v2.999l-2.597 1.5-2.607-1.5z" fill="#10a37f"/></svg>
+                            </div>
+                            <span>ChatGPT</span>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-icon-wrapper">
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg" alt="Figma" class="tool-icon-img" loading="lazy">
+                            </div>
+                            <span>Figma</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- 4. FEATURED PROJECTS                         -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="section projects" id="projects">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-tag">Featured Projects</span>
+                <h2 class="section-title">Real work. Real results.</h2>
+                <p class="section-desc">Selected case studies and strategic work that showcase hands-on execution.</p>
+            </div>
+            <div class="projects-grid">
+
+                <!-- Project 1: Brand Kopi -->
+                <div class="project-card reveal" data-case="kopi">
+                    <div class="project-cover">
+                        <img src="assets/images/project-kopi.png" alt="Brand Kopi Dummy Strategy" loading="lazy">
+                        <div class="project-overlay">
+                            <span class="project-view">View Case Study <i data-lucide="arrow-right"></i></span>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <div class="project-tags">
+                            <span class="tag">Branding</span>
+                            <span class="tag">Content Strategy</span>
+                            <span class="tag">Marketing</span>
+                        </div>
+                        <h3 class="project-title">Brand Kopi Dummy</h3>
+                        <p class="project-desc">Strategi branding & content marketing untuk brand kopi yang menargetkan segmen mahasiswa, termasuk CTA funnel dan KPI engagement.</p>
+                    </div>
+                </div>
+
+                <!-- Project 2: KPI Dashboard -->
+                <div class="project-card reveal reveal-delay-1" data-case="kpi">
+                    <div class="project-cover">
+                        <img src="assets/images/project-kpi.png" alt="KPI Dashboard Simulation" loading="lazy">
+                        <div class="project-overlay">
+                            <span class="project-view">View Case Study <i data-lucide="arrow-right"></i></span>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <div class="project-tags">
+                            <span class="tag">Data Analytics</span>
+                            <span class="tag">Dashboard</span>
+                            <span class="tag">KPI</span>
+                        </div>
+                        <h3 class="project-title">KPI Dashboard Simulation</h3>
+                        <p class="project-desc">Simulasi dashboard analytics dengan CTR, conversion rate, dan weekly insights untuk pengambilan keputusan bisnis berbasis data.</p>
+                    </div>
+                </div>
+
+                <!-- Project 3: Halalytics -->
+                <div class="project-card reveal reveal-delay-2" data-case="halalytics">
+                    <div class="project-cover">
+                        <img src="assets/images/project-halalytics.png" alt="Halalytics Super App" loading="lazy">
+                        <div class="project-overlay">
+                            <span class="project-view">View Case Study <i data-lucide="arrow-right"></i></span>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <div class="project-tags">
+                            <span class="tag">Mobile App</span>
+                            <span class="tag">Super App</span>
+                            <span class="tag">Halal Tech</span>
+                        </div>
+                        <h3 class="project-title">Halalytics Super App</h3>
+                        <p class="project-desc">Aplikasi "Super App" untuk verifikasi produk halal, marketplace, community hub, dan health features — dibangun dengan Android Compose + Laravel.</p>
+                    </div>
+                </div>
+
+                <!-- Project 4: SEO & Content -->
+                <div class="project-card reveal reveal-delay-3" data-case="seo">
+                    <div class="project-cover">
+                        <img src="assets/images/project-seo.png" alt="SEO Content Strategy" loading="lazy">
+                        <div class="project-overlay">
+                            <span class="project-view">View Case Study <i data-lucide="arrow-right"></i></span>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <div class="project-tags">
+                            <span class="tag">SEO</span>
+                            <span class="tag">Content Marketing</span>
+                            <span class="tag">Blog</span>
+                        </div>
+                        <h3 class="project-title">SEO & Content Strategy</h3>
+                        <p class="project-desc">Riset keyword, optimasi on-page SEO, dan strategi konten blog untuk meningkatkan organic traffic dan brand awareness.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- 5. CASE STUDY MODAL                          -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="case-modal" id="caseModal">
+        <div class="case-modal-backdrop" id="caseModalBackdrop"></div>
+        <div class="case-modal-content">
+            <button class="case-modal-close" id="caseClose">
+                <i data-lucide="x"></i>
+            </button>
+            <div class="case-header">
+                <span class="case-tag" id="caseTag">Branding</span>
+                <h2 class="case-title" id="caseTitle">Brand Kopi Dummy</h2>
+            </div>
+            <div class="case-body">
+                <div class="case-section">
+                    <h3><i data-lucide="target"></i> Objective</h3>
+                    <p id="caseObjective">-</p>
+                </div>
+                <div class="case-section">
+                    <h3><i data-lucide="users"></i> Target Audience</h3>
+                    <p id="caseAudience">-</p>
+                </div>
+                <div class="case-section">
+                    <h3><i data-lucide="lightbulb"></i> Strategy</h3>
+                    <p id="caseStrategy">-</p>
+                </div>
+                <div class="case-section">
+                    <h3><i data-lucide="check-circle"></i> Execution</h3>
+                    <p id="caseExecution">-</p>
+                </div>
+                <div class="case-section">
+                    <h3><i data-lucide="bar-chart-3"></i> Key Results</h3>
+                    <p id="caseResults">-</p>
+                </div>
+                <div class="case-section">
+                    <h3><i data-lucide="book-open"></i> Lessons Learned</h3>
+                    <p id="caseLessons">-</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- 6. CONTENT GALLERY                           -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="section gallery" id="gallery">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-tag">Design Gallery</span>
+                <h2 class="section-title">Visual proof of work.</h2>
+                <p class="section-desc">Canva designs, content strategy, landing pages, and business frameworks.</p>
+            </div>
+            <div class="gallery-grid reveal">
+                <div class="gallery-card gallery-card--tall">
+                    <div class="gallery-placeholder">
+                        <i data-lucide="image" class="gallery-ph-icon"></i>
+                        <span>Canva Content Design</span>
+                    </div>
+                </div>
+                <div class="gallery-card">
+                    <div class="gallery-placeholder">
+                        <i data-lucide="layout" class="gallery-ph-icon"></i>
+                        <span>Landing Page</span>
+                    </div>
+                </div>
+                <div class="gallery-card">
+                    <div class="gallery-placeholder">
+                        <i data-lucide="instagram" class="gallery-ph-icon"></i>
+                        <span>IG Content</span>
+                    </div>
+                </div>
+                <div class="gallery-card gallery-card--wide">
+                    <div class="gallery-placeholder">
+                        <i data-lucide="git-branch" class="gallery-ph-icon"></i>
+                        <span>Customer Funnel</span>
+                    </div>
+                </div>
+                <div class="gallery-card">
+                    <div class="gallery-placeholder">
+                        <i data-lucide="clipboard" class="gallery-ph-icon"></i>
+                        <span>SWOT Analysis</span>
+                    </div>
+                </div>
+                <div class="gallery-card">
+                    <div class="gallery-placeholder">
+                        <i data-lucide="table" class="gallery-ph-icon"></i>
+                        <span>Business Model Canvas</span>
+                    </div>
+                </div>
+            </div>
+            <p class="gallery-note reveal">
+                <i data-lucide="info"></i>
+                Gallery content akan segera di-update dengan visual asli dari setiap project.
+            </p>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- 7. LEARNING JOURNEY                          -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="section journey" id="journey">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-tag">Learning Journey</span>
+                <h2 class="section-title">Growth never stops.</h2>
+                <p class="section-desc">Timeline of my learning path — showing real growth, not just credentials.</p>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item reveal">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-date">2024</span>
+                        <h3>Branding & Positioning</h3>
+                        <p>Mempelajari dasar-dasar brand building, unique value proposition, dan visual identity untuk bisnis digital.</p>
+                    </div>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-date">2024</span>
+                        <h3>Content & Funnel Strategy</h3>
+                        <p>Membangun project Brand Kopi Dummy dengan CTA funnel, content calendar, dan engagement metrics.</p>
+                    </div>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-date">2025</span>
+                        <h3>KPI Dashboard & Analytics</h3>
+                        <p>Simulasi dashboard bisnis dengan Google Sheets & Looker Studio — tracking CTR, conversion, dan insights.</p>
+                    </div>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-date">2025</span>
+                        <h3>SEO & Blog Strategy</h3>
+                        <p>Riset keyword, optimasi on-page, dan pembuatan konten blog yang SEO-friendly.</p>
+                    </div>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-date">2026</span>
+                        <h3>AI Workflow & Super App</h3>
+                        <p>Mengintegrasikan AI tools ke workflow bisnis dan membangun Halalytics Super App dengan Android Compose + Laravel.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- 8. CERTIFICATES                              -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="section certificates" id="certificates">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-tag">Certificates & Achievements</span>
+                <h2 class="section-title">Credentials that matter.</h2>
+            </div>
+            <div class="cert-grid reveal">
+                <div class="cert-card">
+                    <div class="cert-badge">
+                        <i data-lucide="award"></i>
+                    </div>
+                    <h3>Coming Soon</h3>
+                    <p>Google Digital Marketing</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-badge">
+                        <i data-lucide="award"></i>
+                    </div>
+                    <h3>Coming Soon</h3>
+                    <p>HubSpot Inbound Marketing</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-badge">
+                        <i data-lucide="award"></i>
+                    </div>
+                    <h3>Coming Soon</h3>
+                    <p>Google Analytics</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-badge">
+                        <i data-lucide="award"></i>
+                    </div>
+                    <h3>Coming Soon</h3>
+                    <p>Meta Ads Certification</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- 9. CONTACT                                   -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section class="section contact" id="contact">
+        <div class="container">
+            <div class="contact-inner reveal">
+                <div class="contact-content">
+                    <span class="section-tag section-tag--light">Get In Touch</span>
+                    <h2 class="contact-title">Let's Build Something Great.</h2>
+                    <p class="contact-desc">
+                        Open for internship, collaboration, and digital business opportunities.<br>
+                        Let's create something impactful together.
+                    </p>
+                    <div class="contact-links">
+                        <a href="mailto:mdrizky240708@gmail.com" class="contact-link" id="contactEmail">
+                            <i data-lucide="mail"></i>
+                            <span>mdrizky240708@gmail.com</span>
+                        </a>
+                        <a href="https://wa.me/6281374936621" target="_blank" rel="noopener" class="contact-link" id="contactWhatsapp">
+                            <i data-lucide="message-circle"></i>
+                            <span>WhatsApp</span>
+                        </a>
+                        <a href="https://instagram.com/m.daffarizkyy_" target="_blank" rel="noopener" class="contact-link" id="contactInstagram">
+                            <i data-lucide="instagram"></i>
+                            <span>@m.daffarizkyy_</span>
+                        </a>
+                        <a href="#" class="contact-link" id="contactLinkedin">
+                            <i data-lucide="linkedin"></i>
+                            <span>LinkedIn (Coming Soon)</span>
+                        </a>
+                    </div>
+                    <div class="contact-cta">
+                        <a href="mailto:mdrizky240708@gmail.com" class="btn btn-white">
+                            <i data-lucide="send" class="btn-icon"></i>
+                            Let's Collaborate
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <p class="footer-brand">
+                    <span class="logo-dot"></span>
+                    Daffa<span class="logo-accent">Rizky</span>
+                </p>
+                <p class="footer-copy">&copy; 2026 Daffa Rizky. Crafted with passion.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
