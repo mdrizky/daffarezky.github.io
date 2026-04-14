@@ -1,6 +1,6 @@
 # Daffa Rizky — Digital Business Portfolio
 
-🌐 **Live**: [daffarezky.github.io](https://daffarezky.github.io)
+🌐 **Live**: [mdrizky.github.io](https://mdrizky.github.io)
 
 A premium Apple-style personal portfolio showcasing digital business projects, case studies, and growth journey.
 
