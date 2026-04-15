@@ -402,8 +402,13 @@
                     <i data-lucide="x"></i>
                 </button>
             </div>
-            <div class="pdf-container" style="flex: 1; padding: 1rem; width: 100%; height: 70vh; min-height: 500px;">
-                <iframe id="pdfIframe" src="" style="width: 100%; height: 100%; border: none; border-radius: 8px;"></iframe>
+            <div class="pdf-action-bar" style="padding: 1rem; border-top: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: flex-end; gap: 1rem; background: #fff;">
+                <a id="pdfOpenBtn" href="" target="_blank" class="btn btn-outline btn-sm" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+                    <i data-lucide="external-link" style="width: 16px; height: 16px;"></i> Buka di Tab Baru
+                </a>
+                <a id="pdfDownloadBtn" href="" download class="btn btn-primary btn-sm" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+                    <i data-lucide="download" style="width: 16px; height: 16px;"></i> Download PDF
+                </a>
             </div>
         </div>
     </div>
@@ -528,37 +533,44 @@
                 <h2 class="section-title">Credentials that matter.</h2>
             </div>
             <div class="cert-grid reveal">
-                <div class="cert-card spotlight-card" data-pdf="sertifikat-tasheel.pdf" data-title="Sertifikat Tasheel">
+                <!-- Sertifikat 1 -->
+                <div class="cert-card spotlight-card" data-pdf="sertifikat-tasheel.pdf" data-title="Sertifikat Tasheel - Daffa Rizky">
                     <div class="cert-badge">
                         <i data-lucide="award"></i>
                     </div>
-                    <h3>Sertifikat Tasheel</h3>
-                    <p>Verified Achievement</p>
-                    <span class="cert-view">View PDF <i data-lucide="external-link"></i></span>
+                    <h3>Sertifikat Tasheel Saya</h3>
+                    <p>Bukti kompetensi saya dalam program Tasheel. Ini adalah pencapaian nyata yang saya raih.</p>
+                    <span class="cert-view">Lihat Sertifikat <i data-lucide="eye"></i></span>
                 </div>
-                <div class="cert-card spotlight-card" data-pdf="surat-rekomendasi-tasheel.pdf" data-title="Surat Rekomendasi Tasheel">
+
+                <!-- Sertifikat 2 -->
+                <div class="cert-card spotlight-card" data-pdf="surat-rekomendasi-tasheel.pdf" data-title="Surat Rekomendasi Tasheel - Daffa Rizky">
                     <div class="cert-badge">
-                        <i data-lucide="file-text"></i>
+                        <i data-lucide="file-check"></i>
                     </div>
-                    <h3>Surat Rekomendasi Tasheel</h3>
-                    <p>Professional Endorsement</p>
-                    <span class="cert-view">View PDF <i data-lucide="external-link"></i></span>
+                    <h3>Rekomendasi Tasheel</h3>
+                    <p>Surat rekomendasi resmi yang menyatakan kualitas kerja dan dedikasi saya di Tasheel.</p>
+                    <span class="cert-view">Buka Dokumen <i data-lucide="eye"></i></span>
                 </div>
-                <div class="cert-card spotlight-card" data-pdf="Financial Literacy 101.pdf" data-title="Financial Literacy 101">
+
+                <!-- Sertifikat 3 -->
+                <div class="cert-card spotlight-card" data-pdf="Financial Literacy 101.pdf" data-title="Sertifikat Financial Literacy - Dicoding Academy">
                     <div class="cert-badge">
-                        <i data-lucide="bar-chart"></i>
+                        <i data-lucide="trending-up"></i>
                     </div>
-                    <h3>Financial Literacy 101</h3>
-                    <p>Course Completion</p>
-                    <span class="cert-view">View PDF <i data-lucide="external-link"></i></span>
+                    <h3>Dicoding: Financial Literacy</h3>
+                    <p>Sertifikat kelulusan saya dari Dicoding Academy untuk kursus Literasi Keuangan.</p>
+                    <span class="cert-view">Tampilkan Sertifikat <i data-lucide="eye"></i></span>
                 </div>
-                <div class="cert-card spotlight-card" data-pdf="Document 15.pdf" data-title="Professional Document">
+
+                <!-- Sertifikat 4 -->
+                <div class="cert-card spotlight-card" data-pdf="Document 15.pdf" data-title="Sertifikat Kompetensi Daffa Rizky">
                     <div class="cert-badge">
-                        <i data-lucide="award"></i>
+                        <i data-lucide="shield-check"></i>
                     </div>
-                    <h3>Professional Document</h3>
-                    <p>Verified Record</p>
-                    <span class="cert-view">View PDF <i data-lucide="external-link"></i></span>
+                    <h3>Sertifikat Kompetensi</h3>
+                    <p>Dokumen pendukung lainnya yang membuktikan skill dan kredibilitas profesional saya.</p>
+                    <span class="cert-view">Lihat Detail <i data-lucide="eye"></i></span>
                 </div>
             </div>
         </div>

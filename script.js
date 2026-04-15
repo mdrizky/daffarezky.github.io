@@ -333,12 +333,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const pdfBackdrop = document.getElementById('pdfModalBackdrop');
     const pdfIframe = document.getElementById('pdfIframe');
     const pdfTitle = document.getElementById('pdfTitle');
+    const pdfOpenBtn = document.getElementById('pdfOpenBtn');
+    const pdfDownloadBtn = document.getElementById('pdfDownloadBtn');
     const certCards = document.querySelectorAll('.cert-card[data-pdf]');
 
     function closePdfModal() {
         pdfModal.classList.remove('active');
         document.body.style.overflow = '';
-        setTimeout(() => { pdfIframe.src = ''; }, 300); // Clear iframe after animation
+        setTimeout(() => { 
+            pdfIframe.src = ''; 
+        }, 300);
     }
 
     certCards.forEach(card => {
@@ -347,8 +351,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const title = card.getAttribute('data-title');
             if (!pdfFile) return;
 
+            const pdfPath = `assets/certificates/${pdfFile}`;
+            const pdfViewPath = `${pdfPath}#view=FitV&pagemode=thumbs`;
+
             pdfTitle.textContent = title || 'Certificate';
-            pdfIframe.src = `assets/certificates/${pdfFile}#view=FitH`;
+            pdfIframe.src = pdfViewPath;
+            
+            // Set action buttons
+            if (pdfOpenBtn) pdfOpenBtn.href = pdfPath;
+            if (pdfDownloadBtn) pdfDownloadBtn.href = pdfPath;
             
             pdfModal.classList.add('active');
             document.body.style.overflow = 'hidden';

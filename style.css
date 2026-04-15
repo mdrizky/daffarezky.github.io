@@ -1613,3 +1613,42 @@ button {
     opacity: 1;
     transform: translateY(0);
 }
+
+/* Improved PDF Modal Viewer */
+.case-modal-content {
+    width: 95% !important;
+    max-width: 1000px !important;
+    overflow: hidden;
+}
+
+.pdf-container {
+    background: #f8f8f8;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Scrollbar styling for modal */
+.case-modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+.case-modal-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+.case-modal-content::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.1);
+    border-radius: 4px;
+}
+
+/* Action Bar Styling */
+.pdf-action-bar .btn {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.pdf-action-bar .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.btn-sm {
+    padding: 0.6rem 1.2rem !important;
+    font-size: 0.85rem !important;
+}
