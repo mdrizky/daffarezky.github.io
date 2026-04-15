@@ -29,6 +29,11 @@
 <body>
 
     <!-- ═══════════════════════════════════════════ -->
+    <!-- MESH GRADIENT BACKGROUND                     -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="mesh-gradient"></div>
+
+    <!-- ═══════════════════════════════════════════ -->
     <!-- NAVBAR                                       -->
     <!-- ═══════════════════════════════════════════ -->
     <nav class="navbar" id="navbar">
@@ -386,6 +391,24 @@
     </div>
 
     <!-- ═══════════════════════════════════════════ -->
+    <!-- PDF VIEWER MODAL                             -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="case-modal" id="pdfModal">
+        <div class="case-modal-backdrop" id="pdfModalBackdrop"></div>
+        <div class="case-modal-content" style="max-height: 90vh; display: flex; flex-direction: column;">
+            <div class="case-header" style="margin-bottom: 0; padding-bottom: 1rem; border-bottom: 1px solid rgba(0,0,0,0.1); position: sticky; top: 0; background: rgba(255, 255, 255, 0.95); z-index: 10;">
+                <h2 class="case-title" id="pdfTitle" style="font-size: 1.5rem; margin: 0;">Certificate</h2>
+                <button class="case-modal-close" id="pdfClose" style="top: 1.5rem;">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="pdf-container" style="flex: 1; padding: 1rem; width: 100%; height: 70vh; min-height: 500px;">
+                <iframe id="pdfIframe" src="" style="width: 100%; height: 100%; border: none; border-radius: 8px;"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
     <!-- 6. CONTENT GALLERY                           -->
     <!-- ═══════════════════════════════════════════ -->
     <section class="section gallery" id="gallery">
@@ -505,33 +528,37 @@
                 <h2 class="section-title">Credentials that matter.</h2>
             </div>
             <div class="cert-grid reveal">
-                <div class="cert-card">
+                <div class="cert-card spotlight-card" data-pdf="sertifikat-tasheel.pdf" data-title="Sertifikat Tasheel">
                     <div class="cert-badge">
                         <i data-lucide="award"></i>
                     </div>
-                    <h3>Coming Soon</h3>
-                    <p>Google Digital Marketing</p>
+                    <h3>Sertifikat Tasheel</h3>
+                    <p>Verified Achievement</p>
+                    <span class="cert-view">View PDF <i data-lucide="external-link"></i></span>
                 </div>
-                <div class="cert-card">
+                <div class="cert-card spotlight-card" data-pdf="surat-rekomendasi-tasheel.pdf" data-title="Surat Rekomendasi Tasheel">
                     <div class="cert-badge">
-                        <i data-lucide="award"></i>
+                        <i data-lucide="file-text"></i>
                     </div>
-                    <h3>Coming Soon</h3>
-                    <p>HubSpot Inbound Marketing</p>
+                    <h3>Surat Rekomendasi Tasheel</h3>
+                    <p>Professional Endorsement</p>
+                    <span class="cert-view">View PDF <i data-lucide="external-link"></i></span>
                 </div>
-                <div class="cert-card">
+                <div class="cert-card spotlight-card" data-pdf="Financial Literacy 101.pdf" data-title="Financial Literacy 101">
                     <div class="cert-badge">
-                        <i data-lucide="award"></i>
+                        <i data-lucide="bar-chart"></i>
                     </div>
-                    <h3>Coming Soon</h3>
-                    <p>Google Analytics</p>
+                    <h3>Financial Literacy 101</h3>
+                    <p>Course Completion</p>
+                    <span class="cert-view">View PDF <i data-lucide="external-link"></i></span>
                 </div>
-                <div class="cert-card">
+                <div class="cert-card spotlight-card" data-pdf="Document 15.pdf" data-title="Professional Document">
                     <div class="cert-badge">
                         <i data-lucide="award"></i>
                     </div>
-                    <h3>Coming Soon</h3>
-                    <p>Meta Ads Certification</p>
+                    <h3>Professional Document</h3>
+                    <p>Verified Record</p>
+                    <span class="cert-view">View PDF <i data-lucide="external-link"></i></span>
                 </div>
             </div>
         </div>

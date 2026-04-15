@@ -1543,3 +1543,73 @@ button {
         grid-template-columns: 1fr;
     }
 }
+
+/* ═══════════════════════════════════════════════════
+   PREMIUM UPGRADES (Mesh Gradient, Spotlight, PDF)
+   ═══════════════════════════════════════════════════ */
+
+/* Mesh Gradient Background */
+.mesh-gradient {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background: radial-gradient(at 0% 0%, hsla(210, 100%, 95%, 0.5) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(280, 100%, 95%, 0.5) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, hsla(180, 100%, 95%, 0.5) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, hsla(30, 100%, 95%, 0.5) 0px, transparent 50%);
+    filter: blur(60px) saturate(150%);
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+/* Spotlight Hover Effect for Cards */
+.spotlight-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.spotlight-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(0,0,0,0.03), transparent 40%);
+    transition: opacity 0.3s ease;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.spotlight-card:hover::before {
+    opacity: 1;
+}
+
+/* PDF Certificate Styles */
+.cert-card[data-pdf] {
+    cursor: pointer;
+}
+
+.cert-view {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: var(--transition-base);
+}
+
+.cert-view svg {
+    width: 14px;
+    height: 14px;
+}
+
+.cert-card:hover .cert-view {
+    opacity: 1;
+    transform: translateY(0);
+}

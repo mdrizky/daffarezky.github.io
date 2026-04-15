@@ -315,5 +315,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
     timelineItems.forEach(item => timelineObserver.observe(item));
 
+    // ─── SPOTLIGHT HOVER EFFECT ───
+    const spotlightCards = document.querySelectorAll('.spotlight-card');
+    spotlightCards.forEach(card => {
+        card.addEventListener('mousemove', e => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+        });
+    });
+
+    // ─── PDF MODAL HANDLER ───
+    const pdfModal = document.getElementById('pdfModal');
+    const pdfClose = document.getElementById('pdfClose');
+    const pdfBackdrop = document.getElementById('pdfModalBackdrop');
+    const pdfIframe = document.getElementById('pdfIframe');
+    const pdfTitle = document.getElementById('pdfTitle');
+    const certCards = document.querySelectorAll('.cert-card[data-pdf]');
+
+    function closePdfModal() {
+        pdfModal.classList.remove('active');
+        document.body.style.overflow = '';
+        setTimeout(() => { pdfIframe.src = ''; }, 300); // Clear iframe after animation
+    }
+
+    certCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const pdfFile = card.getAttribute('data-pdf');
+            const title = card.getAttribute('data-title');
+            if (!pdfFile) return;
+
+            pdfTitle.textContent = title || 'Certificate';
+            pdfIframe.src = `assets/certificates/${pdfFile}#view=FitH`;
+            
+            pdfModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        });
+    });
+
+    if (pdfClose) pdfClose.addEventListener('click', closePdfModal);
+    if (pdfBackdrop) pdfBackdrop.addEventListener('click', closePdfModal);
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && pdfModal.classList.contains('active')) {
+            closePdfModal();
+        }
+    });
+
     console.log('%c🚀 Daffa Rizky Portfolio — Built with passion.', 'color: #18181B; font-weight: bold; font-size: 14px;');
 });
