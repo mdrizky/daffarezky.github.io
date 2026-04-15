@@ -153,44 +153,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const caseStudies = {
         kopi: {
-            tag: 'Branding & Marketing',
+            tag: 'Positioning & Funnel',
             title: 'Brand Kopi Dummy',
-            objective: 'Membangun brand identity dan strategi content marketing untuk produk kopi yang menargetkan segmen mahasiswa usia 18-25 tahun, dengan fokus pada engagement dan brand awareness di media sosial.',
-            audience: 'Mahasiswa dan anak muda usia 18-25 tahun yang aktif di media sosial, suka nongkrong di coffee shop, dan peduli dengan kualitas serta estetika produk.',
-            strategy: 'Menggunakan pendekatan 3-pilar: (1) Visual branding yang clean & aesthetic, (2) Content calendar dengan mix of educational + entertaining content, (3) CTA funnel dari awareness → engagement → conversion melalui promo dan storytelling.',
-            execution: 'Membuat brand guideline, content calendar 30 hari, mockup Instagram feed, carousel infographic tentang kopi, dan simulasi engagement funnel di Google Sheets.',
-            results: 'Prototype engagement funnel menunjukkan potensi 3.2% CTR dari content ke landing page. Desain content Canva mendapat feedback positif dari peer review. Brand positioning berhasil membedakan dari kompetitor lokal.',
-            lessons: 'Konsistensi visual identity sangat penting untuk brand trust. CTA yang terlalu agresif menurunkan engagement — soft-sell approach lebih efektif untuk Gen Z audience.'
+            objective: 'Problem: Brand kopi sepi pembeli karena konten kurang menarik dan tidak ada arah (funnel).',
+            audience: 'Mahasiswa dan Gen Z yang mencari estetika dan rasa.',
+            strategy: 'Solution: Membangun Brand Positioning yang unik dan konten storytelling.',
+            execution: 'Execution: Pembuatan Content Calendar 30 hari & CTA Funnel Strategy.',
+            results: 'Key Results: Engagement naik 20% dalam simulasi minggu pertama.',
+            lessons: 'Lesson: Copywriting yang "relate" jauh lebih efektif dibanding hard-sell.'
         },
         kpi: {
-            tag: 'Data Analytics',
+            tag: 'Data & Analytics',
             title: 'KPI Dashboard Simulation',
-            objective: 'Membuat simulasi dashboard Key Performance Indicator (KPI) untuk bisnis digital yang menampilkan metrik penting seperti CTR, conversion rate, dan weekly performance insights.',
-            audience: 'Stakeholder bisnis dan tim marketing yang membutuhkan data-driven decision making untuk optimasi kampanye digital.',
-            strategy: 'Menggunakan Google Sheets sebagai data source dan Looker Studio untuk visualisasi. Fokus pada 5 KPI utama: CTR, Conversion Rate, Customer Acquisition Cost (CAC), Return on Ad Spend (ROAS), dan Weekly Growth Rate.',
-            execution: 'Menyusun data pipeline sederhana di Google Sheets dengan formula otomatis, membuat dashboard interaktif di Looker Studio dengan filter by date range dan channel, serta menyiapkan weekly insight template.',
-            results: 'Dashboard berhasil menampilkan trend mingguan secara real-time. Template weekly insights mempercepat proses reporting 60%. Simulasi menunjukkan insight tentang channel mana yang paling efektif.',
-            lessons: 'Visualisasi data harus simple dan actionable — terlalu banyak metrik justru membingungkan. Yang penting adalah "so-what" dari setiap angka, bukan angkanya sendiri.'
+            objective: 'Problem: Bisnis berjalan tanpa tracking data, pengambilan keputusan hanya pakai perasaan.',
+            audience: 'Business Owners & Marketing Teams.',
+            strategy: 'Solution: Implementasi Automated Dashboard menggunakan Google Sheets & Looker Studio.',
+            execution: 'Execution: Tracking CTR, Conversion, dan CAC secara real-time.',
+            results: 'Key Results: Deteksi dini campaign yang boncos dan optimasi budget ads.',
+            lessons: 'Lesson: Data tidak berbohong, emosi seringkali salah.'
         },
-        halalytics: {
-            tag: 'Mobile App Development',
-            title: 'Halalytics Super App',
-            objective: 'Membangun aplikasi "Super App" untuk ekosistem halal lifestyle — mencakup verifikasi produk halal, marketplace, community hub, health features, dan AI-powered recommendations.',
-            audience: 'Konsumen Muslim Indonesia yang peduli kehalalan produk, pengguna aktif smartphone, dan merchant produk halal.',
-            strategy: 'Arsitektur modular "Super App" dengan pendekatan feature-flag. Tech stack: Android Jetpack Compose (frontend) + Laravel 11 (backend API). Integrasi dengan database BPJPH, Open Food Facts, dan Google Places API.',
-            execution: 'Membangun 15+ screens: Home, Scanner, Product Detail, Marketplace, Community Forum, Health Hub, Chat Expert, dan Admin Panel. Implementasi barcode scanning, real-time chat (Laravel Reverb), gamification system, dan responsive admin dashboard.',
-            results: 'Aplikasi berhasil berjalan dengan full-stack architecture. Fitur scanning dapat memverifikasi status halal produk. Community hub aktif dengan forum dan gamification. Admin panel responsive dengan Tailwind CSS.',
-            lessons: 'Scope management sangat krusial di project besar — focus on MVP dulu. Clean architecture (ViewModel, Repository pattern) sangat membantu maintainability. User feedback loop penting untuk prioritisasi fitur.'
-        },
-        seo: {
-            tag: 'SEO & Content',
-            title: 'SEO & Content Strategy',
-            objective: 'Mengembangkan strategi SEO dan content marketing untuk meningkatkan organic visibility dan brand authority di search engine.',
-            audience: 'Target readers yang mencari informasi tentang bisnis digital, halal lifestyle, dan digital marketing di Google Search.',
-            strategy: '3-tahap approach: (1) Keyword research dengan analisis search intent dan competition level, (2) On-page SEO optimization, (3) Content cluster strategy — pillar page + supporting articles untuk topical authority.',
-            execution: 'Riset 50+ long-tail keywords menggunakan Google Search Console data dan free tools. Membuat content brief template, optimasi meta tags, heading structure, dan internal linking strategy. Menulis 5 blog articles dengan SEO best practices.',
-            results: 'Artikel berhasil terindex di Google dalam 2 minggu. Implementasi schema markup meningkatkan rich snippet appearance. On-page score meningkat dari 65 menjadi 92 berdasarkan audit tools.',
-            lessons: 'SEO adalah marathon, bukan sprint — consistency matters lebih dari volume. User intent harus menjadi foundation setiap konten. Technical SEO (speed, mobile-friendly) sama pentingnya dengan content quality.'
+        marketplace: {
+            tag: 'E-commerce Optimization',
+            title: 'Marketplace Funnel Analysis',
+            objective: 'Problem: Banyak pengunjung tapi Checkout Rate rendah (keranjang ditinggal).',
+            audience: 'Online Shoppers & Marketplace Sellers.',
+            strategy: 'Solution: Optimasi Urgency, Social Proof, dan Trust signals di halaman produk.',
+            execution: 'Execution: A/B Testing pada copywriting judul dan foto produk.',
+            results: 'Key Results: Potensi kenaikan checkout rate hingga 15% dengan optimasi UX.',
+            lessons: 'Lesson: Sedikit "FOMO" (Fear of Missing Out) sangat membantu konversi.'
         }
     };
 
@@ -200,11 +190,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = caseStudies[caseKey];
             if (!data) return;
 
+            // Mapping Problem-Solution to existing fields for simplicity
             document.getElementById('caseTag').textContent = data.tag;
             document.getElementById('caseTitle').textContent = data.title;
-            document.getElementById('caseObjective').textContent = data.objective;
+            document.getElementById('caseObjective').innerHTML = `<strong>Problem:</strong> ${data.objective.split('Problem: ')[1]}`;
             document.getElementById('caseAudience').textContent = data.audience;
-            document.getElementById('caseStrategy').textContent = data.strategy;
+            document.getElementById('caseStrategy').innerHTML = `<strong>Solution:</strong> ${data.strategy.split('Solution: ')[1]}`;
             document.getElementById('caseExecution').textContent = data.execution;
             document.getElementById('caseResults').textContent = data.results;
             document.getElementById('caseLessons').textContent = data.lessons;
@@ -212,7 +203,6 @@ document.addEventListener('DOMContentLoaded', () => {
             caseModal.classList.add('active');
             document.body.style.overflow = 'hidden';
 
-            // Re-initialize icons in modal
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
             }
@@ -379,3 +369,98 @@ document.addEventListener('DOMContentLoaded', () => {
 
     console.log('%c🚀 Daffa Rizky Portfolio — Built with passion.', 'color: #18181B; font-weight: bold; font-size: 14px;');
 });
+
+// ─── LANGUAGE & THEME SYSTEM ───
+const translations = {
+    en: {
+        hero_label: "Portfolio",
+        hero_title: "Daffa Rizky",
+        hero_desc: "Building brands, analytics, and growth systems — preparing for the future of digital business.",
+        view_projects: "View Projects",
+        stat_projects: "Projects",
+        about_tag: "About Me",
+        about_title: "Crafting the future,<br>one strategy at a time.",
+        about_lead: "I am a vocational student focused on building skills in digital business, branding, funnel strategy, SEO, and data analytics for college and startup career preparation.",
+        about_body: "With a data-driven approach and creativity, I build real projects that showcase strategic capabilities — not just theory, but execution. My target: enter the Digital Business major and build an impactful startup.",
+        skills_tag: "Master Skill Stack",
+        skills_title: "The Digital Business Formula:<br>Marketing + Data + AI + Strategy.",
+        skills_desc: "Skill combinations specifically designed to build, scale, and automate businesses in the digital era.",
+        contact_tag: "Get in Touch",
+        contact_title: "Ready to build something<br>remarkable?",
+        contact_desc: "I'm always open to discussing new projects, creative ideas or opportunities to be part of your visions."
+    },
+    id: {
+        hero_label: "Portofolio",
+        hero_title: "Daffa Rizky",
+        hero_desc: "Membangun brand, analitik, dan sistem pertumbuhan — bersiap untuk masa depan bisnis digital.",
+        view_projects: "Lihat Projek",
+        stat_projects: "Projek",
+        about_tag: "Tentang Saya",
+        about_title: "Merancang masa depan,<br>satu strategi setiap waktu.",
+        about_lead: "Saya adalah siswa SMK yang fokus membangun skill di bidang bisnis digital, branding, funnel strategy, SEO, dan data analytics untuk persiapan kuliah dan karier di dunia startup.",
+        about_body: "Dengan pendekatan berbasis data dan kreativitas, saya membangun project-project nyata yang menunjukkan kemampuan strategis — bukan hanya teori, tapi eksekusi. Target saya: masuk jurusan Bisnis Digital dan membangun startup yang berdampak.",
+        skills_tag: "Master Skill Stack",
+        skills_title: "Formula Bisnis Digital:<br>Marketing + Data + AI + Strategi.",
+        skills_desc: "Kombinasi skill yang dirancang khusus untuk membangun, men-scale, dan mengotomasi bisnis di era digital.",
+        contact_tag: "Hubungi Saya",
+        contact_title: "Siap membangun sesuatu<br>yang luar biasa?",
+        contact_desc: "Saya selalu terbuka untuk mendiskusikan proyek baru, ide kreatif, atau peluang untuk menjadi bagian dari visi Anda."
+    }
+};
+
+// Theme Logic
+const themeToggle = document.getElementById('themeToggle');
+const sunIcon = document.querySelector('.sun-icon');
+const moonIcon = document.querySelector('.moon-icon');
+
+function setTheme(isDark) {
+    if (isDark) {
+        document.body.classList.add('dark-theme');
+        sunIcon.style.display = 'block';
+        moonIcon.style.display = 'none';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        document.body.classList.remove('dark-theme');
+        sunIcon.style.display = 'none';
+        moonIcon.style.display = 'block';
+        localStorage.setItem('theme', 'light');
+    }
+}
+
+themeToggle.addEventListener('click', () => {
+    const isDark = document.body.classList.contains('dark-theme');
+    setTheme(!isDark);
+});
+
+// Language Logic
+const langBtns = document.querySelectorAll('.lang-btn');
+
+function setLanguage(lang) {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang][key]) {
+            el.innerHTML = translations[lang][key];
+        }
+    });
+
+    langBtns.forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+        btn.style.color = btn.getAttribute('data-lang') === lang ? 'var(--text-primary)' : 'var(--text-secondary)';
+    });
+
+    localStorage.setItem('lang', lang);
+}
+
+langBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        setLanguage(btn.getAttribute('data-lang'));
+    });
+});
+
+// Initialization
+const savedTheme = localStorage.getItem('theme');
+const savedLang = localStorage.getItem('lang') || 'en';
+
+if (savedTheme === 'dark') setTheme(true);
+setLanguage(savedLang);
+

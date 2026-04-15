@@ -1652,3 +1652,198 @@ button {
     padding: 0.6rem 1.2rem !important;
     font-size: 0.85rem !important;
 }
+
+/* Fix for Cert Card Clickability & Modal Visibility */
+.cert-card {
+    cursor: pointer !important;
+}
+
+/* Ensure modal is always on top and visible */
+.case-modal {
+    z-index: 9999 !important;
+}
+
+/* PDF Viewer Enhancements */
+.pdf-container {
+    height: 75vh !important;
+    max-height: 800px;
+}
+
+#pdfIframe {
+    background: white;
+}
+
+/* Full Master Skills Grid */
+.skills-master-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.skill-category-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 2rem;
+    padding: 2.5rem;
+    transition: var(--transition-base);
+}
+
+.skill-category-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--accent);
+}
+
+.skill-cat-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.skill-cat-header i {
+    color: var(--accent);
+    width: 28px;
+    height: 28px;
+}
+
+.skill-cat-header h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
+}
+
+.skill-list-modern {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.skill-list-modern li {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.skill-list-modern li::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+}
+
+.skill-cat-footer {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-light);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Services Design Upgrade */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+.service-card {
+    padding: 3rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 2.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.service-icon-box {
+    width: 60px;
+    height: 60px;
+    background: var(--bg-secondary);
+    border-radius: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+    color: var(--accent);
+}
+
+.service-icon-box i {
+    width: 30px;
+    height: 30px;
+}
+
+.service-card h3 {
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+    font-family: var(--font-heading);
+}
+
+.service-list {
+    margin-top: 1.5rem;
+    list-style: none;
+}
+
+.service-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.service-list i {
+    width: 18px;
+    height: 18px;
+    color: #22c55e;
+}
+
+/* Trust Section */
+.trust-banner {
+    margin-top: 5rem;
+    padding: 3rem;
+    background: var(--bg-dark);
+    border-radius: 2.5rem;
+    color: white;
+    text-align: center;
+}
+
+.trust-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.trust-avatars {
+    display: flex;
+    margin-left: 10px;
+}
+
+.trust-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #52525b;
+    border: 3px solid var(--bg-dark);
+    margin-left: -12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+    .skill-list-modern {
+        grid-template-columns: 1fr;
+    }
+}

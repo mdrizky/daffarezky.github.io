@@ -1,0 +1,55 @@
+:root {
+    --bg-primary: #FAFAFA;
+    --bg-secondary: #F4F4F5;
+    --bg-card: #FFFFFF;
+    --bg-dark: #18181B;
+    --text-primary: #18181B;
+    --text-secondary: #52525B;
+    --text-muted: #A1A1AA;
+    --border: rgba(0, 0, 0, 0.08);
+    --border-light: rgba(0, 0, 0, 0.04);
+    --accent: #18181B;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+    --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.5);
+}
+
+.dark-theme {
+    --bg-primary: #09090B;
+    --bg-secondary: #18181B;
+    --bg-card: #18181B;
+    --bg-dark: #000000;
+    --text-primary: #FAFAFA;
+    --text-secondary: #A1A1AA;
+    --text-muted: #71717A;
+    --border: rgba(255, 255, 255, 0.1);
+    --border-light: rgba(255, 255, 255, 0.05);
+    --accent: #FAFAFA;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.3);
+    --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.5);
+    --glass-bg: rgba(24, 24, 27, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+/* Global Reset with Variables */
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.section-tag { background: var(--bg-secondary); color: var(--text-secondary); }
+.section-title { color: var(--text-primary); }
+.section-desc { color: var(--text-secondary); }
+.skill-category-card, .service-card, .project-card, .tool-card, .journey-card { 
+    background: var(--bg-card); 
+    border-color: var(--border); 
+}
+.nav-glass { background: var(--glass-bg); border-bottom-color: var(--glass-border); }
+.nav-link { color: var(--text-secondary); }
+.nav-link:hover { color: var(--text-primary); }
+.btn-outline { border-color: var(--border); color: var(--text-primary); }
+.btn-outline:hover { background: var(--bg-secondary); }
