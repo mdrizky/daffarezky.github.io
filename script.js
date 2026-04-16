@@ -465,3 +465,54 @@ if (savedTheme === 'dark') setTheme(true);
 setLanguage(savedLang);
 
 
+
+// ─── ADD NEW TRANSLATIONS (SERVICES & PROCESS) ───
+const strategicTranslations = {
+    en: {
+        services_tag: "Services & Solutions",
+        services_title: "Turning problems into<br>digital opportunities.",
+        services_desc: "Not just services, but strategic solutions for your business growth.",
+        service_1_title: "Branding & Social Media Growth",
+        service_1_desc: "I help your brand have a cool visual identity and content strategy that makes followers increase.",
+        service_2_title: "Market Research & Data Entry",
+        service_2_desc: "I help you collect competitor data and market research so your business doesn't make the wrong move.",
+        service_3_title: "Digital Business Setup",
+        service_3_desc: "I help setup landing pages, domains, and professional emails for your business to look trusted.",
+        process_tag: "Strategic Framework",
+        process_title: "How I bring results<br>to the table.",
+        proc_1_title: "Audit & Analysis",
+        proc_1_desc: "Deep dive into market trends & competitor data to find opportunities.",
+        proc_2_title: "Strategic Blueprint",
+        proc_2_desc: "Designing funnels, branding, and a scalable roadmap.",
+        proc_3_title: "Expert Execution",
+        proc_3_desc: "Executing content strategy & digital business setup with precision.",
+        proc_4_title: "Optimization",
+        proc_4_desc: "Continuously monitoring data, A/B testing, and scaling up for maximum results."
+    },
+    id: {
+        services_tag: "Jasa & Solusi",
+        services_title: "Mengubah masalah jadi<br>peluang digital.",
+        services_desc: "Bukan sekadar jasa, tapi solusi strategis untuk pertumbuhan bisnis Anda.",
+        service_1_title: "Branding & Social Media Growth",
+        service_1_desc: "Gw bantu brand lo punya identitas visual yang keren dan strategi konten yang bikin followers naik.",
+        service_2_title: "Market Research & Data Entry",
+        service_2_desc: "Gw bantu lo ngumpulin data kompetitor dan riset pasar biar bisnis lo gak salah langkah.",
+        service_3_title: "Digital Business Setup",
+        service_3_desc: "Gw bantu setup landing page, domain, dan email profesional buat bisnis lo agar terlihat trusted.",
+        process_tag: "Framework Strategis",
+        process_title: "Bagaimana saya bekerja<br>untuk anda.",
+        proc_1_title: "Audit & Analisa",
+        proc_1_desc: "Deep dive ke market trends & data kompetitor untuk cari peluang.",
+        proc_2_title: "Strategic Blueprint",
+        proc_2_desc: "Ngerancang funnel, branding, dan roadmap yang scalable.",
+        proc_3_title: "Eksekusi Pakar",
+        proc_3_desc: "Eksekusi content strategy & digital business setup dengan presisi.",
+        proc_4_title: "Optimasi",
+        proc_4_desc: "Terus pantau data, A/B testing, dan scale up hasil yang maksimal."
+    }
+};
+
+// Merge strategic translations
+Object.keys(strategicTranslations).forEach(lang => {
+    Object.assign(translations[lang], strategicTranslations[lang]);
+});

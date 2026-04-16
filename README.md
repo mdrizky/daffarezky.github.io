@@ -1,49 +1,58 @@
-# Daffa Rizky — Digital Business Portfolio
+# 🚀 Daffa Rizky — Digital Business Portfolio
 
-🌐 **Live**: [mdrizky.github.io](https://mdrizky.github.io)
+[![Live Site](https://img.shields.io/badge/Live-Site-blue?style=for-the-badge&logo=github)](https://mdrizky.github.io/daffarezky.github.io/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+[![Portfolio](https://img.shields.io/badge/Role-Digital_Business_Strategist-black?style=for-the-badge)](https://mdrizky.github.io/daffarezky.github.io/)
 
-A premium Apple-style personal portfolio showcasing digital business projects, case studies, and growth journey.
+A high-converting, premium digital business portfolio built for the next generation of strategists. This showcase combines **Apple-inspired aesthetics** with **strategic data-driven components**.
 
-## ✨ Features
+---
 
-- 🎨 Clean Apple-style design with glassmorphism navbar
-- 📱 Fully responsive (mobile, tablet, desktop)
-- ⚡ Smooth scroll-triggered animations
-- 📂 Interactive case study modals
-- ⌨️ Typing animation on hero
-- 🎯 SEO optimized with Open Graph tags
-- 🚀 Auto-deploy to GitHub Pages
+## ✨ Advanced Features
 
-## 🛠️ Tech Stack
+| Feature | Description |
+| :--- | :--- |
+| 🌍 **Dual Language** | Seamlessly switch between **English** and **Indonesian** without page reloads. |
+| 🌑 **Dark Mode** | Professional theme switcher with state persistence via LocalStorage. |
+| 📄 **Fullscreen PDF** | Interactive certificate viewer with download and external view options. |
+| 🎯 **Strategy Process** | A dedicated section showcasing the professional 4-step workflow (Audit → Scale). |
+| 📱 **Responsive** | Pixel-perfect layout across Mobile, Tablet, and Desktop. |
 
-- HTML5 / CSS3 / Vanilla JavaScript
-- Google Fonts (Inter + Outfit)
-- Lucide Icons
-- GitHub Actions for CI/CD
+## 🛠️ Performance Tech Stack
 
-## 📂 Structure
+- **Core**: HTML5, Vanilla JavaScript (ES6+), CSS3 (Modern Flexbox/Grid)
+- **Icons**: Lucide Icons for consistent, professional visual language.
+- **Typography**: Inter & Outfit (Variable Fonts for maximum readability).
+- **CI/CD**: GitHub Actions for automated deployment to GitHub Pages.
 
-```
+## 📂 Project Structure
+
+```bash
 daffa-portfolio/
-├── index.html          # Main page
-├── style.css           # Design system
-├── script.js           # Interactivity
+├── index.html          # Core structure & SEO metadata
+├── style.css           # Premium design system & theme variables
+├── script.js           # Interactive logic, i18n system, & theme management
 ├── assets/
-│   └── images/         # Project covers & profile
-├── .github/
-│   └── workflows/
-│       └── deploy.yml  # Auto-deploy
-└── README.md
+│   ├── images/         # Optimized project & profile assets
+│   └── certificates/   # Professional certification documents (PDF)
+└── .github/            # Automated deployment workflows
 ```
 
-## 🚀 Setup
+## 🚀 Quick Setup (For Developers)
 
-1. Clone this repo
-2. Add your `profile.jpg` to `assets/images/`
-3. Push to `main` branch
-4. Enable GitHub Pages (Settings → Pages → Source: GitHub Actions)
-5. Your portfolio is live!
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/mdrizky/daffarezky.github.io.git
+   ```
+2. **Local Environment**:
+   Simply open `index.html` or use a live server (Python, Node, etc.).
+   ```bash
+   python3 -m http.server 8000
+   ```
+3. **Identity Customization**:
+   - Swap `assets/images/MuhammadDaffaRezkyAdyra.jpg` with your profile picture.
+   - Update `script.js` translations object with your personal bio.
 
-## 📝 License
+---
 
-© 2026 Daffa Rizky. All rights reserved.
+© 2026 Daffa Rizky. [LinkedIn](https://www.linkedin.com/in/daffarezkyad/) • [Instagram](https://instagram.com/m.daffarizkyy_)

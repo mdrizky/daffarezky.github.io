@@ -1849,3 +1849,95 @@ button {
 }
 
 /* ═══════════════════════════════════════════════════
+
+/* ═══════════════════════════════════════════════════
+   STRATEGY PROCESS SECTION
+   ═══════════════════════════════════════════════════ */
+.process-section {
+    background: var(--bg-primary);
+    padding: var(--section-py) 0;
+}
+
+.process-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-top: 4rem;
+    position: relative;
+}
+
+/* Connecting line (Desktop only) */
+@media (min-width: 1025px) {
+    .process-grid::before {
+        content: '';
+        position: absolute;
+        top: 2rem;
+        left: 10%;
+        right: 10%;
+        height: 1px;
+        background: dashed var(--border);
+        z-index: 0;
+    }
+}
+
+.process-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 2rem;
+    padding: 2.5rem;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    transition: var(--transition-base);
+}
+
+.process-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--accent);
+    box-shadow: var(--shadow-xl);
+}
+
+.process-step {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: var(--bg-card);
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 99px;
+    letter-spacing: 0.1em;
+}
+
+.process-icon-box {
+    width: 64px;
+    height: 64px;
+    background: var(--bg-secondary);
+    border-radius: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: var(--accent);
+    transition: var(--transition-base);
+}
+
+.process-card:hover .process-icon-box {
+    background: var(--accent);
+    color: var(--bg-card);
+}
+
+.process-card h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    font-family: var(--font-heading);
+}
+
+.process-card p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
