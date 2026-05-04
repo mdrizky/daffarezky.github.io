@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #0A0A0F;
+  --color-foreground: #FFFFFF;
+  --color-neon-green: #00FF88;
+  --color-neon-blue: #0099FF;
+  
+  --font-heading: var(--font-syne);
+  --font-body: var(--font-dm-sans);
+}
+
+@layer base {
+  :root {
+    --background: 240 20% 5%; /* Approximate HSL for #0A0A0F */
+    --foreground: 0 0% 100%;
+  }
+
+  body {
+    @apply bg-[var(--color-background)] text-[var(--color-foreground)] font-body antialiased;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/5 backdrop-blur-md border border-white/10;
+  }
+  
+  .text-gradient {
+    @apply bg-gradient-to-r from-[var(--color-neon-green)] to-[var(--color-neon-blue)] bg-clip-text text-transparent;
+  }
+  
+  .bg-gradient-neon {
+    @apply bg-gradient-to-r from-[var(--color-neon-green)] to-[var(--color-neon-blue)];
+  }
+}

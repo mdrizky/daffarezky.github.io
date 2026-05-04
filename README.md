@@ -1,58 +1,36 @@
-# 🚀 Daffa Rizky — Digital Business Portfolio
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-[![Live Site](https://img.shields.io/badge/Live-Site-blue?style=for-the-badge&logo=github)](https://mdrizky.github.io/daffarezky.github.io/)
-[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
-[![Portfolio](https://img.shields.io/badge/Role-Digital_Business_Strategist-black?style=for-the-badge)](https://mdrizky.github.io/daffarezky.github.io/)
+## Getting Started
 
-A high-converting, premium digital business portfolio built for the next generation of strategists. This showcase combines **Apple-inspired aesthetics** with **strategic data-driven components**.
-
----
-
-## ✨ Advanced Features
-
-| Feature | Description |
-| :--- | :--- |
-| 🌍 **Dual Language** | Seamlessly switch between **English** and **Indonesian** without page reloads. |
-| 🌑 **Dark Mode** | Professional theme switcher with state persistence via LocalStorage. |
-| 📄 **Fullscreen PDF** | Interactive certificate viewer with download and external view options. |
-| 🎯 **Strategy Process** | A dedicated section showcasing the professional 4-step workflow (Audit → Scale). |
-| 📱 **Responsive** | Pixel-perfect layout across Mobile, Tablet, and Desktop. |
-
-## 🛠️ Performance Tech Stack
-
-- **Core**: HTML5, Vanilla JavaScript (ES6+), CSS3 (Modern Flexbox/Grid)
-- **Icons**: Lucide Icons for consistent, professional visual language.
-- **Typography**: Inter & Outfit (Variable Fonts for maximum readability).
-- **CI/CD**: GitHub Actions for automated deployment to GitHub Pages.
-
-## 📂 Project Structure
+First, run the development server:
 
 ```bash
-daffa-portfolio/
-├── index.html          # Core structure & SEO metadata
-├── style.css           # Premium design system & theme variables
-├── script.js           # Interactive logic, i18n system, & theme management
-├── assets/
-│   ├── images/         # Optimized project & profile assets
-│   └── certificates/   # Professional certification documents (PDF)
-└── .github/            # Automated deployment workflows
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-## 🚀 Quick Setup (For Developers)
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/mdrizky/daffarezky.github.io.git
-   ```
-2. **Local Environment**:
-   Simply open `index.html` or use a live server (Python, Node, etc.).
-   ```bash
-   python3 -m http.server 8000
-   ```
-3. **Identity Customization**:
-   - Swap `assets/images/MuhammadDaffaRezkyAdyra.jpg` with your profile picture.
-   - Update `script.js` translations object with your personal bio.
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
----
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-© 2026 Daffa Rizky. [LinkedIn](https://www.linkedin.com/in/daffarezkyad/) • [Instagram](https://instagram.com/m.daffarizkyy_)
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
