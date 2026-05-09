@@ -120,7 +120,7 @@ export default function TentangPage() {
               <div className="absolute inset-0 bg-gradient-to-tr from-[var(--color-neon-blue)]/20 to-transparent mix-blend-overlay z-10"></div>
               <Image
                 src={profile?.photo_url || "/foto.jpg"}
-                alt="Daffa Rizky"
+                alt={profile?.name || "Daffa Rizky"}
                 fill
                 className="object-cover rounded-2xl"
               />
@@ -130,7 +130,7 @@ export default function TentangPage() {
 
           <div className="lg:col-span-7 flex flex-col gap-6">
             <h2 className="text-3xl font-heading font-bold text-gray-700 dark:text-gray-300">
-              {t.greeting} <span className="text-gray-900 dark:text-white">Daffa Rizky</span> 👋
+              {t.greeting} <span className="text-gray-900 dark:text-white">{profile?.name || 'Daffa Rizky'}</span> 👋
             </h2>
             <div className="text-gray-600 dark:text-gray-300 leading-relaxed space-y-4">
               {bio ? (

@@ -112,7 +112,7 @@ export default function Home() {
             <h1 className="text-5xl md:text-7xl font-heading font-bold leading-tight text-gray-900 dark:text-white">
               {t.heroTitle} <br />
               <span className="text-gradient">
-                Digital Business Strategist
+                {profile?.title_id || 'Digital Business Strategist'}
               </span>
             </h1>
             <p className="text-gray-500 dark:text-gray-400 text-lg md:text-xl max-w-lg">
@@ -159,7 +159,7 @@ export default function Home() {
               <div className="absolute inset-8 rounded-full overflow-hidden bg-gray-200/50 dark:bg-black/50 backdrop-blur-md border border-gray-200 dark:border-white/10">
                 <Image
                   src={profile?.photo_url || "/foto.jpg"}
-                  alt="Daffa Rizky"
+                  alt={profile?.name || "Daffa Rizky"}
                   fill
                   className="object-cover"
                 />
