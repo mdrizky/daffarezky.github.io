@@ -171,9 +171,9 @@ export default function SkillForm() {
                 onChange={handleChange}
                 className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white [&>option]:bg-white dark:[&>option]:bg-[#0A0A0F]"
               >
-                <option value="Pemula">Pemula (Beginner)</option>
-                <option value="Menengah">Menengah (Intermediate)</option>
-                <option value="Canggih">Canggih (Advanced)</option>
+                <option value="Beginner">Pemula (Beginner)</option>
+                <option value="Intermediate">Menengah (Intermediate)</option>
+                <option value="Advanced">Canggih (Advanced)</option>
               </select>
             </div>
           </div>
