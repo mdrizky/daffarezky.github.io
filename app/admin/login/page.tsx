@@ -35,28 +35,6 @@ export default function AdminLogin() {
     }
   }
 
-  const handleSignUp = async () => {
-    setLoading(true)
-    setError('')
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      })
-      if (error) throw error
-      
-      if (data.user && data.user.identities && data.user.identities.length === 0) {
-        setError('Email ini sudah terdaftar. Silakan langsung login.')
-      } else {
-        alert('✅ AKUN BERHASIL DIBUAT!\n\nPENTING: Supabase biasanya meminta konfirmasi email. Silakan BUKA KOTAK MASUK EMAIL ANDA (mdrizky240708@gmail.com) dan klik link konfirmasi dari Supabase.\n\nSetelah dikonfirmasi, Anda baru bisa login.')
-      }
-    } catch (err: any) {
-      setError(err.message || 'Gagal membuat akun.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-2xl relative overflow-hidden">
@@ -134,22 +112,8 @@ export default function AdminLogin() {
               )}
             </button>
           </form>
-
-          <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl text-center">
-            <p className="text-sm text-blue-300 mb-3">
-              Belum punya akses Admin? Daftarkan email dan password di atas lalu klik tombol ini:
-            </p>
-            <button
-              type="button"
-              onClick={handleSignUp}
-              disabled={loading}
-              className="w-full py-2 px-4 bg-blue-600/50 hover:bg-blue-600 text-white font-bold rounded-lg transition-colors border border-blue-400/50"
-            >
-              Daftar Sebagai Admin
-            </button>
-          </div>
           
-          <div className="mt-6 text-center">
+          <div className="mt-8 text-center">
             <button 
               onClick={() => router.push('/')}
               className="text-gray-500 text-sm hover:text-white transition-colors"

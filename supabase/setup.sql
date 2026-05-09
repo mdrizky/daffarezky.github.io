@@ -146,3 +146,24 @@ CREATE POLICY "Allow public insert" ON public.messages FOR INSERT WITH CHECK (tr
 -- 4. Enter Password: AdminPro123!
 -- 5. Auto Confirm User (Optional but recommended).
 -- 6. Click 'Create user'.
+
+-- 9. Setup Storage Bucket for Images
+insert into storage.buckets (id, name, public)
+values ('portfolio-images', 'portfolio-images', true)
+on conflict (id) do nothing;
+
+create policy "Public Access"
+on storage.objects for select
+using ( bucket_id = 'portfolio-images' );
+
+create policy "Auth Upload"
+on storage.objects for insert
+with check ( bucket_id = 'portfolio-images' and auth.role() = 'authenticated' );
+
+create policy "Auth Update Delete"
+on storage.objects for update
+using ( bucket_id = 'portfolio-images' and auth.role() = 'authenticated' );
+
+create policy "Auth Delete"
+on storage.objects for delete
+using ( bucket_id = 'portfolio-images' and auth.role() = 'authenticated' );

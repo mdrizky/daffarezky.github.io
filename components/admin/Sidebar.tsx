@@ -27,6 +27,7 @@ export default function Sidebar() {
     { name: "Portfolio", path: "/admin/projects", icon: <FaProjectDiagram /> },
     { name: "Blog", path: "/admin/blog", icon: <FaBlog /> },
     { name: "Messages", path: "/admin/messages", icon: <FaEnvelope /> },
+    { name: "Settings", path: "/admin/settings", icon: <FaUserEdit /> },
   ];
 
   const handleLogout = async () => {
