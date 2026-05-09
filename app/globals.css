@@ -1,8 +1,6 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #0A0A0F;
-  --color-foreground: #FFFFFF;
   --color-neon-green: #00FF88;
   --color-neon-blue: #0099FF;
   
@@ -12,18 +10,25 @@
 
 @layer base {
   :root {
-    --background: 240 20% 5%; /* Approximate HSL for #0A0A0F */
-    --foreground: 0 0% 100%;
+    --background: #FFFFFF;
+    --foreground: #0A0A0F;
+  }
+
+  .dark {
+    --background: #0A0A0F;
+    --foreground: #FFFFFF;
   }
 
   body {
-    @apply bg-[var(--color-background)] text-[var(--color-foreground)] font-body antialiased;
+    background-color: var(--background);
+    color: var(--foreground);
+    @apply font-body antialiased transition-colors duration-300;
   }
 }
 
 @layer utilities {
   .glass {
-    @apply bg-white/5 backdrop-blur-md border border-white/10;
+    @apply bg-white/5 dark:bg-black/20 backdrop-blur-md border border-gray-200/50 dark:border-white/10;
   }
   
   .text-gradient {

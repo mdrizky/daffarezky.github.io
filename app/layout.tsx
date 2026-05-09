@@ -49,7 +49,7 @@ export default function RootLayout({
   return (
     <html lang="id" className="scroll-smooth" suppressHydrationWarning>
       <body
-        className={`${syne.variable} ${dmSans.variable} font-body bg-white text-gray-900 dark:bg-[#0A0A0F] dark:text-white antialiased min-h-screen flex flex-col transition-colors duration-300`}
+        className={`${syne.variable} ${dmSans.variable} font-body antialiased min-h-screen flex flex-col`}
       >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <LanguageProvider>

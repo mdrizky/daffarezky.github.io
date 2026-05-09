@@ -14,7 +14,7 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
   const { language, setLanguage } = useLanguage();
   const [profile, setProfile] = useState<{name: string} | null>(null);
 
@@ -63,7 +63,7 @@ export default function Navbar() {
   ];
 
   const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
+    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
   };
 
   const toggleLanguage = () => {
@@ -117,9 +117,9 @@ export default function Navbar() {
               <button
                 onClick={toggleTheme}
                 className="p-2.5 rounded-xl bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/20 transition-all"
-                title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                title={resolvedTheme === 'dark' ? 'Light Mode' : 'Dark Mode'}
               >
-                {theme === 'dark' ? <FaSun className="text-amber-400" /> : <FaMoon className="text-indigo-500" />}
+                {resolvedTheme === 'dark' ? <FaSun className="text-amber-400" /> : <FaMoon className="text-indigo-500" />}
               </button>
             )}
             <button
@@ -147,7 +147,7 @@ export default function Navbar() {
               onClick={toggleTheme}
               className="p-2.5 rounded-xl bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300"
             >
-              {theme === 'dark' ? <FaSun className="text-amber-400" /> : <FaMoon className="text-indigo-500" />}
+              {resolvedTheme === 'dark' ? <FaSun className="text-amber-400" /> : <FaMoon className="text-indigo-500" />}
             </button>
           )}
           <button
