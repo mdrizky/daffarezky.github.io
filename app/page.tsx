@@ -118,7 +118,7 @@ export default function Home() {
                 {language === 'id' ? (profile?.title_id || 'Digital Business Strategist') : (profile?.title_en || 'Digital Business Strategist')}
               </span>
             </h1>
-            <p className="text-gray-500 dark:text-gray-400 text-lg md:text-xl max-w-lg">
+            <p className="text-muted dark:text-gray-400 text-lg md:text-xl max-w-lg">
               {bio}
             </p>
             

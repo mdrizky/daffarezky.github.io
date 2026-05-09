@@ -100,8 +100,8 @@ export default function Navbar() {
                   <Link
                     href={link.path}
                     className={cn(
-                      "text-sm font-medium transition-colors hover:text-[var(--color-neon-green)]",
-                      isActive ? "text-[var(--color-neon-green)]" : "text-gray-600 dark:text-gray-300"
+                      "text-sm font-semibold transition-colors hover:text-[var(--color-neon-green)]",
+                      isActive ? "text-[var(--color-neon-green)]" : "text-gray-900/70 dark:text-gray-300"
                     )}
                   >
                     {link.name}

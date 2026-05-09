@@ -111,7 +111,7 @@ export default function TentangPage() {
           <h1 className="text-4xl md:text-6xl font-heading font-bold mb-4 text-gray-900 dark:text-white">
             {t.pageTitle} <span className="text-gradient">{t.pageTitleGrad}</span>
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto text-lg">
+          <p className="text-muted dark:text-gray-400 max-w-2xl mx-auto text-lg">
             {t.pageDesc}
           </p>
         </div>
@@ -135,7 +135,7 @@ export default function TentangPage() {
             <h2 className="text-3xl font-heading font-bold text-gray-700 dark:text-gray-300">
               {t.greeting} <span className="text-gray-900 dark:text-white">{profile?.name || 'Daffa Rizky'}</span> 👋
             </h2>
-            <div className="text-gray-600 dark:text-gray-300 leading-relaxed space-y-4">
+            <div className="text-muted dark:text-gray-300 leading-relaxed space-y-4 font-medium">
               {bio ? (
                 <p>{bio}</p>
               ) : (
@@ -178,8 +178,8 @@ export default function TentangPage() {
                     <div className={`absolute w-4 h-4 rounded-full -left-[8px] top-1 ${edu.is_current ? 'bg-[var(--color-neon-green)] shadow-[0_0_10px_rgba(0,255,136,0.8)]' : 'bg-gray-400 dark:bg-gray-600'}`}></div>
                     {edu.is_current && <span className="text-[var(--color-neon-green)] text-sm font-bold tracking-wider">{t.inProgress}</span>}
                     <h3 className="text-xl font-bold mt-1 mb-1 text-gray-900 dark:text-white">{edu.institution}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{language === 'id' ? edu.degree_id : edu.degree_en} • {edu.start_year} - {edu.is_current ? (language === 'id' ? 'Sekarang' : 'Present') : edu.end_year}</p>
-                    <p className="text-gray-500 dark:text-gray-400 text-sm">{language === 'id' ? edu.description_id : edu.description_en}</p>
+                    <p className="text-sm text-gray-900/60 dark:text-gray-400 mb-1 font-semibold">{language === 'id' ? edu.degree_id : edu.degree_en} • {edu.start_year} - {edu.is_current ? (language === 'id' ? 'Sekarang' : 'Present') : edu.end_year}</p>
+                    <p className="text-muted dark:text-gray-400 text-sm">{language === 'id' ? edu.description_id : edu.description_en}</p>
                   </div>
                 ))
               ) : (
@@ -222,7 +222,7 @@ export default function TentangPage() {
                     <div className="absolute w-3 h-3 rounded-full bg-[var(--color-neon-blue)] -left-[6px] top-1.5"></div>
                     <span className="text-[var(--color-neon-blue)] text-sm font-bold">{item.year}</span>
                     <h3 className="text-lg font-bold mt-1 text-gray-900 dark:text-white">{item.title}</h3>
-                    <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">{item.desc}</p>
+                    <p className="text-muted dark:text-gray-400 text-sm mt-1">{item.desc}</p>
                   </div>
                 ))
               )}
