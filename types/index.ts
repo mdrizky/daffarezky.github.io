@@ -71,6 +71,19 @@ export type Profile = {
   linkedin: string
   tiktok: string
   youtube: string
+  stats_projects: string
+  stats_tools: string
+  stats_passion: string
+}
+
+export type Testimonial = {
+  id: string
+  name: string
+  role: string
+  content_id: string
+  content_en: string
+  avatar_url: string | null
+  created_at: string
 }
 
 export type Certificate = {

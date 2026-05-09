@@ -21,7 +21,10 @@ export default function AdminProfile() {
     github: '',
     linkedin: '',
     tiktok: '',
-    youtube: ''
+    youtube: '',
+    stats_projects: '4+',
+    stats_tools: '10+',
+    stats_passion: '∞'
   })
   const [profileId, setProfileId] = useState<string | null>(null)
 
@@ -240,7 +243,49 @@ export default function AdminProfile() {
           </div>
         </div>
 
-        {/* Contact & Social Links */}
+        {/* Home Page Stats */}
+        <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm transition-colors duration-300">
+          <h2 className="text-xl font-bold mb-6 border-b border-gray-200 dark:border-white/10 pb-4 text-gray-900 dark:text-white">Statistik Beranda</h2>
+          <p className="text-sm text-gray-500 mb-6 italic">Sesuaikan angka statistik yang muncul di halaman depan.</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Jumlah Proyek</label>
+              <input
+                type="text"
+                name="stats_projects"
+                value={profile.stats_projects || ''}
+                onChange={handleChange}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white"
+                placeholder="Misal: 4+"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Jumlah Tools</label>
+              <input
+                type="text"
+                name="stats_tools"
+                value={profile.stats_tools || ''}
+                onChange={handleChange}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white"
+                placeholder="Misal: 10+"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Passion / Lainnya</label>
+              <input
+                type="text"
+                name="stats_passion"
+                value={profile.stats_passion || ''}
+                onChange={handleChange}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white"
+                placeholder="Misal: ∞"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Contact & Social Media */}
         <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm transition-colors duration-300">
           <h2 className="text-xl font-bold mb-6 border-b border-gray-200 dark:border-white/10 pb-4 text-gray-900 dark:text-white">Kontak & Sosial Media</h2>
           

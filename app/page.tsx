@@ -8,27 +8,30 @@ import { useLanguage } from "@/components/LanguageProvider";
 import SocialLinks from "@/components/SocialLinks";
 import ProjectCard from "@/components/ProjectCard";
 import ServiceCard from "@/components/ServiceCard";
-import type { Profile, Project, Service } from "@/types";
+import type { Profile, Project, Service, Testimonial } from "@/types";
 
 export default function Home() {
   const { language } = useLanguage();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [servicesData, setServicesData] = useState<Service[]>([]);
+  const [testimonialsData, setTestimonialsData] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [profileRes, projectsRes, servicesRes] = await Promise.all([
+        const [profileRes, projectsRes, servicesRes, testimonialsRes] = await Promise.all([
           supabase.from("profile").select("*").limit(1),
           supabase.from("projects").select("*").eq("featured", true).limit(3),
           supabase.from("services").select("*").order("price", { ascending: true }).limit(3),
+          supabase.from("testimonials").select("*").order("created_at", { ascending: false }).limit(3),
         ]);
 
         if (profileRes.data && profileRes.data.length > 0) setProfile(profileRes.data[0]);
         if (projectsRes.data) setProjects(projectsRes.data);
         if (servicesRes.data) setServicesData(servicesRes.data);
+        if (testimonialsRes.data) setTestimonialsData(testimonialsRes.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -138,15 +141,21 @@ export default function Home() {
 
             <div className="grid grid-cols-3 gap-6 mt-8 pt-8 border-t border-gray-200 dark:border-white/10">
               <div>
-                <div className="text-3xl font-heading font-bold text-gray-900 dark:text-white">4+</div>
+                <div className="text-3xl font-heading font-bold text-gray-900 dark:text-white">
+                  {profile?.stats_projects || '4+'}
+                </div>
                 <div className="text-sm text-gray-500 dark:text-gray-400">{t.projects}</div>
               </div>
               <div>
-                <div className="text-3xl font-heading font-bold text-gray-900 dark:text-white">10+</div>
+                <div className="text-3xl font-heading font-bold text-gray-900 dark:text-white">
+                  {profile?.stats_tools || '10+'}
+                </div>
                 <div className="text-sm text-gray-500 dark:text-gray-400">{t.tools}</div>
               </div>
               <div>
-                <div className="text-3xl font-heading font-bold text-gray-900 dark:text-white">∞</div>
+                <div className="text-3xl font-heading font-bold text-gray-900 dark:text-white">
+                  {profile?.stats_passion || '∞'}
+                </div>
                 <div className="text-sm text-gray-500 dark:text-gray-400">{t.passion}</div>
               </div>
             </div>
@@ -238,16 +247,38 @@ export default function Home() {
       <section className="container mx-auto px-6 md:px-12">
         <h2 className="text-3xl md:text-5xl font-heading font-bold mb-12 text-center text-gray-900 dark:text-white">{t.testiTitle} <span className="text-gradient">{t.testiTitle2}</span></h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((testi, i) => (
-            <div key={i} className="bg-white dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 p-8 rounded-2xl relative shadow-sm">
-              <div className="text-4xl text-[var(--color-neon-blue)] opacity-50 absolute top-4 right-6 font-serif">"</div>
-              <p className="text-gray-600 dark:text-gray-300 italic mb-6 relative z-10">{testi.text}</p>
-              <div>
-                <h4 className="font-bold text-gray-900 dark:text-white">{testi.name}</h4>
-                <p className="text-xs text-[var(--color-neon-green)]">{testi.role}</p>
+          {testimonialsData.length > 0 ? (
+            testimonialsData.map((testi) => (
+              <div key={testi.id} className="bg-white dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 p-8 rounded-2xl relative shadow-sm">
+                <div className="text-4xl text-[var(--color-neon-blue)] opacity-50 absolute top-4 right-6 font-serif">"</div>
+                <p className="text-gray-600 dark:text-gray-300 italic mb-6 relative z-10">
+                  {language === 'id' ? testi.content_id : testi.content_en}
+                </p>
+                <div className="flex items-center gap-4">
+                  {testi.avatar_url && (
+                    <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-200 dark:border-white/10">
+                      <img src={testi.avatar_url} alt={testi.name} className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <div>
+                    <h4 className="font-bold text-gray-900 dark:text-white">{testi.name}</h4>
+                    <p className="text-xs text-[var(--color-neon-green)]">{testi.role}</p>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            testimonials.map((testi, i) => (
+              <div key={i} className="bg-white dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 p-8 rounded-2xl relative shadow-sm">
+                <div className="text-4xl text-[var(--color-neon-blue)] opacity-50 absolute top-4 right-6 font-serif">"</div>
+                <p className="text-gray-600 dark:text-gray-300 italic mb-6 relative z-10">{testi.text}</p>
+                <div>
+                  <h4 className="font-bold text-gray-900 dark:text-white">{testi.name}</h4>
+                  <p className="text-xs text-[var(--color-neon-green)]">{testi.role}</p>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </section>
 

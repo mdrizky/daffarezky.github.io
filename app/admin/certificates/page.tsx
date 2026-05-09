@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { FaPlus, FaEdit, FaTrash, FaCertificate, FaImage } from 'react-icons/fa'
+import { FaPlus, FaEdit, FaTrash, FaCertificate, FaImage, FaFilePdf } from 'react-icons/fa'
 import { useLanguage } from '@/components/LanguageProvider'
 import type { Certificate } from '@/types'
 
@@ -165,7 +165,14 @@ export default function AdminCertificates() {
             <div key={item.id} className="group bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
               <div className="aspect-[4/3] relative bg-gray-100 dark:bg-black/20 overflow-hidden">
                 {item.file_url ? (
-                  <img src={item.file_url} alt={item.title_id} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  item.file_url.toLowerCase().endsWith('.pdf') ? (
+                    <div className="flex flex-col items-center justify-center h-full bg-red-50 dark:bg-red-950/20 text-red-500">
+                      <FaFilePdf className="text-6xl mb-2" />
+                      <span className="text-xs font-bold uppercase">Dokumen PDF</span>
+                    </div>
+                  ) : (
+                    <img src={item.file_url} alt={item.title_id} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  )
                 ) : (
                   <div className="flex items-center justify-center h-full text-gray-400"><FaImage className="text-4xl" /></div>
                 )}
@@ -262,7 +269,11 @@ export default function AdminCertificates() {
                 <div className="flex items-center gap-4">
                   <div className="w-24 h-24 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 overflow-hidden flex items-center justify-center">
                     {formData.file_url ? (
-                      <img src={formData.file_url} className="w-full h-full object-cover" />
+                      formData.file_url.toLowerCase().endsWith('.pdf') ? (
+                        <FaFilePdf className="text-4xl text-red-500" />
+                      ) : (
+                        <img src={formData.file_url} className="w-full h-full object-cover" />
+                      )
                     ) : (
                       <FaImage className="text-2xl text-gray-400" />
                     )}
@@ -270,15 +281,15 @@ export default function AdminCertificates() {
                   <div className="flex-grow">
                     <input
                       type="file"
-                      accept="image/*"
+                      accept="image/*,application/pdf"
                       onChange={handleImageUpload}
                       className="hidden"
                       id="cert-upload"
                     />
                     <label htmlFor="cert-upload" className="cursor-pointer inline-block px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg text-sm transition-all shadow-md shadow-blue-500/20">
-                      Pilih Gambar
+                      Pilih File
                     </label>
-                    <p className="text-[10px] text-gray-500 mt-2">Format: JPG, PNG. Ukuran maks: 2MB.</p>
+                    <p className="text-[10px] text-gray-500 mt-2">Format: JPG, PNG, PDF. Ukuran maks: 2MB.</p>
                   </div>
                 </div>
                 <input

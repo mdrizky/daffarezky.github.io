@@ -26,6 +26,7 @@ export default function Sidebar() {
     { name: "Skills", path: "/admin/skills", icon: <FaTools /> },
     { name: "Services", path: "/admin/services", icon: <FaCogs /> },
     { name: "Portfolio", path: "/admin/projects", icon: <FaProjectDiagram /> },
+    { name: "Testimonials", path: "/admin/testimonials", icon: <FaEnvelope /> },
     { name: "Blog", path: "/admin/blog", icon: <FaBlog /> },
     { name: "Learning", path: "/admin/learning-journey", icon: <FaBriefcase /> },
     { name: "Messages", path: "/admin/messages", icon: <FaEnvelope /> },
