@@ -15,10 +15,20 @@ export default function Navbar() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   const { language, setLanguage } = useLanguage();
+  const [profile, setProfile] = useState<{name: string} | null>(null);
 
   useEffect(() => {
     setMounted(true);
+    const fetchProfile = async () => {
+      const { data } = await supabase.from('profile').select('name').limit(1);
+      if (data && data.length > 0) setProfile(data[0]);
+    };
+    fetchProfile();
   }, []);
+
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -72,10 +82,10 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-neon text-white font-heading font-bold text-lg shadow-[0_0_15px_rgba(0,255,136,0.5)] transition-transform group-hover:scale-105">
-            DR
+            {profile?.name ? getInitials(profile.name) : 'DR'}
           </div>
           <span className="font-heading font-bold text-xl hidden sm:block text-gray-900 dark:text-white">
-            Daffa Rizky
+            {profile?.name || 'Daffa Rizky'}
           </span>
         </Link>
 

@@ -1,4 +1,5 @@
-import React from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 import { FaWhatsapp, FaInstagram, FaGithub, FaLinkedin, FaTiktok, FaYoutube } from "react-icons/fa";
 
 type SocialLinksProps = {
@@ -7,46 +8,56 @@ type SocialLinksProps = {
 };
 
 export default function SocialLinks({ variant = "icon-only", className = "" }: SocialLinksProps) {
+  const [profile, setProfile] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const { data } = await supabase.from('profile').select('*').limit(1);
+      if (data && data.length > 0) setProfile(data[0]);
+    };
+    fetchProfile();
+  }, []);
+
   const socialMedia = [
     {
       name: "WhatsApp",
       icon: <FaWhatsapp size={24} />,
       color: "#25D366",
-      url: "https://wa.me/6281374936621",
+      url: profile?.wa ? `https://wa.me/${profile.wa}` : "https://wa.me/6281374936621",
     },
     {
       name: "Instagram",
       icon: <FaInstagram size={24} />,
-      color: "#E1306C", // We can use gradient in classes, but for simplicity we'll handle it via className or style
-      url: "https://instagram.com/m.daffarizkyy_",
+      color: "#E1306C",
+      url: profile?.instagram ? (profile.instagram.startsWith('http') ? profile.instagram : `https://instagram.com/${profile.instagram}`) : "https://instagram.com/m.daffarizkyy_",
       customClass: "hover:text-[#E1306C]",
     },
     {
       name: "GitHub",
       icon: <FaGithub size={24} />,
       color: "#FFFFFF",
-      url: "https://github.com/daffarezky",
+      url: profile?.github || "https://github.com/daffarezky",
       customClass: "hover:text-gray-400",
     },
     {
       name: "LinkedIn",
       icon: <FaLinkedin size={24} />,
       color: "#0077B5",
-      url: "https://linkedin.com",
+      url: profile?.linkedin || "https://linkedin.com",
       customClass: "hover:text-[#0077B5]",
     },
     {
       name: "TikTok",
       icon: <FaTiktok size={24} />,
       color: "#FFFFFF",
-      url: "https://tiktok.com/@daffarizky_",
+      url: profile?.tiktok ? (profile.tiktok.startsWith('http') ? profile.tiktok : `https://tiktok.com/@${profile.tiktok}`) : "https://tiktok.com/@daffarizky_",
       customClass: "hover:text-gray-300",
     },
     {
       name: "YouTube",
       icon: <FaYoutube size={24} />,
       color: "#FF0000",
-      url: "https://youtube.com",
+      url: profile?.youtube || "https://youtube.com",
       customClass: "hover:text-[#FF0000]",
     },
   ];

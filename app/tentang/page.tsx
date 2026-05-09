@@ -20,12 +20,12 @@ export default function TentangPage() {
     const fetchData = async () => {
       try {
         const [profileRes, certsRes, eduRes, learnRes] = await Promise.all([
-          supabase.from("profile").select("*").single(),
+          supabase.from("profile").select("*").limit(1),
           supabase.from("certificates").select("*"),
           supabase.from("education").select("*").order("start_year", { ascending: false }),
           supabase.from("learning_journey").select("*").order("year", { ascending: false }),
         ]);
-        if (profileRes.data) setProfile(profileRes.data);
+        if (profileRes.data && profileRes.data.length > 0) setProfile(profileRes.data[0]);
         if (certsRes.data) setCertificates(certsRes.data);
         if (eduRes.data) setEducation(eduRes.data);
         if (learnRes.data) setLearningJourneyData(learnRes.data);

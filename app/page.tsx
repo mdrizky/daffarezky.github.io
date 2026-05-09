@@ -21,12 +21,12 @@ export default function Home() {
     const fetchData = async () => {
       try {
         const [profileRes, projectsRes, servicesRes] = await Promise.all([
-          supabase.from("profile").select("*").single(),
+          supabase.from("profile").select("*").limit(1),
           supabase.from("projects").select("*").eq("featured", true).limit(3),
           supabase.from("services").select("*").order("price", { ascending: true }).limit(3),
         ]);
 
-        if (profileRes.data) setProfile(profileRes.data);
+        if (profileRes.data && profileRes.data.length > 0) setProfile(profileRes.data[0]);
         if (projectsRes.data) setProjects(projectsRes.data);
         if (servicesRes.data) setServicesData(servicesRes.data);
       } catch (error) {

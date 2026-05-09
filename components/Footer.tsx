@@ -1,11 +1,26 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import SocialLinks from "./SocialLinks";
 import { useLanguage } from "@/components/LanguageProvider";
+import { supabase } from "@/lib/supabase";
 
 export default function Footer() {
   const { language } = useLanguage();
+  const [profile, setProfile] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const { data } = await supabase.from('profile').select('name').limit(1);
+      if (data && data.length > 0) setProfile(data[0]);
+    };
+    fetchProfile();
+  }, []);
+
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  };
 
   const quickLinksId = [
     { name: "Beranda", path: "/" },
@@ -33,10 +48,10 @@ export default function Footer() {
           <div className="flex flex-col gap-4">
             <Link href="/" className="flex items-center gap-2 group w-fit">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-neon text-white font-heading font-bold text-lg">
-                DR
+                {profile?.name ? getInitials(profile.name) : 'DR'}
               </div>
               <span className="font-heading font-bold text-xl text-gray-900 dark:text-white">
-                Daffa Rizky
+                {profile?.name || 'Daffa Rizky'}
               </span>
             </Link>
             <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-sm">
@@ -82,7 +97,7 @@ export default function Footer() {
         {/* Bottom */}
         <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-gray-200 dark:border-white/5 relative">
           <p className="text-gray-500 text-sm">
-            © {new Date().getFullYear()} Daffa Rizky. {language === 'id' ? 'Dibangun dengan penuh semangat.' : 'Built with passion.'}
+            © {new Date().getFullYear()} {profile?.name || 'Daffa Rizky'}. {language === 'id' ? 'Dibangun dengan penuh semangat.' : 'Built with passion.'}
           </p>
           
           {/* Hidden Admin Link */}
