@@ -106,13 +106,13 @@ export default function Home() {
 
         <div className="container mx-auto px-6 md:px-12 grid lg:grid-cols-2 gap-12 items-center">
           <div className="flex flex-col gap-6 order-2 lg:order-1 animate-in fade-in slide-in-from-bottom-8 duration-700">
-            <h2 className="text-[var(--color-neon-green)] font-bold tracking-wider uppercase">
-              {t.greeting}
-            </h2>
+            <span className="text-[var(--color-neon-green)] font-bold tracking-widest uppercase text-sm mb-4 block animate-in fade-in slide-in-from-left-4 duration-500">
+              {language === 'id' ? `Halo, Saya ${profile?.name || 'Daffa Rizky'} 👋` : `Hi, I'm ${profile?.name || 'Daffa Rizky'} 👋`}
+            </span>
             <h1 className="text-5xl md:text-7xl font-heading font-bold leading-tight text-gray-900 dark:text-white">
               {t.heroTitle} <br />
               <span className="text-gradient">
-                {profile?.title_id || 'Digital Business Strategist'}
+                {language === 'id' ? (profile?.title_id || 'Digital Business Strategist') : (profile?.title_en || 'Digital Business Strategist')}
               </span>
             </h1>
             <p className="text-gray-500 dark:text-gray-400 text-lg md:text-xl max-w-lg">
