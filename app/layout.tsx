@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import FloatingWA from "@/components/FloatingWA";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { LanguageProvider } from "@/components/LanguageProvider";
+import RootLayoutClient from "@/components/RootLayoutClient";
 
 const syne = Syne({ 
   subsets: ["latin"],
@@ -52,12 +53,9 @@ export default function RootLayout({
       >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <LanguageProvider>
-            <Navbar />
-            <main className="flex-grow">
+            <RootLayoutClient>
               {children}
-            </main>
-            <Footer />
-            <FloatingWA />
+            </RootLayoutClient>
           </LanguageProvider>
         </ThemeProvider>
       </body>
