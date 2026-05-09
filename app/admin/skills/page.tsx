@@ -91,9 +91,15 @@ export default function AdminSkills() {
                 skills.map((item) => (
                   <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
                     <td className="p-4">
-                      <div className="flex items-center gap-3 font-bold text-gray-900 dark:text-white">
-                        <div dangerouslySetInnerHTML={{ __html: item.icon }} className="w-6 h-6 text-xl" />
-                        {item.name}
+                      <div className="flex items-center gap-3 font-bold text-gray-900 dark:text-white max-w-[200px]">
+                        <div className="w-10 h-10 flex-shrink-0 bg-gray-100 dark:bg-white/5 rounded-lg flex items-center justify-center p-1 overflow-hidden border border-gray-200 dark:border-white/10">
+                          {item.icon.trim().startsWith('<svg') || item.icon.trim().startsWith('<?xml') ? (
+                            <div dangerouslySetInnerHTML={{ __html: item.icon }} className="w-full h-full [&>svg]:w-full [&>svg]:h-full" />
+                          ) : (
+                            <img src={item.icon} alt={item.name} className="w-full h-full object-contain" />
+                          )}
+                        </div>
+                        <span className="truncate">{item.name}</span>
                       </div>
                     </td>
                     <td className="p-4">
@@ -111,17 +117,17 @@ export default function AdminSkills() {
                       </span>
                     </td>
                     <td className="p-4">
-                      <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center justify-end gap-2">
                         <Link 
                           href={`/admin/skills/${item.id}`}
-                          className="p-2 bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors"
+                          className="p-2.5 bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-all border border-blue-200 dark:border-blue-500/20"
                           title="Edit"
                         >
                           <FaEdit />
                         </Link>
                         <button 
                           onClick={() => handleDelete(item.id)}
-                          className="p-2 bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors"
+                          className="p-2.5 bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400 rounded-xl hover:bg-red-100 dark:hover:bg-red-500/20 transition-all border border-red-200 dark:border-red-500/20"
                           title="Hapus"
                         >
                           <FaTrash />
