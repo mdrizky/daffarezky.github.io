@@ -35,6 +35,23 @@ export default function AdminLogin() {
     }
   }
 
+  const handleSignUp = async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      })
+      if (error) throw error
+      alert('Akun berhasil dibuat! Jika error saat login, periksa email untuk konfirmasi atau coba login sekarang.')
+    } catch (err: any) {
+      setError(err.message || 'Gagal membuat akun.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-2xl relative overflow-hidden">
@@ -105,13 +122,23 @@ export default function AdminLogin() {
               {loading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-[#0A0A0F] border-t-transparent rounded-full animate-spin"></div>
-                  Logging in...
+                  Memproses...
                 </>
               ) : (
                 'Login'
               )}
             </button>
           </form>
+
+          <div className="mt-4 text-center">
+            <button
+              onClick={handleSignUp}
+              disabled={loading}
+              className="text-xs text-gray-400 hover:text-[#00FF88] transition-colors underline"
+            >
+              [Khusus Setup Awal] Klik di sini untuk membuat akun admin ini
+            </button>
+          </div>
           
           <div className="mt-8 text-center">
             <button 
