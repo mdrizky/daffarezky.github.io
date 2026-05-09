@@ -15,12 +15,15 @@ export default function BlogPostForm() {
   const [loading, setLoading] = useState(!isNew)
   const [saving, setSaving] = useState(false)
   const [formData, setFormData] = useState({
-    title: '',
+    title_id: '',
+    title_en: '',
     slug: '',
-    content: '',
+    content_id: '',
+    content_en: '',
     thumbnail: '',
     category: 'Edukasi',
-    excerpt: '',
+    excerpt_id: '',
+    excerpt_en: '',
   })
 
   useEffect(() => {
@@ -40,12 +43,15 @@ export default function BlogPostForm() {
       if (error) throw error
       if (data) {
         setFormData({
-          title: data.title || '',
+          title_id: data.title_id || '',
+          title_en: data.title_en || '',
           slug: data.slug || '',
-          content: data.content || '',
+          content_id: data.content_id || '',
+          content_en: data.content_en || '',
           thumbnail: data.thumbnail || '',
           category: data.category || 'Edukasi',
-          excerpt: data.excerpt || '',
+          excerpt_id: data.excerpt_id || '',
+          excerpt_en: data.excerpt_en || '',
         })
       }
     } catch (error) {
@@ -60,8 +66,7 @@ export default function BlogPostForm() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     
-    // Auto generate slug from title if it's a new post or slug is empty
-    if (name === 'title' && (isNew || !formData.slug)) {
+    if (name === 'title_id' && (isNew || !formData.slug)) {
       const generatedSlug = value
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
@@ -69,7 +74,7 @@ export default function BlogPostForm() {
       
       setFormData(prev => ({ 
         ...prev, 
-        title: value,
+        title_id: value,
         slug: generatedSlug
       }))
     } else {
@@ -132,148 +137,193 @@ export default function BlogPostForm() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-[#00FF88] border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     )
   }
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-4xl animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex items-center gap-4 mb-8">
-        <Link href="/admin/blog" className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors">
+        <Link href="/admin/blog" className="p-2.5 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/10 rounded-xl transition-colors shadow-sm">
           <FaArrowLeft />
         </Link>
-        <h1 className="text-3xl font-bold font-syne">
-          {isNew ? 'Tulis Artikel Baru' : 'Edit Artikel'}
-        </h1>
+        <div>
+          <h1 className="text-3xl font-bold font-syne text-gray-900 dark:text-white">
+            {isNew ? 'Tulis Artikel Baru' : 'Edit Artikel'}
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">Lengkapi konten artikel (Bilingual).</p>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-6">
+        <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-2 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Judul Artikel *</label>
-                <input
-                  type="text"
-                  name="title"
-                  required
-                  value={formData.title}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 bg-black/20 border border-white/10 rounded-lg focus:outline-none focus:border-[#00FF88] text-white text-lg font-bold"
-                  placeholder="Judul Artikel..."
-                />
+            <div className="md:col-span-2 space-y-6">
+              {/* Title Bilingual */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Judul Artikel <span className="text-blue-500">(ID) *</span></label>
+                  <input
+                    type="text"
+                    name="title_id"
+                    required
+                    value={formData.title_id}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white font-bold"
+                    placeholder="Judul Artikel..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Article Title <span className="text-purple-500">(EN) *</span></label>
+                  <input
+                    type="text"
+                    name="title_en"
+                    required
+                    value={formData.title_en}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-gray-900 dark:text-white font-bold"
+                    placeholder="Article Title..."
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">URL Slug *</label>
-                <input
-                  type="text"
-                  name="slug"
-                  required
-                  value={formData.slug}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 bg-black/20 border border-white/10 rounded-lg focus:outline-none focus:border-[#00FF88] text-gray-400 font-mono text-sm"
-                  placeholder="judul-artikel-anda"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">URL Slug *</label>
+                  <input
+                    type="text"
+                    name="slug"
+                    required
+                    value={formData.slug}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-500 dark:text-gray-400 font-mono text-sm"
+                    placeholder="judul-artikel-anda"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Kategori</label>
+                  <select
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white [&>option]:bg-white dark:[&>option]:bg-[#0A0A0F]"
+                  >
+                    <option value="Edukasi">Edukasi</option>
+                    <option value="Tutorial">Tutorial</option>
+                    <option value="Opini">Opini</option>
+                    <option value="Update">Update</option>
+                  </select>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Kategori</label>
-                <select
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 bg-black/20 border border-white/10 rounded-lg focus:outline-none focus:border-[#00FF88] text-white [&>option]:bg-[#0A0A0F]"
-                >
-                  <option value="Edukasi">Edukasi</option>
-                  <option value="Tutorial">Tutorial</option>
-                  <option value="Opini">Opini</option>
-                  <option value="Update">Update</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Ringkasan (Excerpt)</label>
-                <textarea
-                  name="excerpt"
-                  rows={3}
-                  value={formData.excerpt}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 bg-black/20 border border-white/10 rounded-lg focus:outline-none focus:border-[#00FF88] text-white"
-                  placeholder="Ringkasan singkat artikel untuk ditampilkan di list..."
-                />
+              {/* Excerpt Bilingual */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Ringkasan <span className="text-blue-500">(ID)</span></label>
+                  <textarea
+                    name="excerpt_id"
+                    rows={3}
+                    value={formData.excerpt_id}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white text-sm"
+                    placeholder="Ringkasan singkat artikel..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Excerpt <span className="text-purple-500">(EN)</span></label>
+                  <textarea
+                    name="excerpt_en"
+                    rows={3}
+                    value={formData.excerpt_en}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-gray-900 dark:text-white text-sm"
+                    placeholder="Short article summary..."
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Thumbnail</label>
-                <div className="border-2 border-dashed border-white/20 rounded-lg p-4 text-center hover:bg-white/5 transition-colors">
-                  {formData.thumbnail ? (
-                    <div className="relative aspect-video mb-4 rounded overflow-hidden">
-                      <img src={formData.thumbnail} alt="Preview" className="w-full h-full object-cover" />
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Thumbnail</label>
+              <div className="border-2 border-dashed border-gray-300 dark:border-white/20 rounded-xl p-4 text-center hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group relative overflow-hidden">
+                {formData.thumbnail ? (
+                  <div className="relative aspect-video mb-4 rounded-lg overflow-hidden">
+                    <img src={formData.thumbnail} alt="Preview" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="text-white text-sm font-medium">Ganti Thumbnail</span>
                     </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center py-8 text-gray-400">
-                      <FaImage className="text-4xl mb-2" />
-                      <p className="text-sm">Belum ada thumbnail</p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-10 text-gray-400 dark:text-gray-500">
+                    <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-3">
+                      <FaImage className="text-2xl" />
                     </div>
-                  )}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
-                    id="thumbnail-upload"
-                  />
-                  <label
-                    htmlFor="thumbnail-upload"
-                    className="cursor-pointer inline-block px-4 py-2 bg-white/10 hover:bg-white/20 rounded text-sm transition-colors"
-                  >
-                    Upload Thumbnail
-                  </label>
-                </div>
+                    <p className="text-sm font-medium">Upload Thumbnail</p>
+                  </div>
+                )}
                 <input
-                  type="text"
-                  name="thumbnail"
-                  value={formData.thumbnail}
-                  onChange={handleChange}
-                  className="w-full mt-2 px-4 py-2 bg-black/20 border border-white/10 rounded-lg focus:outline-none focus:border-[#00FF88] text-white text-sm"
-                  placeholder="Atau paste URL gambar"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  id="thumbnail-upload"
                 />
               </div>
+              <input
+                type="text"
+                name="thumbnail"
+                value={formData.thumbnail}
+                onChange={handleChange}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white text-sm"
+                placeholder="Atau paste URL gambar"
+              />
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Konten (Markdown / HTML)</label>
-            <textarea
-              name="content"
-              rows={15}
-              required
-              value={formData.content}
-              onChange={handleChange}
-              className="w-full px-4 py-4 bg-black/20 border border-white/10 rounded-lg focus:outline-none focus:border-[#00FF88] text-white font-mono text-sm leading-relaxed"
-              placeholder="Tulis konten artikel di sini..."
-            />
+          {/* Content Bilingual */}
+          <div className="space-y-6 pt-4 border-t border-gray-200 dark:border-white/10">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Konten Artikel <span className="text-blue-500">(ID) *</span></label>
+              <textarea
+                name="content_id"
+                rows={12}
+                required
+                value={formData.content_id}
+                onChange={handleChange}
+                className="w-full px-4 py-4 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white font-mono text-sm leading-relaxed"
+                placeholder="Tulis konten artikel di sini (Markdown / HTML)..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Article Content <span className="text-purple-500">(EN) *</span></label>
+              <textarea
+                name="content_en"
+                rows={12}
+                required
+                value={formData.content_en}
+                onChange={handleChange}
+                className="w-full px-4 py-4 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-gray-900 dark:text-white font-mono text-sm leading-relaxed"
+                placeholder="Write article content here (Markdown / HTML)..."
+              />
+            </div>
           </div>
         </div>
 
         <div className="flex justify-end gap-4">
           <Link
             href="/admin/blog"
-            className="px-6 py-2 bg-white/10 text-white font-medium rounded-lg hover:bg-white/20 transition-colors"
+            className="px-6 py-3 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-white/10 transition-colors shadow-sm"
           >
             Batal
           </Link>
           <button
             type="submit"
             disabled={saving}
-            className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-[#00FF88] to-[#0099FF] text-[#0A0A0F] font-bold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="flex items-center gap-2 px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all disabled:opacity-50"
           >
             {saving ? (
-              <div className="w-5 h-5 border-2 border-[#0A0A0F] border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
             ) : (
               <FaSave />
             )}

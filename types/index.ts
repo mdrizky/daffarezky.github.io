@@ -1,7 +1,9 @@
 export type Project = {
   id: string
-  title: string
-  description: string
+  title_id: string
+  title_en: string
+  description_id: string
+  description_en: string
   image_url: string
   tech_stack: string[]
   demo_url?: string
@@ -13,21 +15,27 @@ export type Project = {
 
 export type BlogPost = {
   id: string
-  title: string
+  title_id: string
+  title_en: string
   slug: string
-  content: string
+  content_id: string
+  content_en: string
   thumbnail: string
   category: string
-  excerpt: string
+  excerpt_id: string
+  excerpt_en: string
   created_at: string
 }
 
 export type Service = {
   id: string
-  name: string
+  name_id: string
+  name_en: string
   price: string
-  description: string
-  features: string[]
+  description_id: string
+  description_en: string
+  features_id: string[]
+  features_en: string[]
   is_popular: boolean
 }
 
@@ -51,8 +59,10 @@ export type Skill = {
 export type Profile = {
   id: string
   name: string
-  title: string
-  bio: string
+  title_id: string
+  title_en: string
+  bio_id: string
+  bio_en: string
   photo_url: string
   wa: string
   email: string
@@ -65,8 +75,22 @@ export type Profile = {
 
 export type Certificate = {
   id: string
-  title: string
+  title_id: string
+  title_en: string
   issuer: string
   file_url: string
   date_issued: string
+}
+
+export type Education = {
+  id: string
+  institution: string
+  degree_id: string
+  degree_en: string
+  start_year: string
+  end_year: string
+  description_id: string
+  description_en: string
+  is_current: boolean
+  created_at: string
 }

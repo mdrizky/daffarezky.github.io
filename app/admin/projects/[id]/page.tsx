@@ -15,8 +15,10 @@ export default function ProjectForm() {
   const [loading, setLoading] = useState(!isNew)
   const [saving, setSaving] = useState(false)
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
+    title_id: '',
+    title_en: '',
+    description_id: '',
+    description_en: '',
     image_url: '',
     tech_stack: '',
     demo_url: '',
@@ -42,8 +44,10 @@ export default function ProjectForm() {
       if (error) throw error
       if (data) {
         setFormData({
-          title: data.title || '',
-          description: data.description || '',
+          title_id: data.title_id || '',
+          title_en: data.title_en || '',
+          description_id: data.description_id || '',
+          description_en: data.description_en || '',
           image_url: data.image_url || '',
           tech_stack: data.tech_stack ? data.tech_stack.join(', ') : '',
           demo_url: data.demo_url || '',
@@ -108,8 +112,10 @@ export default function ProjectForm() {
       const techStackArray = formData.tech_stack.split(',').map(item => item.trim()).filter(Boolean)
       
       const payload = {
-        title: formData.title,
-        description: formData.description,
+        title_id: formData.title_id,
+        title_en: formData.title_en,
+        description_id: formData.description_id,
+        description_en: formData.description_en,
         image_url: formData.image_url,
         tech_stack: techStackArray,
         demo_url: formData.demo_url,
@@ -139,46 +145,69 @@ export default function ProjectForm() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-[#00FF88] border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     )
   }
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-4xl animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex items-center gap-4 mb-8">
-        <Link href="/admin/projects" className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors">
+        <Link href="/admin/projects" className="p-2.5 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/10 rounded-xl transition-colors shadow-sm">
           <FaArrowLeft />
         </Link>
-        <h1 className="text-3xl font-bold font-syne">
-          {isNew ? 'Tambah Project Baru' : 'Edit Project'}
-        </h1>
+        <div>
+          <h1 className="text-3xl font-bold font-syne text-gray-900 dark:text-white">
+            {isNew ? 'Tambah Project Baru' : 'Edit Project'}
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">Lengkapi informasi proyek di bawah ini (Bilingual).</p>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-white/5 border border-white/10 rounded-xl p-6 space-y-6">
+        <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 space-y-8 shadow-sm">
+          
+          {/* Judul Bilingual */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Judul Project *</label>
-                <input
-                  type="text"
-                  name="title"
-                  required
-                  value={formData.title}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 bg-black/20 border border-white/10 rounded-lg focus:outline-none focus:border-[#00FF88] text-white"
-                  placeholder="Nama Project"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Kategori</label>
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                Judul Project <span className="text-blue-500">(Indonesia) *</span>
+              </label>
+              <input
+                type="text"
+                name="title_id"
+                required
+                value={formData.title_id}
+                onChange={handleChange}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
+                placeholder="Judul dalam Bahasa Indonesia"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                Project Title <span className="text-purple-500">(English) *</span>
+              </label>
+              <input
+                type="text"
+                name="title_en"
+                required
+                value={formData.title_en}
+                onChange={handleChange}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-gray-900 dark:text-white transition-all"
+                placeholder="Title in English"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Kategori</label>
                 <select
                   name="category"
                   value={formData.category}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 bg-black/20 border border-white/10 rounded-lg focus:outline-none focus:border-[#00FF88] text-white [&>option]:bg-[#0A0A0F]"
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all [&>option]:bg-white dark:[&>option]:bg-[#0A0A0F]"
                 >
                   <option value="Website">Website</option>
                   <option value="Branding">Branding</option>
@@ -187,105 +216,126 @@ export default function ProjectForm() {
                 </select>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Tech Stack</label>
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Tech Stack</label>
                 <input
                   type="text"
                   name="tech_stack"
                   value={formData.tech_stack}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 bg-black/20 border border-white/10 rounded-lg focus:outline-none focus:border-[#00FF88] text-white"
-                  placeholder="React, Next.js, Tailwind (pisahkan dengan koma)"
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
+                  placeholder="React, Next.js, Tailwind (pisahkan koma)"
                 />
               </div>
 
-              <div className="flex items-center gap-2 mt-4">
-                <input
-                  type="checkbox"
-                  id="featured"
-                  name="featured"
-                  checked={formData.featured}
-                  onChange={handleChange}
-                  className="w-4 h-4 rounded bg-black/20 border-white/10 text-[#00FF88] focus:ring-[#00FF88] focus:ring-offset-[#0A0A0F]"
-                />
-                <label htmlFor="featured" className="text-sm font-medium text-gray-300">
-                  Tampilkan di Beranda (Featured)
+              <div className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl">
+                <div className="relative flex items-center">
+                  <input
+                    type="checkbox"
+                    id="featured"
+                    name="featured"
+                    checked={formData.featured}
+                    onChange={handleChange}
+                    className="w-5 h-5 rounded border-gray-300 dark:border-white/10 text-yellow-500 focus:ring-yellow-500 focus:ring-offset-0 bg-white dark:bg-black/20 cursor-pointer transition-all"
+                  />
+                </div>
+                <label htmlFor="featured" className="text-sm font-semibold text-gray-700 dark:text-gray-300 cursor-pointer flex flex-col">
+                  <span>Tampilkan di Beranda (Featured)</span>
+                  <span className="text-xs font-normal text-gray-500">Project ini akan mendapatkan sorotan utama.</span>
                 </label>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Gambar Project</label>
-                <div className="border-2 border-dashed border-white/20 rounded-lg p-4 text-center hover:bg-white/5 transition-colors">
-                  {formData.image_url ? (
-                    <div className="relative aspect-video mb-4 rounded overflow-hidden">
-                      <img src={formData.image_url} alt="Preview" className="w-full h-full object-cover" />
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Gambar Project</label>
+              <div className="border-2 border-dashed border-gray-300 dark:border-white/20 rounded-xl p-4 text-center hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group relative overflow-hidden">
+                {formData.image_url ? (
+                  <div className="relative aspect-video mb-4 rounded-lg overflow-hidden border border-gray-200 dark:border-white/10">
+                    <img src={formData.image_url} alt="Preview" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="text-white text-sm font-medium">Ganti Gambar</span>
                     </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center py-8 text-gray-400">
-                      <FaImage className="text-4xl mb-2" />
-                      <p className="text-sm">Belum ada gambar</p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-10 text-gray-400 dark:text-gray-500">
+                    <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                      <FaImage className="text-2xl" />
                     </div>
-                  )}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
-                    id="image-upload"
-                  />
-                  <label
-                    htmlFor="image-upload"
-                    className="cursor-pointer inline-block px-4 py-2 bg-white/10 hover:bg-white/20 rounded text-sm transition-colors"
-                  >
-                    Upload Gambar Baru
-                  </label>
-                </div>
+                    <p className="text-sm font-medium">Klik untuk upload gambar</p>
+                    <p className="text-xs mt-1">PNG, JPG, WEBP hingga 5MB</p>
+                  </div>
+                )}
                 <input
-                  type="text"
-                  name="image_url"
-                  value={formData.image_url}
-                  onChange={handleChange}
-                  className="w-full mt-2 px-4 py-2 bg-black/20 border border-white/10 rounded-lg focus:outline-none focus:border-[#00FF88] text-white text-sm"
-                  placeholder="Atau paste URL gambar di sini"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  id="image-upload"
                 />
               </div>
+              <input
+                type="text"
+                name="image_url"
+                value={formData.image_url}
+                onChange={handleChange}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white text-sm transition-all"
+                placeholder="Atau paste URL gambar di sini"
+              />
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Deskripsi Lengkap</label>
-            <textarea
-              name="description"
-              rows={5}
-              value={formData.description}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-black/20 border border-white/10 rounded-lg focus:outline-none focus:border-[#00FF88] text-white"
-              placeholder="Ceritakan tentang project ini..."
-            />
+          {/* Deskripsi Bilingual */}
+          <div className="space-y-6 pt-4 border-t border-gray-200 dark:border-white/10">
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                Deskripsi Lengkap <span className="text-blue-500">(Indonesia) *</span>
+              </label>
+              <textarea
+                name="description_id"
+                required
+                rows={4}
+                value={formData.description_id}
+                onChange={handleChange}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
+                placeholder="Ceritakan tentang project ini dalam bahasa Indonesia..."
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                Full Description <span className="text-purple-500">(English) *</span>
+              </label>
+              <textarea
+                name="description_en"
+                required
+                rows={4}
+                value={formData.description_en}
+                onChange={handleChange}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-gray-900 dark:text-white transition-all"
+                placeholder="Tell about this project in English..."
+              />
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Demo URL</label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-200 dark:border-white/10">
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Demo URL</label>
               <input
                 type="url"
                 name="demo_url"
                 value={formData.demo_url}
                 onChange={handleChange}
-                className="w-full px-4 py-2 bg-black/20 border border-white/10 rounded-lg focus:outline-none focus:border-[#00FF88] text-white"
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
                 placeholder="https://..."
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">GitHub URL</label>
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">GitHub URL</label>
               <input
                 type="url"
                 name="github_url"
                 value={formData.github_url}
                 onChange={handleChange}
-                className="w-full px-4 py-2 bg-black/20 border border-white/10 rounded-lg focus:outline-none focus:border-[#00FF88] text-white"
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
                 placeholder="https://github.com/..."
               />
             </div>
@@ -295,17 +345,17 @@ export default function ProjectForm() {
         <div className="flex justify-end gap-4">
           <Link
             href="/admin/projects"
-            className="px-6 py-2 bg-white/10 text-white font-medium rounded-lg hover:bg-white/20 transition-colors"
+            className="px-6 py-3 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-white/10 transition-colors shadow-sm"
           >
             Batal
           </Link>
           <button
             type="submit"
             disabled={saving}
-            className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-[#00FF88] to-[#0099FF] text-[#0A0A0F] font-bold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="flex items-center gap-2 px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all disabled:opacity-50 disabled:hover:shadow-none"
           >
             {saving ? (
-              <div className="w-5 h-5 border-2 border-[#0A0A0F] border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
             ) : (
               <FaSave />
             )}

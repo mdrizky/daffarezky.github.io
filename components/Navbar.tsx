@@ -3,13 +3,22 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
+import { useLanguage } from "@/components/LanguageProvider";
 import { cn } from "@/lib/utils";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaBars, FaTimes, FaSun, FaMoon, FaGlobe } from "react-icons/fa";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
+  const { language, setLanguage } = useLanguage();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,7 +33,7 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navLinks = [
+  const navLinks = language === 'id' ? [
     { name: "Beranda", path: "/" },
     { name: "Tentang", path: "/tentang" },
     { name: "Portfolio", path: "/portfolio" },
@@ -32,13 +41,31 @@ export default function Navbar() {
     { name: "Services", path: "/services" },
     { name: "Blog", path: "/blog" },
     { name: "Kontak", path: "/kontak" },
+  ] : [
+    { name: "Home", path: "/" },
+    { name: "About", path: "/tentang" },
+    { name: "Portfolio", path: "/portfolio" },
+    { name: "Skills", path: "/skills" },
+    { name: "Services", path: "/services" },
+    { name: "Blog", path: "/blog" },
+    { name: "Contact", path: "/kontak" },
   ];
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
+  const toggleLanguage = () => {
+    setLanguage(language === 'id' ? 'en' : 'id');
+  };
 
   return (
     <nav
       className={cn(
         "fixed top-0 z-40 w-full transition-all duration-300",
-        isScrolled ? "glass py-4 shadow-md" : "bg-transparent py-6"
+        isScrolled
+          ? "backdrop-blur-xl bg-white/80 dark:bg-[#0A0A0F]/80 py-4 shadow-lg dark:shadow-none border-b border-gray-200/50 dark:border-white/10"
+          : "bg-transparent py-6"
       )}
     >
       <div className="container mx-auto px-6 md:px-12 flex items-center justify-between">
@@ -47,14 +74,14 @@ export default function Navbar() {
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-neon text-white font-heading font-bold text-lg shadow-[0_0_15px_rgba(0,255,136,0.5)] transition-transform group-hover:scale-105">
             DR
           </div>
-          <span className="font-heading font-bold text-xl hidden sm:block">
+          <span className="font-heading font-bold text-xl hidden sm:block text-gray-900 dark:text-white">
             Daffa Rizky
           </span>
         </Link>
 
         {/* Desktop Menu */}
-        <div className="hidden lg:flex items-center gap-8">
-          <ul className="flex items-center gap-6">
+        <div className="hidden lg:flex items-center gap-6">
+          <ul className="flex items-center gap-5">
             {navLinks.map((link) => {
               const isActive = pathname === link.path || (link.path !== '/' && pathname.startsWith(link.path));
               return (
@@ -63,7 +90,7 @@ export default function Navbar() {
                     href={link.path}
                     className={cn(
                       "text-sm font-medium transition-colors hover:text-[var(--color-neon-green)]",
-                      isActive ? "text-[var(--color-neon-green)]" : "text-gray-300"
+                      isActive ? "text-[var(--color-neon-green)]" : "text-gray-600 dark:text-gray-300"
                     )}
                   >
                     {link.name}
@@ -72,26 +99,65 @@ export default function Navbar() {
               );
             })}
           </ul>
+
+          {/* Theme & Language Toggles */}
+          <div className="flex items-center gap-2 ml-2">
+            {mounted && (
+              <button
+                onClick={toggleTheme}
+                className="p-2.5 rounded-xl bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/20 transition-all"
+                title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+              >
+                {theme === 'dark' ? <FaSun className="text-amber-400" /> : <FaMoon className="text-indigo-500" />}
+              </button>
+            )}
+            <button
+              onClick={toggleLanguage}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/20 transition-all text-xs font-bold"
+              title="Switch Language"
+            >
+              <FaGlobe />
+              {language === 'id' ? 'EN' : 'ID'}
+            </button>
+          </div>
+
           <Link
             href="/kontak"
             className="rounded-full bg-gradient-neon px-6 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(0,153,255,0.4)] transition-all hover:scale-105 hover:shadow-[0_0_25px_rgba(0,255,136,0.6)]"
           >
-            Hire Me 🔥
+            {language === 'id' ? 'Hire Me 🔥' : 'Hire Me 🔥'}
           </Link>
         </div>
 
         {/* Mobile Menu Button */}
-        <button
-          className="lg:hidden text-white"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
-        </button>
+        <div className="flex items-center gap-3 lg:hidden">
+          {mounted && (
+            <button
+              onClick={toggleTheme}
+              className="p-2.5 rounded-xl bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300"
+            >
+              {theme === 'dark' ? <FaSun className="text-amber-400" /> : <FaMoon className="text-indigo-500" />}
+            </button>
+          )}
+          <button
+            onClick={toggleLanguage}
+            className="flex items-center gap-1 px-2.5 py-2 rounded-xl bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 text-xs font-bold"
+          >
+            <FaGlobe />
+            {language === 'id' ? 'EN' : 'ID'}
+          </button>
+          <button
+            className="text-gray-700 dark:text-white"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="absolute top-full left-0 w-full glass flex flex-col items-center py-6 gap-6 lg:hidden shadow-xl border-t border-white/10 animate-in slide-in-from-top-2">
+        <div className="absolute top-full left-0 w-full backdrop-blur-xl bg-white/95 dark:bg-[#0A0A0F]/95 flex flex-col items-center py-6 gap-6 lg:hidden shadow-xl border-t border-gray-200 dark:border-white/10 animate-in slide-in-from-top-2">
           <ul className="flex flex-col items-center gap-4">
             {navLinks.map((link) => {
               const isActive = pathname === link.path || (link.path !== '/' && pathname.startsWith(link.path));
@@ -102,7 +168,7 @@ export default function Navbar() {
                     onClick={() => setMobileMenuOpen(false)}
                     className={cn(
                       "text-lg font-medium transition-colors hover:text-[var(--color-neon-green)]",
-                      isActive ? "text-[var(--color-neon-green)]" : "text-gray-300"
+                      isActive ? "text-[var(--color-neon-green)]" : "text-gray-700 dark:text-gray-300"
                     )}
                   >
                     {link.name}
@@ -116,7 +182,7 @@ export default function Navbar() {
             onClick={() => setMobileMenuOpen(false)}
             className="rounded-full bg-gradient-neon px-8 py-3 text-base font-semibold text-white shadow-[0_0_20px_rgba(0,153,255,0.4)] transition-all active:scale-95"
           >
-            Hire Me 🔥
+            {language === 'id' ? 'Hire Me 🔥' : 'Hire Me 🔥'}
           </Link>
         </div>
       )}

@@ -4,6 +4,8 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FloatingWA from "@/components/FloatingWA";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { LanguageProvider } from "@/components/LanguageProvider";
 
 const syne = Syne({ 
   subsets: ["latin"],
@@ -44,16 +46,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" className="scroll-smooth">
+    <html lang="id" className="scroll-smooth" suppressHydrationWarning>
       <body
-        className={`${syne.variable} ${dmSans.variable} font-body bg-[#0A0A0F] text-white antialiased min-h-screen flex flex-col`}
+        className={`${syne.variable} ${dmSans.variable} font-body bg-white text-gray-900 dark:bg-[#0A0A0F] dark:text-white antialiased min-h-screen flex flex-col transition-colors duration-300`}
       >
-        <Navbar />
-        <main className="flex-grow">
-          {children}
-        </main>
-        <Footer />
-        <FloatingWA />
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+          <LanguageProvider>
+            <Navbar />
+            <main className="flex-grow">
+              {children}
+            </main>
+            <Footer />
+            <FloatingWA />
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

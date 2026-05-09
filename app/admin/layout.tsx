@@ -14,14 +14,16 @@ export default function AdminLayout({
 
   return (
     <AdminGuard>
-      <div className="min-h-screen bg-[#0A0A0F] text-white">
+      <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#0A0A0F] dark:text-white transition-colors duration-300">
         {isLoginPage ? (
           children
         ) : (
-          <div className="flex">
+          <div className="flex h-screen overflow-hidden">
             <Sidebar />
-            <main className="flex-1 p-8 md:ml-64 w-full overflow-x-hidden min-h-screen">
-              {children}
+            <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-[#0A0A0F] md:ml-64 w-full">
+              <div className="p-8 mx-auto max-w-7xl">
+                {children}
+              </div>
             </main>
           </div>
         )}
