@@ -18,14 +18,64 @@ export default function BlogDetailClient({ post, relatedPosts }: { post: BlogPos
 
   const formatContent = (text: string) => {
     if (!text) return "";
+    
     // If it already looks like HTML (contains <p> or <br>), return as is
     if (/<[a-z][\s\S]*>/i.test(text)) return text;
     
-    // Otherwise, convert double newlines to paragraphs and single newlines to br
-    return text
-      .split(/\n\n+/)
-      .map(para => `<p className="mb-4">${para.replace(/\n/g, '<br />')}</p>`)
-      .join('');
+    // Split into lines for processing
+    const lines = text.split('\n');
+    let html = '';
+    let inList = false;
+
+    lines.forEach((line) => {
+      const trimmedLine = line.trim();
+      
+      if (!trimmedLine) {
+        if (inList) {
+          html += '</ul>';
+          inList = false;
+        }
+        html += '<div className="h-4"></div>';
+        return;
+      }
+
+      // Detect Main Headings (e.g., "1. Judul Utama")
+      if (/^\d+\.\s+[A-Z]/.test(trimmedLine)) {
+        if (inList) {
+          html += '</ul>';
+          inList = false;
+        }
+        html += `<h2 className="text-2xl md:text-3xl font-heading font-bold mt-12 mb-6 text-gray-900 dark:text-white border-l-4 border-[var(--color-neon-blue)] pl-4">${trimmedLine}</h2>`;
+      } 
+      // Detect Sub Headings (e.g., "- Sub Judul" or "• Sub Judul")
+      else if (/^[\-\*•]\s+[A-Z]/.test(trimmedLine) && trimmedLine.length < 100) {
+        if (inList) {
+          html += '</ul>';
+          inList = false;
+        }
+        html += `<h3 className="text-xl font-bold mt-8 mb-4 text-gray-800 dark:text-gray-200">${trimmedLine.replace(/^[\-\*•]\s+/, '')}</h3>`;
+      }
+      // Detect List Items
+      else if (/^[\-\*•]\s+/.test(trimmedLine)) {
+        if (!inList) {
+          html += '<ul className="list-disc ml-6 space-y-2 mb-6 text-gray-700 dark:text-gray-300">';
+          inList = true;
+        }
+        html += `<li>${trimmedLine.replace(/^[\-\*•]\s+/, '')}</li>`;
+      }
+      // Regular Paragraphs
+      else {
+        if (inList) {
+          html += '</ul>';
+          inList = false;
+        }
+        html += `<p className="mb-6 leading-relaxed text-gray-700 dark:text-gray-300 text-lg">${trimmedLine}</p>`;
+      }
+    });
+
+    if (inList) html += '</ul>';
+    
+    return html;
   };
 
   return (
