@@ -16,6 +16,18 @@ export default function BlogDetailClient({ post, relatedPosts }: { post: BlogPos
     day: 'numeric', month: 'long', year: 'numeric'
   });
 
+  const formatContent = (text: string) => {
+    if (!text) return "";
+    // If it already looks like HTML (contains <p> or <br>), return as is
+    if (/<[a-z][\s\S]*>/i.test(text)) return text;
+    
+    // Otherwise, convert double newlines to paragraphs and single newlines to br
+    return text
+      .split(/\n\n+/)
+      .map(para => `<p className="mb-4">${para.replace(/\n/g, '<br />')}</p>`)
+      .join('');
+  };
+
   return (
     <div className="pt-32 pb-24 min-h-screen">
       <div className="container mx-auto px-6 md:px-12 max-w-4xl">
@@ -35,7 +47,7 @@ export default function BlogDetailClient({ post, relatedPosts }: { post: BlogPos
             </div>
           </div>
           
-          <h1 className="text-3xl md:text-5xl font-heading font-bold mb-8 leading-tight text-gray-900 dark:text-white">
+          <h1 className="text-3xl md:text-5xl font-heading font-bold mb-8 leading-tight">
             {title}
           </h1>
 
@@ -50,8 +62,8 @@ export default function BlogDetailClient({ post, relatedPosts }: { post: BlogPos
         </div>
 
         {/* Content */}
-        <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:font-heading prose-headings:text-gray-900 dark:prose-headings:text-white prose-a:text-[var(--color-neon-blue)] hover:prose-a:text-[var(--color-neon-green)] prose-img:rounded-2xl">
-          <div dangerouslySetInnerHTML={{ __html: content }} />
+        <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:font-heading prose-headings:text-gray-900 dark:prose-headings:text-white prose-a:text-[var(--color-neon-blue)] hover:prose-a:text-[var(--color-neon-green)] prose-img:rounded-2xl prose-p:text-gray-700 dark:prose-p:text-gray-300">
+          <div dangerouslySetInnerHTML={{ __html: formatContent(content) }} />
         </div>
 
         {/* CTA Follow */}
