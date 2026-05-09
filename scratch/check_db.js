@@ -7,9 +7,16 @@ const supabaseKey = process.argv[3];
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function checkData() {
-  const { data, error } = await supabase.from('profile').select('*');
-  console.log('Profile Data:', JSON.stringify(data, null, 2));
-  if (error) console.error('Error:', error);
+  const { data: profile } = await supabase.from('profile').select('*');
+  const { data: projects } = await supabase.from('projects').select('*');
+  const { data: skills } = await supabase.from('skills').select('*');
+  
+  console.log('--- Profile ---');
+  console.log(JSON.stringify(profile, null, 2));
+  console.log('\n--- Projects ---');
+  console.log(JSON.stringify(projects, null, 2));
+  console.log('\n--- Skills ---');
+  console.log(JSON.stringify(skills, null, 2));
 }
 
 checkData();
