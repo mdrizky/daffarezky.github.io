@@ -6,7 +6,7 @@ import { createClient } from "@supabase/supabase-js";
 import { 
   FaHome, FaProjectDiagram, FaBlog, 
   FaCogs, FaEnvelope, FaUserEdit, FaSignOutAlt,
-  FaGraduationCap, FaTools
+  FaGraduationCap, FaTools, FaBriefcase, FaCertificate
 } from "react-icons/fa";
 
 const supabase = createClient(
@@ -22,10 +22,12 @@ export default function Sidebar() {
     { name: "Dashboard", path: "/admin", icon: <FaHome /> },
     { name: "Profile", path: "/admin/profile", icon: <FaUserEdit /> },
     { name: "Education", path: "/admin/education", icon: <FaGraduationCap /> },
+    { name: "Certificates", path: "/admin/certificates", icon: <FaCertificate /> },
     { name: "Skills", path: "/admin/skills", icon: <FaTools /> },
     { name: "Services", path: "/admin/services", icon: <FaCogs /> },
     { name: "Portfolio", path: "/admin/projects", icon: <FaProjectDiagram /> },
     { name: "Blog", path: "/admin/blog", icon: <FaBlog /> },
+    { name: "Learning", path: "/admin/learning-journey", icon: <FaBriefcase /> },
     { name: "Messages", path: "/admin/messages", icon: <FaEnvelope /> },
     { name: "Settings", path: "/admin/settings", icon: <FaUserEdit /> },
   ];

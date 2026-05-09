@@ -94,3 +94,13 @@ export type Education = {
   is_current: boolean
   created_at: string
 }
+
+export type LearningJourney = {
+  id: string
+  year: string
+  title_id: string
+  title_en: string
+  description_id: string
+  description_en: string
+  created_at: string
+}

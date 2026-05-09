@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
-import { FaProjectDiagram, FaBlog, FaEnvelope, FaCogs, FaGraduationCap, FaTools, FaUserEdit, FaArrowRight } from 'react-icons/fa'
+import { FaProjectDiagram, FaBlog, FaEnvelope, FaCogs, FaGraduationCap, FaTools, FaUserEdit, FaArrowRight, FaBriefcase } from 'react-icons/fa'
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -13,6 +13,7 @@ export default function AdminDashboard() {
     services: 0,
     skills: 0,
     education: 0,
+    learning: 0,
   })
   const [recentMessages, setRecentMessages] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -23,13 +24,14 @@ export default function AdminDashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      const [projectsRes, blogsRes, messagesRes, servicesRes, skillsRes, educationRes] = await Promise.all([
+      const [projectsRes, blogsRes, messagesRes, servicesRes, skillsRes, educationRes, learning_journeyRes] = await Promise.all([
         supabase.from('projects').select('*', { count: 'exact', head: true }),
         supabase.from('blog_posts').select('*', { count: 'exact', head: true }),
         supabase.from('messages').select('*', { count: 'exact', head: true }).eq('is_read', false),
         supabase.from('services').select('*', { count: 'exact', head: true }),
         supabase.from('skills').select('*', { count: 'exact', head: true }),
         supabase.from('education').select('*', { count: 'exact', head: true }),
+        supabase.from('learning_journey').select('*', { count: 'exact', head: true }),
       ])
 
       setStats({
@@ -39,6 +41,7 @@ export default function AdminDashboard() {
         services: servicesRes.count || 0,
         skills: skillsRes.count || 0,
         education: educationRes.count || 0,
+        learning: learning_journeyRes.count || 0,
       })
 
       const { data: messagesData } = await supabase
@@ -64,6 +67,7 @@ export default function AdminDashboard() {
     { title: 'Paket Jasa', value: stats.services, icon: FaCogs, color: 'text-purple-500', bg: 'bg-purple-50 dark:bg-purple-500/10', border: 'border-purple-200 dark:border-purple-500/20', href: '/admin/services' },
     { title: 'Skills', value: stats.skills, icon: FaTools, color: 'text-cyan-500', bg: 'bg-cyan-50 dark:bg-cyan-500/10', border: 'border-cyan-200 dark:border-cyan-500/20', href: '/admin/skills' },
     { title: 'Pendidikan', value: stats.education, icon: FaGraduationCap, color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-500/10', border: 'border-rose-200 dark:border-rose-500/20', href: '/admin/education' },
+    { title: 'Learning', value: stats.learning, icon: FaBriefcase, color: 'text-indigo-500', bg: 'bg-indigo-50 dark:bg-indigo-500/10', border: 'border-indigo-200 dark:border-indigo-500/20', href: '/admin/learning-journey' },
   ]
 
   if (loading) {

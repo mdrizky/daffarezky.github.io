@@ -6,26 +6,29 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/components/LanguageProvider";
 import { FaGraduationCap, FaBriefcase, FaFileDownload } from "react-icons/fa";
-import type { Profile, Certificate, Education } from "@/types";
+import type { Profile, Certificate, Education, LearningJourney } from "@/types";
 
 export default function TentangPage() {
   const { language } = useLanguage();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [certificates, setCertificates] = useState<Certificate[]>([]);
   const [education, setEducation] = useState<Education[]>([]);
+  const [learningJourneyData, setLearningJourneyData] = useState<LearningJourney[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [profileRes, certsRes, eduRes] = await Promise.all([
+        const [profileRes, certsRes, eduRes, learnRes] = await Promise.all([
           supabase.from("profile").select("*").single(),
           supabase.from("certificates").select("*"),
           supabase.from("education").select("*").order("start_year", { ascending: false }),
+          supabase.from("learning_journey").select("*").order("year", { ascending: false }),
         ]);
         if (profileRes.data) setProfile(profileRes.data);
         if (certsRes.data) setCertificates(certsRes.data);
         if (eduRes.data) setEducation(eduRes.data);
+        if (learnRes.data) setLearningJourneyData(learnRes.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -200,14 +203,29 @@ export default function TentangPage() {
             </div>
             
             <div className="space-y-8">
-              {learningJourney.map((item, i) => (
-                <div key={i} className="relative border-l border-gray-300 dark:border-white/10 pl-8">
-                  <div className="absolute w-3 h-3 rounded-full bg-[var(--color-neon-blue)] -left-[6px] top-1.5"></div>
-                  <span className="text-[var(--color-neon-blue)] text-sm font-bold">{item.year}</span>
-                  <h3 className="text-lg font-bold mt-1 text-gray-900 dark:text-white">{item.title}</h3>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">{item.desc}</p>
-                </div>
-              ))}
+              {learningJourneyData.length > 0 ? (
+                learningJourneyData.map((item) => (
+                  <div key={item.id} className="relative border-l border-gray-300 dark:border-white/10 pl-8">
+                    <div className="absolute w-3 h-3 rounded-full bg-[var(--color-neon-blue)] -left-[6px] top-1.5"></div>
+                    <span className="text-[var(--color-neon-blue)] text-sm font-bold">{item.year}</span>
+                    <h3 className="text-lg font-bold mt-1 text-gray-900 dark:text-white">
+                      {language === 'id' ? item.title_id : item.title_en}
+                    </h3>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+                      {language === 'id' ? item.description_id : item.description_en}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                learningJourney.map((item, i) => (
+                  <div key={i} className="relative border-l border-gray-300 dark:border-white/10 pl-8">
+                    <div className="absolute w-3 h-3 rounded-full bg-[var(--color-neon-blue)] -left-[6px] top-1.5"></div>
+                    <span className="text-[var(--color-neon-blue)] text-sm font-bold">{item.year}</span>
+                    <h3 className="text-lg font-bold mt-1 text-gray-900 dark:text-white">{item.title}</h3>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">{item.desc}</p>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>
