@@ -7,6 +7,7 @@ import { useTheme } from "next-themes";
 import { useLanguage } from "@/components/LanguageProvider";
 import { cn } from "@/lib/utils";
 import { FaBars, FaTimes, FaSun, FaMoon, FaGlobe } from "react-icons/fa";
+import { supabase } from "@/lib/supabase";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
