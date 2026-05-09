@@ -112,7 +112,7 @@ export default function Home() {
             <span className="text-[var(--color-neon-green)] font-bold tracking-widest uppercase text-sm mb-4 block animate-in fade-in slide-in-from-left-4 duration-500">
               {language === 'id' ? `Halo, Saya ${profile?.name || 'Daffa Rizky'} 👋` : `Hi, I'm ${profile?.name || 'Daffa Rizky'} 👋`}
             </span>
-            <h1 className="text-5xl md:text-7xl font-heading font-bold leading-tight text-gray-900 dark:text-white">
+            <h1 className="text-5xl md:text-7xl font-heading font-bold leading-tight">
               {t.heroTitle} <br />
               <span className="text-gradient">
                 {language === 'id' ? (profile?.title_id || 'Digital Business Strategist') : (profile?.title_en || 'Digital Business Strategist')}

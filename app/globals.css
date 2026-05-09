@@ -6,43 +6,55 @@
   
   --font-heading: var(--font-syne);
   --font-body: var(--font-dm-sans);
+
+  /* Define theme colors as variables */
+  --color-bg: var(--background);
+  --color-text: var(--foreground);
+  --color-text-muted: var(--muted);
+  --color-text-subtle: var(--subtle);
 }
 
 @layer base {
   :root {
     --background: #FFFFFF;
     --foreground: #0A0A0F;
-    --muted: #4B5563; /* gray-600 */
-    --subtle: #9CA3AF; /* gray-400 */
+    --muted: #1F2937; /* gray-800 - Very Dark */
+    --subtle: #4B5563; /* gray-600 */
     --border: #E5E7EB; /* gray-200 */
   }
 
+  /* Force dark mode styles when .dark class is present */
   .dark {
     --background: #0A0A0F;
     --foreground: #FFFFFF;
-    --muted: #9CA3AF; /* gray-400 */
-    --subtle: #4B5563; /* gray-600 */
-    --border: #1F2937; /* gray-800 or white/10 */
+    --muted: #D1D5DB; /* gray-300 */
+    --subtle: #9CA3AF; /* gray-400 */
+    --border: #1F2937; /* gray-800 */
   }
 
-  body {
-    background-color: var(--background);
-    color: var(--foreground);
+  html, body {
+    background-color: var(--background) !important;
+    color: var(--foreground) !important;
     @apply font-body antialiased transition-colors duration-300;
+  }
+
+  /* Ensure all headings and text are dark in light mode unless overridden */
+  h1, h2, h3, h4, h5, h6, p, span, div {
+    @apply transition-colors duration-300;
   }
 }
 
 @layer utilities {
   .glass {
-    @apply bg-white/50 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10;
+    @apply bg-white/80 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10;
   }
   
   .text-muted {
-    color: var(--muted);
+    color: var(--muted) !important;
   }
 
   .text-subtle {
-    color: var(--subtle);
+    color: var(--subtle) !important;
   }
   
   .text-gradient {

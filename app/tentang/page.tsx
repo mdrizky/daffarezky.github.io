@@ -108,7 +108,7 @@ export default function TentangPage() {
       <div className="container mx-auto px-6 md:px-12">
         {/* Header */}
         <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <h1 className="text-4xl md:text-6xl font-heading font-bold mb-4 text-gray-900 dark:text-white">
+          <h1 className="text-4xl md:text-6xl font-heading font-bold mb-4">
             {t.pageTitle} <span className="text-gradient">{t.pageTitleGrad}</span>
           </h1>
           <p className="text-muted dark:text-gray-400 max-w-2xl mx-auto text-lg">
@@ -132,8 +132,8 @@ export default function TentangPage() {
           </div>
 
           <div className="lg:col-span-7 flex flex-col gap-6">
-            <h2 className="text-3xl font-heading font-bold text-gray-700 dark:text-gray-300">
-              {t.greeting} <span className="text-gray-900 dark:text-white">{profile?.name || 'Daffa Rizky'}</span> 👋
+            <h2 className="text-3xl font-heading font-bold opacity-90">
+              {t.greeting} <span className="opacity-100">{profile?.name || 'Daffa Rizky'}</span> 👋
             </h2>
             <div className="text-muted dark:text-gray-300 leading-relaxed space-y-4 font-medium">
               {bio ? (
@@ -152,7 +152,7 @@ export default function TentangPage() {
                 {t.whyItems.map((item, i) => (
                   <li key={i} className="flex items-center gap-3 bg-gray-50 dark:bg-white/5 rounded-lg p-3 border border-gray-200 dark:border-white/10">
                     <span className="text-[var(--color-neon-green)]">✦</span>
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{item}</span>
+                    <span className="text-sm font-bold opacity-90">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -168,7 +168,7 @@ export default function TentangPage() {
               <div className="p-3 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-[var(--color-neon-green)] shadow-sm">
                 <FaGraduationCap size={24} />
               </div>
-              <h2 className="text-3xl font-heading font-bold text-gray-900 dark:text-white">{t.education}</h2>
+              <h2 className="text-3xl font-heading font-bold">{t.education}</h2>
             </div>
             
             <div className="space-y-6">
@@ -177,7 +177,7 @@ export default function TentangPage() {
                   <div key={edu.id} className="relative border-l border-gray-300 dark:border-white/10 pl-8 pb-4">
                     <div className={`absolute w-4 h-4 rounded-full -left-[8px] top-1 ${edu.is_current ? 'bg-[var(--color-neon-green)] shadow-[0_0_10px_rgba(0,255,136,0.8)]' : 'bg-gray-400 dark:bg-gray-600'}`}></div>
                     {edu.is_current && <span className="text-[var(--color-neon-green)] text-sm font-bold tracking-wider">{t.inProgress}</span>}
-                    <h3 className="text-xl font-bold mt-1 mb-1 text-gray-900 dark:text-white">{edu.institution}</h3>
+                    <h3 className="text-xl font-bold mt-1 mb-1">{edu.institution}</h3>
                     <p className="text-sm text-gray-900/60 dark:text-gray-400 mb-1 font-semibold">{language === 'id' ? edu.degree_id : edu.degree_en} • {edu.start_year} - {edu.is_current ? (language === 'id' ? 'Sekarang' : 'Present') : edu.end_year}</p>
                     <p className="text-muted dark:text-gray-400 text-sm">{language === 'id' ? edu.description_id : edu.description_en}</p>
                   </div>
@@ -208,7 +208,7 @@ export default function TentangPage() {
                   <div key={item.id} className="relative border-l border-gray-300 dark:border-white/10 pl-8">
                     <div className="absolute w-3 h-3 rounded-full bg-[var(--color-neon-blue)] -left-[6px] top-1.5"></div>
                     <span className="text-[var(--color-neon-blue)] text-sm font-bold">{item.year}</span>
-                    <h3 className="text-lg font-bold mt-1 text-gray-900 dark:text-white">
+                    <h3 className="text-lg font-bold mt-1">
                       {language === 'id' ? item.title_id : item.title_en}
                     </h3>
                     <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
