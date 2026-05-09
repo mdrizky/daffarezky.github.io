@@ -134,11 +134,15 @@ export default function SkillsPage() {
                   <SkillBadge 
                     key={idx} 
                     skill={skill} 
-                    icon={skill.icon.startsWith('<svg') ? (
-                      <div dangerouslySetInnerHTML={{ __html: skill.icon }} className="w-6 h-6" />
-                    ) : (
-                      getIconElement(skill.icon)
-                    )} 
+                    icon={
+                      skill.icon.startsWith('<svg') ? (
+                        <div dangerouslySetInnerHTML={{ __html: skill.icon }} className="w-6 h-6 flex items-center justify-center" />
+                      ) : (skill.icon.startsWith('http') || skill.icon.startsWith('/')) ? (
+                        <img src={skill.icon} alt={skill.name} className="w-6 h-6 object-contain" />
+                      ) : (
+                        getIconElement(skill.icon)
+                      )
+                    } 
                   />
                 ))}
               </div>
