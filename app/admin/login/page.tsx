@@ -44,7 +44,12 @@ export default function AdminLogin() {
         password,
       })
       if (error) throw error
-      alert('Akun berhasil dibuat! Jika error saat login, periksa email untuk konfirmasi atau coba login sekarang.')
+      
+      if (data.user && data.user.identities && data.user.identities.length === 0) {
+        setError('Email ini sudah terdaftar. Silakan langsung login.')
+      } else {
+        alert('✅ AKUN BERHASIL DIBUAT!\n\nPENTING: Supabase biasanya meminta konfirmasi email. Silakan BUKA KOTAK MASUK EMAIL ANDA (mdrizky240708@gmail.com) dan klik link konfirmasi dari Supabase.\n\nSetelah dikonfirmasi, Anda baru bisa login.')
+      }
     } catch (err: any) {
       setError(err.message || 'Gagal membuat akun.')
     } finally {
@@ -130,17 +135,21 @@ export default function AdminLogin() {
             </button>
           </form>
 
-          <div className="mt-4 text-center">
+          <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl text-center">
+            <p className="text-sm text-blue-300 mb-3">
+              Belum punya akses Admin? Daftarkan email dan password di atas lalu klik tombol ini:
+            </p>
             <button
+              type="button"
               onClick={handleSignUp}
               disabled={loading}
-              className="text-xs text-gray-400 hover:text-[#00FF88] transition-colors underline"
+              className="w-full py-2 px-4 bg-blue-600/50 hover:bg-blue-600 text-white font-bold rounded-lg transition-colors border border-blue-400/50"
             >
-              [Khusus Setup Awal] Klik di sini untuk membuat akun admin ini
+              Daftar Sebagai Admin
             </button>
           </div>
           
-          <div className="mt-8 text-center">
+          <div className="mt-6 text-center">
             <button 
               onClick={() => router.push('/')}
               className="text-gray-500 text-sm hover:text-white transition-colors"
