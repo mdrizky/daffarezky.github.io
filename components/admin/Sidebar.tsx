@@ -8,6 +8,7 @@ import {
   FaCogs, FaEnvelope, FaUserEdit, FaSignOutAlt,
   FaGraduationCap, FaTools, FaBriefcase, FaCertificate
 } from "react-icons/fa";
+import SiteLogo from "@/components/SiteLogo";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -41,12 +42,8 @@ export default function Sidebar() {
   return (
     <aside className="w-64 h-screen bg-white dark:bg-[#0A0A0F]/80 backdrop-blur-xl border-r border-gray-200 dark:border-white/10 flex flex-col fixed left-0 top-0 shadow-lg dark:shadow-none z-50 transition-colors duration-300">
       <div className="p-6 border-b border-gray-200 dark:border-white/10 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-neon text-[#0A0A0F] font-heading font-bold shadow-[0_0_10px_rgba(0,255,136,0.3)]">
-            DR
-          </div>
-          <span className="font-heading font-bold text-gray-900 dark:text-white">Admin Panel</span>
-        </Link>
+        <SiteLogo size={36} textSize="text-base" href="/" />
+        <span className="text-xs font-semibold text-gray-400 dark:text-gray-500 ml-1">Admin</span>
       </div>
 
       <nav className="flex-grow p-4 space-y-2 overflow-y-auto custom-scrollbar">

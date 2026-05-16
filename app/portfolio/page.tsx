@@ -1,10 +1,17 @@
 'use client'
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/components/LanguageProvider";
-import PortfolioClient from "./PortfolioClient";
+import { PageSkeleton } from "@/components/ui/Skeleton";
 import type { Project } from "@/types";
+
+// Lazy load the heavy interactive client — it has a modal, filter logic, and images
+const PortfolioClient = dynamic(() => import("./PortfolioClient"), {
+  loading: () => <PageSkeleton />,
+  ssr: false,
+});
 
 export default function PortfolioPage() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -31,14 +38,6 @@ export default function PortfolioPage() {
     fetchProjects();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="pt-32 pb-24 min-h-screen flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-[#00FF88] border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
   return (
     <div className="pt-32 pb-24 min-h-screen">
       <div className="container mx-auto px-6 md:px-12">
@@ -54,7 +53,7 @@ export default function PortfolioPage() {
         </div>
 
         <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
-          <PortfolioClient initialProjects={projects} />
+          {loading ? <PageSkeleton /> : <PortfolioClient initialProjects={projects} />}
         </div>
       </div>
     </div>

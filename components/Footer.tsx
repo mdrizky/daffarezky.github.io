@@ -5,22 +5,19 @@ import Link from "next/link";
 import SocialLinks from "./SocialLinks";
 import { useLanguage } from "@/components/LanguageProvider";
 import { supabase } from "@/lib/supabase";
+import SiteLogo from "@/components/SiteLogo";
 
 export default function Footer() {
   const { language } = useLanguage();
-  const [profile, setProfile] = useState<any>(null);
+  const [profileName, setProfileName] = useState<string>("Daffa Rizky");
 
   useEffect(() => {
     const fetchProfile = async () => {
       const { data } = await supabase.from('profile').select('name').limit(1);
-      if (data && data.length > 0) setProfile(data[0]);
+      if (data && data.length > 0) setProfileName(data[0].name);
     };
     fetchProfile();
   }, []);
-
-  const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-  };
 
   const quickLinksId = [
     { name: "Beranda", path: "/" },
@@ -46,14 +43,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
           {/* Brand */}
           <div className="flex flex-col gap-4">
-            <Link href="/" className="flex items-center gap-2 group w-fit">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-neon text-white font-heading font-bold text-lg">
-                {profile?.name ? getInitials(profile.name) : 'DR'}
-              </div>
-              <span className="font-heading font-bold text-xl text-gray-900 dark:text-white">
-                {profile?.name || 'Daffa Rizky'}
-              </span>
-            </Link>
+            <SiteLogo size={40} textSize="text-xl" />
             <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-sm">
               {language === 'id'
                 ? 'Mengubah ide menjadi realitas digital. Seorang Digital Business Strategist yang membantu brand tumbuh di era digital.'
@@ -97,7 +87,7 @@ export default function Footer() {
         {/* Bottom */}
         <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-gray-200 dark:border-white/5 relative">
           <p className="text-gray-500 text-sm">
-            © {new Date().getFullYear()} {profile?.name || 'Daffa Rizky'}. {language === 'id' ? 'Dibangun dengan penuh semangat.' : 'Built with passion.'}
+            © {new Date().getFullYear()} {profileName}. {language === 'id' ? 'Dibangun dengan penuh semangat.' : 'Built with passion.'}
           </p>
           
           {/* Hidden Admin Link */}

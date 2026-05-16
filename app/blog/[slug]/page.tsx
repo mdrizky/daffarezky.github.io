@@ -6,21 +6,60 @@ import BlogDetailClient from "./BlogDetailClient";
 
 export const revalidate = 3600;
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://daffa-portfolio.vercel.app";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
   const { slug } = await params;
   const supabase = await createClient();
-  const { data } = await supabase.from("blog_posts").select("*").eq("slug", slug).single();
-  
+  const { data } = await supabase
+    .from("blog_posts")
+    .select("*")
+    .eq("slug", slug)
+    .single();
+
   if (!data) return { title: "Not Found" };
-  
+
+  // Build dynamic OG image URL
+  const ogImageUrl = new URL(`${siteUrl}/og`);
+  ogImageUrl.searchParams.set("title", data.title_id);
+  ogImageUrl.searchParams.set("description", data.excerpt_id || "");
+  ogImageUrl.searchParams.set("category", data.category || "");
+  ogImageUrl.searchParams.set("type", "blog");
+
   return {
     title: `${data.title_id} | Blog Daffa Rizky`,
     description: data.excerpt_id,
+    alternates: {
+      canonical: `${siteUrl}/blog/${slug}`,
+    },
     openGraph: {
       title: data.title_id,
       description: data.excerpt_id,
-      images: [{ url: data.thumbnail || "/og-image.jpg" }]
-    }
+      url: `${siteUrl}/blog/${slug}`,
+      type: "article",
+      publishedTime: data.created_at,
+      tags: [data.category],
+      images: [
+        {
+          // Use thumbnail if available, otherwise use dynamic OG image
+          url: data.thumbnail || ogImageUrl.toString(),
+          width: 1200,
+          height: 630,
+          alt: data.title_id,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: data.title_id,
+      description: data.excerpt_id,
+      images: [data.thumbnail || ogImageUrl.toString()],
+    },
   };
 }
 

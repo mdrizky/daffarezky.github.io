@@ -1,10 +1,17 @@
 'use client'
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/components/LanguageProvider";
-import BlogClient from "./BlogClient";
+import { PageSkeleton } from "@/components/ui/Skeleton";
 import type { BlogPost } from "@/types";
+
+// Lazy load the search/filter client — not needed for initial paint
+const BlogClient = dynamic(() => import("./BlogClient"), {
+  loading: () => <PageSkeleton />,
+  ssr: false,
+});
 
 export default function BlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -31,14 +38,6 @@ export default function BlogPage() {
     fetchPosts();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="pt-32 pb-24 min-h-screen flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-[#00FF88] border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
   return (
     <div className="pt-32 pb-24 min-h-screen">
       <div className="container mx-auto px-6 md:px-12">
@@ -54,7 +53,7 @@ export default function BlogPage() {
         </div>
 
         <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
-          <BlogClient initialPosts={posts} />
+          {loading ? <PageSkeleton /> : <BlogClient initialPosts={posts} />}
         </div>
       </div>
     </div>

@@ -64,6 +64,7 @@ export type Profile = {
   bio_id: string
   bio_en: string
   photo_url: string
+  logo_url?: string
   wa: string
   email: string
   instagram: string

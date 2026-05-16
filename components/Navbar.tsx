@@ -7,29 +7,19 @@ import { useTheme } from "next-themes";
 import { useLanguage } from "@/components/LanguageProvider";
 import { cn } from "@/lib/utils";
 import { FaBars, FaTimes, FaSun, FaMoon, FaGlobe } from "react-icons/fa";
-import { supabase } from "@/lib/supabase";
+import SiteLogo from "@/components/SiteLogo";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
   const { language, setLanguage } = useLanguage();
-  const [profile, setProfile] = useState<{name: string} | null>(null);
 
   useEffect(() => {
     setMounted(true);
-    const fetchProfile = async () => {
-      const { data } = await supabase.from('profile').select('name').limit(1);
-      if (data && data.length > 0) setProfile(data[0]);
-    };
-    fetchProfile();
   }, []);
-
-  const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -81,14 +71,7 @@ export default function Navbar() {
     >
       <div className="container mx-auto px-6 md:px-12 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-neon text-white font-heading font-bold text-lg shadow-[0_0_15px_rgba(0,255,136,0.5)] transition-transform group-hover:scale-105">
-            {profile?.name ? getInitials(profile.name) : 'DR'}
-          </div>
-          <span className="font-heading font-bold text-xl hidden sm:block text-gray-900 dark:text-white">
-            {profile?.name || 'Daffa Rizky'}
-          </span>
-        </Link>
+        <SiteLogo size={40} textSize="text-xl" />
 
         {/* Desktop Menu */}
         <div className="hidden lg:flex items-center gap-6">
