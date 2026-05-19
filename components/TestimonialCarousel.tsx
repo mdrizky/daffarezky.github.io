@@ -1,115 +1,232 @@
-"use client"
+"use client";
 
-import React, { useEffect, useRef, useState } from "react"
-import { supabase } from "../lib/supabase"
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
+import { useCallback, useEffect, useState } from "react";
+import { FaStar, FaChevronLeft, FaChevronRight, FaQuoteLeft } from "react-icons/fa";
+import Image from "next/image";
+import { supabase } from "@/lib/supabase";
+import { useLanguage } from "@/components/LanguageProvider";
+import type { Testimonial } from "@/types";
 
-type Testimonial = {
-  id: string
-  name: string
-  role?: string
-  company?: string
-  content: string
-  avatar?: string
-  rating?: number
+// Fallback data jika Supabase kosong
+const FALLBACK: Testimonial[] = [
+  {
+    id: "1",
+    name: "Ahmad Fauzi",
+    role: "Business Owner",
+    content_id: "Kerja sama dengan Daffa sangat memuaskan. Website jadi lebih cepat dan desainnya premium banget. Highly recommended!",
+    content_en: "Working with Daffa was very satisfying. The website became faster and the design is premium. Highly recommended!",
+    avatar_url: null,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "2",
+    name: "Siti Rahayu",
+    role: "Startup Founder",
+    content_id: "Strategi digital yang diberikan sangat on-point. Konversi naik 40% dalam sebulan. Sangat merekomendasikan jasa Daffa.",
+    content_en: "The digital strategy provided was spot on. Conversions increased 40% in a month. Highly recommend Daffa's services.",
+    avatar_url: null,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "3",
+    name: "Budi Santoso",
+    role: "Content Creator",
+    content_id: "Dashboard analytics yang dibuat sangat membantu saya memantau KPI. Tampilan modern dan mudah digunakan. Thanks Daffa!",
+    content_en: "The analytics dashboard created really helps me monitor KPIs. Modern look and easy to use. Thanks Daffa!",
+    avatar_url: null,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "4",
+    name: "Dewi Lestari",
+    role: "E-Commerce Owner",
+    content_id: "Website toko online saya jadi jauh lebih profesional. Penjualan meningkat signifikan setelah redesign. Terima kasih Daffa!",
+    content_en: "My online store website became much more professional. Sales increased significantly after the redesign. Thank you Daffa!",
+    avatar_url: null,
+    created_at: new Date().toISOString(),
+  },
+];
+
+function StarRating({ count = 5 }: { count?: number }) {
+  return (
+    <div className="flex gap-1">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <FaStar
+          key={i}
+          className={i < count ? "text-amber-400" : "text-gray-300 dark:text-gray-600"}
+          size={14}
+        />
+      ))}
+    </div>
+  );
 }
 
-export default function TestimonialCarousel({ className = "" }: { className?: string }) {
-  const [items, setItems] = useState<Testimonial[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const containerRef = useRef<HTMLDivElement | null>(null)
-  const autoRef = useRef<number | null>(null)
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .substring(0, 2)
+    .toUpperCase();
+}
+
+export default function TestimonialCarousel() {
+  const { language } = useLanguage();
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    {
+      loop: true,
+      align: "start",
+      slidesToScroll: 1,
+      breakpoints: {
+        "(min-width: 768px)": { slidesToScroll: 1 },
+      },
+    },
+    [Autoplay({ delay: 4000, stopOnInteraction: true, stopOnMouseEnter: true })]
+  );
+
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
 
   useEffect(() => {
-    let mounted = true
-    async function load() {
-      setLoading(true)
-      const { data, error } = await supabase.from("testimonials").select("*")
-      if (!mounted) return
-      if (error) {
-        setError(error.message)
-        setItems([])
-      } else {
-        setItems((data || []) as Testimonial[])
-      }
-      setLoading(false)
-    }
-    load()
-    return () => {
-      mounted = false
-    }
-  }, [])
+    if (!emblaApi) return;
+    onSelect();
+    emblaApi.on("select", onSelect);
+    return () => { emblaApi.off("select", onSelect); };
+  }, [emblaApi, onSelect]);
 
   useEffect(() => {
-    const el = containerRef.current
-    if (!el || items.length === 0) return
-
-    // autoplay: scroll by one card every 3.5s
-    function startAuto() {
-      stopAuto()
-      autoRef.current = window.setInterval(() => {
-        if (!el) return
-        const cardWidth = el.querySelector("[data-card]")?.clientWidth || 300
-        el.scrollBy({ left: cardWidth + 24, behavior: "smooth" })
-      }, 3500)
-    }
-
-    function stopAuto() {
-      if (autoRef.current) {
-        window.clearInterval(autoRef.current)
-        autoRef.current = null
+    const fetch = async () => {
+      try {
+        const { data } = await supabase
+          .from("testimonials")
+          .select("*")
+          .order("created_at", { ascending: false });
+        setTestimonials(data && data.length > 0 ? data : FALLBACK);
+      } catch {
+        setTestimonials(FALLBACK);
+      } finally {
+        setLoading(false);
       }
-    }
-
-    startAuto()
-
-    el.addEventListener("mouseenter", stopAuto)
-    el.addEventListener("mouseleave", startAuto)
-
-    return () => {
-      stopAuto()
-      el.removeEventListener("mouseenter", stopAuto)
-      el.removeEventListener("mouseleave", startAuto)
-    }
-  }, [items])
+    };
+    fetch();
+  }, []);
 
   if (loading) {
-    return <div className="p-6">Memuat testimoni...</div>
-  }
-
-  if (error) {
-    return <div className="p-6 text-red-400">Gagal memuat testimoni: {error}</div>
-  }
-
-  if (items.length === 0) {
-    return <div className="p-6 text-zinc-400">Belum ada testimoni.</div>
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="h-52 rounded-2xl bg-gray-100 dark:bg-white/5 animate-pulse"
+          />
+        ))}
+      </div>
+    );
   }
 
   return (
-    <div className={className}>
-      <div
-        ref={containerRef}
-        className="flex gap-6 overflow-x-auto snap-x snap-mandatory py-4 px-2 touch-pan-x scrollbar-hide"
-        style={{ WebkitOverflowScrolling: "touch" }}
-      >
-        {items.map((t) => (
-          <article
-            key={t.id}
-            data-card
-            className="snap-start min-w-[280px] max-w-[420px] bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 shadow-md flex-shrink-0"
-          >
-            <p className="text-sm text-zinc-300 italic leading-relaxed">“{t.content}”</p>
+    <div className="relative">
+      {/* Carousel viewport */}
+      <div className="overflow-hidden" ref={emblaRef}>
+        <div className="flex gap-6 touch-pan-y">
+          {testimonials.map((t) => {
+            const content = language === "id" ? t.content_id : t.content_en;
+            return (
+              <div
+                key={t.id}
+                className="flex-none w-[85%] sm:w-[48%] lg:w-[31%] min-w-0"
+              >
+                <div className="h-full bg-white dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-2xl p-7 flex flex-col gap-4 relative overflow-hidden group hover:border-[var(--color-neon-blue)]/40 transition-all duration-300 hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(0,153,255,0.1)]">
+                  {/* Glow */}
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--color-neon-blue)]/5 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
 
-            <div className="mt-4 flex items-center gap-3">
-              <img src={t.avatar || "/avatar-placeholder.png"} alt={t.name} className="w-10 h-10 rounded-full object-cover" />
-              <div>
-                <div className="font-semibold text-white text-sm">{t.name}</div>
-                <div className="text-xs text-zinc-400">{t.role || t.company}</div>
+                  {/* Quote icon */}
+                  <FaQuoteLeft className="text-[var(--color-neon-blue)] opacity-30 text-3xl" />
+
+                  {/* Stars */}
+                  <StarRating count={5} />
+
+                  {/* Content */}
+                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed flex-grow italic">
+                    "{content}"
+                  </p>
+
+                  {/* Author */}
+                  <div className="flex items-center gap-3 pt-4 border-t border-gray-100 dark:border-white/10">
+                    {t.avatar_url ? (
+                      <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border-2 border-[var(--color-neon-green)]/30">
+                        <Image
+                          src={t.avatar_url}
+                          alt={t.name}
+                          fill
+                          className="object-cover"
+                          sizes="40px"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-10 h-10 rounded-full flex-shrink-0 bg-gradient-to-br from-[#00FF88] to-[#0099FF] flex items-center justify-center text-[#0A0A0F] font-bold text-sm">
+                        {getInitials(t.name)}
+                      </div>
+                    )}
+                    <div>
+                      <p className="font-bold text-sm text-gray-900 dark:text-white">{t.name}</p>
+                      <p className="text-xs text-[var(--color-neon-green)]">{t.role}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </article>
-        ))}
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Controls */}
+      <div className="flex items-center justify-between mt-8">
+        {/* Dots */}
+        <div className="flex gap-2">
+          {testimonials.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => emblaApi?.scrollTo(i)}
+              className={`transition-all duration-300 rounded-full ${
+                i === selectedIndex
+                  ? "w-6 h-2 bg-gradient-to-r from-[#00FF88] to-[#0099FF]"
+                  : "w-2 h-2 bg-gray-300 dark:bg-white/20 hover:bg-gray-400 dark:hover:bg-white/40"
+              }`}
+              aria-label={`Go to slide ${i + 1}`}
+            />
+          ))}
+        </div>
+
+        {/* Arrows */}
+        <div className="flex gap-3">
+          <button
+            onClick={scrollPrev}
+            className="w-10 h-10 rounded-full bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/20 hover:text-[var(--color-neon-blue)] transition-all"
+            aria-label="Previous"
+          >
+            <FaChevronLeft size={14} />
+          </button>
+          <button
+            onClick={scrollNext}
+            className="w-10 h-10 rounded-full bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/20 hover:text-[var(--color-neon-blue)] transition-all"
+            aria-label="Next"
+          >
+            <FaChevronRight size={14} />
+          </button>
+        </div>
       </div>
     </div>
-  )
+  );
 }

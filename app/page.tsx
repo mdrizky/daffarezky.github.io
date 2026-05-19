@@ -9,31 +9,30 @@ import SocialLinks from "@/components/SocialLinks";
 import ProjectCard from "@/components/ProjectCard";
 import ServiceCard from "@/components/ServiceCard";
 import dynamic from 'next/dynamic'
-const TestimonialCarouselEmbla = dynamic(() => import('@/components/TestimonialCarouselEmbla'), { ssr: false })
-import type { Profile, Project, Service, Testimonial } from "@/types";
+import type { Profile, Project, Service } from "@/types";
+
+const TestimonialCarousel = dynamic(() => import('@/components/TestimonialCarousel'), { ssr: false })
+const StatsCounter = dynamic(() => import('@/components/StatsCounter'), { ssr: false })
 
 export default function Home() {
   const { language } = useLanguage();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [servicesData, setServicesData] = useState<Service[]>([]);
-  const [testimonialsData, setTestimonialsData] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [profileRes, projectsRes, servicesRes, testimonialsRes] = await Promise.all([
+        const [profileRes, projectsRes, servicesRes] = await Promise.all([
           supabase.from("profile").select("*").limit(1),
           supabase.from("projects").select("*").eq("featured", true).limit(3),
           supabase.from("services").select("*").order("price", { ascending: true }).limit(3),
-          supabase.from("testimonials").select("*").order("created_at", { ascending: false }).limit(3),
         ]);
 
         if (profileRes.data && profileRes.data.length > 0) setProfile(profileRes.data[0]);
         if (projectsRes.data) setProjects(projectsRes.data);
         if (servicesRes.data) setServicesData(servicesRes.data);
-        if (testimonialsRes.data) setTestimonialsData(testimonialsRes.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -161,7 +160,7 @@ export default function Home() {
                 <div className="text-sm text-gray-500 dark:text-gray-400">{t.passion}</div>
               </div>
             </div>
-          </div>
+          </div>{/* end left column */}
 
           <div className="order-1 lg:order-2 flex justify-center lg:justify-end animate-in fade-in slide-in-from-right-8 duration-700">
             <div className="relative w-[300px] h-[300px] md:w-[450px] md:h-[450px]">
@@ -245,12 +244,30 @@ export default function Home() {
         </section>
       )}
 
-      {/* 5. Testimonials (carousel) */}
+      {/* 5. Testimonials — Embla Carousel */}
       <section className="container mx-auto px-6 md:px-12">
-        <h2 className="text-3xl md:text-5xl font-heading font-bold mb-12 text-center text-gray-900 dark:text-white">{t.testiTitle} <span className="text-gradient">{t.testiTitle2}</span></h2>
-        <div className="mx-auto max-w-5xl">
-          <TestimonialCarouselEmbla />
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4 text-gray-900 dark:text-white">
+            {t.testiTitle} <span className="text-gradient">{t.testiTitle2}</span>
+          </h2>
+          <p className="text-gray-500 dark:text-gray-400 max-w-xl mx-auto">
+            {language === 'id' ? 'Apa yang mereka katakan tentang pengalaman bekerja sama dengan saya.' : 'What they say about their experience working with me.'}
+          </p>
         </div>
+        <TestimonialCarousel />
+      </section>
+
+      {/* 5b. Stats from DB */}
+      <section className="container mx-auto px-6 md:px-12">
+        <div className="text-center mb-10">
+          <h2 className="text-2xl md:text-3xl font-heading font-bold text-gray-900 dark:text-white">
+            {language === 'id' ? 'Data ' : 'Real '}<span className="text-gradient">{language === 'id' ? 'Real-time' : 'Statistics'}</span>
+          </h2>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-2">
+            {language === 'id' ? 'Statistik langsung dari database.' : 'Live stats directly from the database.'}
+          </p>
+        </div>
+        <StatsCounter language={language} />
       </section>
 
       {/* 6. CTA Section */}

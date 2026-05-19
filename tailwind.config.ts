@@ -1,7 +1,8 @@
 import type { Config } from "tailwindcss";
 
-// Note: This project uses Tailwind CSS v4, so the primary configuration is in app/globals.css
-// using the @theme directive. This file is kept for compatibility with tools that require it.
+// Catatan: Project ini menggunakan Tailwind CSS v4.
+// Konfigurasi utama ada di app/globals.css menggunakan @theme directive.
+// File ini hanya untuk kompatibilitas dengan tools yang memerlukannya.
 const config: Config = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -11,6 +12,6 @@ const config: Config = {
   theme: {
     extend: {},
   },
-  plugins: [require('@tailwindcss/typography')],
+  plugins: [],
 };
 export default config;

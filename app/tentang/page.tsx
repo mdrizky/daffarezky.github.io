@@ -6,7 +6,13 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/components/LanguageProvider";
 import { FaGraduationCap, FaBriefcase, FaFileDownload } from "react-icons/fa";
+import dynamic from "next/dynamic";
 import type { Profile, Certificate, Education, LearningJourney } from "@/types";
+
+const EducationDetailModal = dynamic(
+  () => import("@/components/EducationDetailModal"),
+  { ssr: false }
+);
 
 export default function TentangPage() {
   const { language } = useLanguage();
@@ -15,6 +21,7 @@ export default function TentangPage() {
   const [education, setEducation] = useState<Education[]>([]);
   const [learningJourneyData, setLearningJourneyData] = useState<LearningJourney[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedEdu, setSelectedEdu] = useState<Education | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -174,12 +181,19 @@ export default function TentangPage() {
             <div className="space-y-6">
               {education.length > 0 ? (
                 education.map((edu) => (
-                  <div key={edu.id} className="relative border-l border-gray-300 dark:border-white/10 pl-8 pb-4">
-                    <div className={`absolute w-4 h-4 rounded-full -left-[8px] top-1 ${edu.is_current ? 'bg-[var(--color-neon-green)] shadow-[0_0_10px_rgba(0,255,136,0.8)]' : 'bg-gray-400 dark:bg-gray-600'}`}></div>
+                  <div
+                    key={edu.id}
+                    className="relative border-l border-gray-300 dark:border-white/10 pl-8 pb-4 cursor-pointer group"
+                    onClick={() => setSelectedEdu(edu)}
+                  >
+                    <div className={`absolute w-4 h-4 rounded-full -left-[8px] top-1 transition-transform group-hover:scale-125 ${edu.is_current ? 'bg-[var(--color-neon-green)] shadow-[0_0_10px_rgba(0,255,136,0.8)]' : 'bg-gray-400 dark:bg-gray-600'}`}></div>
                     {edu.is_current && <span className="text-[var(--color-neon-green)] text-sm font-bold tracking-wider">{t.inProgress}</span>}
-                    <h3 className="text-xl font-bold mt-1 mb-1">{edu.institution}</h3>
+                    <h3 className="text-xl font-bold mt-1 mb-1 group-hover:text-[var(--color-neon-blue)] transition-colors">{edu.institution}</h3>
                     <p className="text-sm text-gray-900/60 dark:text-gray-400 mb-1 font-semibold">{language === 'id' ? edu.degree_id : edu.degree_en} • {edu.start_year} - {edu.is_current ? (language === 'id' ? 'Sekarang' : 'Present') : edu.end_year}</p>
-                    <p className="text-muted dark:text-gray-400 text-sm">{language === 'id' ? edu.description_id : edu.description_en}</p>
+                    <p className="text-muted dark:text-gray-400 text-sm line-clamp-2">{language === 'id' ? edu.description_id : edu.description_en}</p>
+                    <span className="text-xs text-[var(--color-neon-blue)] font-semibold mt-2 inline-block opacity-0 group-hover:opacity-100 transition-opacity">
+                      {language === 'id' ? 'Klik untuk detail →' : 'Click for details →'}
+                    </span>
                   </div>
                 ))
               ) : (
@@ -266,6 +280,14 @@ export default function TentangPage() {
           </Link>
         </div>
       </div>
+
+      {/* Modal Detail Pendidikan */}
+      {selectedEdu && (
+        <EducationDetailModal
+          education={selectedEdu}
+          onClose={() => setSelectedEdu(null)}
+        />
+      )}
     </div>
   );
 }
