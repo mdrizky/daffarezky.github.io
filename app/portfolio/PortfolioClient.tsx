@@ -22,6 +22,12 @@ export default function PortfolioClient({ initialProjects }: { initialProjects: 
   const getTitle = (p: Project) => language === 'id' ? p.title_id : p.title_en;
   const getDescription = (p: Project) => language === 'id' ? p.description_id : p.description_en;
 
+  const getDemoLabel = (url: string | undefined) => {
+    if (!url) return ''
+    const isVideo = /youtube\.com|youtu\.be|vimeo\.com|\.mp4|\.webm/i.test(url)
+    return isVideo ? (language === 'id' ? 'Tonton Video Demo' : 'Watch Video Demo') : (language === 'id' ? 'Kunjungi Demo' : 'Visit Live Demo')
+  }
+
   return (
     <>
       <div className="flex flex-wrap gap-4 mb-12 justify-center">
@@ -120,14 +126,20 @@ export default function PortfolioClient({ initialProjects }: { initialProjects: 
               </div>
 
               <div className="mt-12 flex flex-wrap gap-4 border-t border-gray-200 dark:border-white/10 pt-8">
-                {selectedProject.demo_url && (
+                {selectedProject.demo_url ? (
                   <a href={selectedProject.demo_url} target="_blank" rel="noopener noreferrer" className="bg-gradient-neon text-[#0A0A0F] px-8 py-3 rounded-full font-bold">
-                    Visit Live Demo
+                    {getDemoLabel(selectedProject.demo_url)}
                   </a>
+                ) : (
+                  <div className="px-8 py-3 rounded-full bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300 text-sm font-semibold">
+                    {language === 'id'
+                      ? 'Demo belum tersedia. Gunakan link video jika belum ada hosting.'
+                      : 'Demo not available yet. Use a video link when hosting is not ready.'}
+                  </div>
                 )}
                 {selectedProject.github_url && (
                   <a href={selectedProject.github_url} target="_blank" rel="noopener noreferrer" className="bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white px-8 py-3 rounded-full font-bold hover:bg-gray-200 dark:hover:bg-white/20 transition-colors">
-                    View Source Code
+                    {language === 'id' ? 'Lihat Kode' : 'View Source Code'}
                   </a>
                 )}
               </div>

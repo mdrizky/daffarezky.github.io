@@ -15,6 +15,8 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
 
   const title = language === 'id' ? project.title_id : project.title_en;
   const description = language === 'id' ? project.description_id : project.description_en;
+  const isVideoDemo = /youtube\.com|youtu\.be|vimeo\.com|\.mp4|\.webm/i.test(project.demo_url || "")
+  const demoLabel = isVideoDemo ? (language === 'id' ? 'Video Demo' : 'Video Demo') : (language === 'id' ? 'Demo' : 'Live Demo')
 
   return (
     <div 
@@ -73,7 +75,7 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
               className="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-[var(--color-neon-green)] transition-colors"
               onClick={(e) => e.stopPropagation()}
             >
-              <FaExternalLinkAlt /> Demo
+              <FaExternalLinkAlt /> {demoLabel}
             </a>
           )}
           {project.github_url && (

@@ -318,14 +318,14 @@ export default function ProjectForm() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-200 dark:border-white/10">
             <div className="space-y-2">
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Demo URL</label>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Demo / Video URL</label>
               <input
                 type="url"
                 name="demo_url"
                 value={formData.demo_url}
                 onChange={handleChange}
                 className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
-                placeholder="https://..."
+                placeholder="https://... (live site atau video YouTube jika belum ada hosting)"
               />
             </div>
             <div className="space-y-2">

@@ -5,7 +5,7 @@ export async function GET() {
   const supabase = await createClient()
 
   try {
-    const { data, error } = await supabase.from("contacts").select("*").order("created_at", { ascending: false })
+    const { data, error } = await supabase.from("messages").select("*").order("created_at", { ascending: false })
 
     if (error) throw error
 
@@ -27,7 +27,7 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "id and status required" }, { status: 400 })
     }
 
-    const { data, error } = await supabase.from("contacts").update({ status }).eq("id", id).select()
+    const { data, error } = await supabase.from("messages").update({ status }).eq("id", id).select()
 
     if (error) throw error
 
@@ -49,7 +49,7 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "id required" }, { status: 400 })
     }
 
-    const { error } = await supabase.from("contacts").delete().eq("id", id)
+    const { error } = await supabase.from("messages").delete().eq("id", id)
 
     if (error) throw error
 

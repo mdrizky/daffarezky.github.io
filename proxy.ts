@@ -4,10 +4,8 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Proteksi semua route /admin kecuali halaman login
-  if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
+  if (pathname.startsWith('/admin') || pathname.startsWith('/api/admin')) {
     const response = NextResponse.next()
-
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL || '',
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
@@ -26,13 +24,28 @@ export async function proxy(request: NextRequest) {
       }
     )
 
-    // Cek sesi user
     const {
-      data: { user },
-    } = await supabase.auth.getUser()
+      data: { session },
+    } = await supabase.auth.getSession()
 
-    if (!user) {
+    const isLoginPage = pathname === '/admin/login'
+
+    if (pathname.startsWith('/api/admin')) {
+      if (!session) {
+        return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: { 'content-type': 'application/json' },
+        })
+      }
+      return response
+    }
+
+    if (!session && !isLoginPage) {
       return NextResponse.redirect(new URL('/admin/login', request.url))
+    }
+
+    if (session && isLoginPage) {
+      return NextResponse.redirect(new URL('/admin', request.url))
     }
 
     return response
@@ -42,5 +55,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path*', '/api/admin/:path*'],
 }
