@@ -1,127 +1,235 @@
-'use client'
+"use client"
 
-import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
-import Link from 'next/link'
-import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa'
-import { Education } from '@/types'
+import { useEffect, useState } from "react"
+
+interface Education {
+  id: string
+  school_name: string
+  description?: string
+  start_year: number
+  end_year?: number
+  location?: string
+  achievements?: string
+  image_url?: string
+}
 
 export default function AdminEducation() {
-  const [education, setEducation] = useState<Education[]>([])
+  const [items, setItems] = useState<Education[]>([])
   const [loading, setLoading] = useState(true)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [formData, setFormData] = useState<Partial<Education>>({
+    school_name: "",
+    description: "",
+    start_year: new Date().getFullYear(),
+    end_year: undefined,
+    location: "",
+    achievements: "",
+    image_url: "",
+  })
 
   useEffect(() => {
     fetchEducation()
   }, [])
 
-  const fetchEducation = async () => {
+  async function fetchEducation() {
     try {
-      const { data, error } = await supabase
-        .from('education')
-        .select('*')
-        .order('start_year', { ascending: false })
-
-      if (error) throw error
-      if (data) setEducation(data)
-    } catch (error) {
-      console.error('Error fetching education:', error)
+      const res = await fetch("/api/admin/education")
+      const { data } = await res.json()
+      setItems(data || [])
+    } catch (err) {
+      console.error("Error fetching:", err)
     } finally {
       setLoading(false)
     }
   }
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Yakin ingin menghapus riwayat pendidikan ini?')) return
-
+  async function handleSave() {
     try {
-      const { error } = await supabase.from('education').delete().eq('id', id)
-      if (error) throw error
-      setEducation(education.filter((e) => e.id !== id))
-    } catch (error) {
-      console.error('Error deleting education:', error)
-      alert('Gagal menghapus data')
+      if (!formData.school_name || !formData.start_year) {
+        alert("Nama sekolah dan tahun harus diisi!")
+        return
+      }
+
+      const method = editingId && editingId !== "new" ? "PUT" : "POST"
+      const body =
+        editingId && editingId !== "new"
+          ? { ...formData, id: editingId }
+          : formData
+
+      const res = await fetch("/api/admin/education", {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      })
+
+      if (res.ok) {
+        setEditingId(null)
+        setFormData({
+          school_name: "",
+          description: "",
+          start_year: new Date().getFullYear(),
+          end_year: undefined,
+          location: "",
+          achievements: "",
+          image_url: "",
+        })
+        fetchEducation()
+      }
+    } catch (err) {
+      console.error("Error saving:", err)
+      alert("Gagal menyimpan data")
+    }
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm("Yakin hapus?")) return
+    try {
+      const res = await fetch(`/api/admin/education?id=${id}`, {
+        method: "DELETE",
+      })
+      if (res.ok) {
+        fetchEducation()
+      }
+    } catch (err) {
+      console.error("Error deleting:", err)
     }
   }
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    )
+    return <div className="p-4 text-zinc-400">Memuat...</div>
   }
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <div>
-          <h1 className="text-3xl font-bold font-syne text-gray-900 dark:text-white">Pendidikan</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">Kelola riwayat pendidikan Anda.</p>
-        </div>
-        <Link 
-          href="/admin/education/new"
-          className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50"
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-white">Pendidikan</h1>
+        <button
+          onClick={() => setEditingId("new")}
+          className="px-4 py-2 bg-cyan-500 text-white rounded-lg font-medium hover:bg-cyan-600 transition"
         >
-          <FaPlus /> Tambah Pendidikan
-        </Link>
+          + Tambah
+        </button>
       </div>
 
-      <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl shadow-sm overflow-hidden transition-colors duration-300">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead className="bg-gray-50 dark:bg-white/5 border-b border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300">
-              <tr>
-                <th className="p-4 font-semibold text-sm">Institusi</th>
-                <th className="p-4 font-semibold text-sm">Gelar / Jurusan</th>
-                <th className="p-4 font-semibold text-sm">Tahun</th>
-                <th className="p-4 font-semibold text-sm text-right">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-white/5">
-              {education.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="p-12 text-center text-gray-500">
-                    <div className="flex flex-col items-center justify-center gap-3">
-                      <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center text-2xl">🎓</div>
-                      <p>Belum ada data pendidikan. Silakan tambah riwayat baru.</p>
-                    </div>
-                  </td>
-                </tr>
-              ) : (
-                education.map((item) => (
-                  <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
-                    <td className="p-4 font-bold text-gray-900 dark:text-white">{item.institution}</td>
-                    <td className="p-4">
-                      <div className="text-sm text-gray-900 dark:text-gray-200"><span className="text-xs font-semibold text-blue-500 mr-1">ID</span> {item.degree_id}</div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400"><span className="text-xs font-semibold text-purple-500 mr-1">EN</span> {item.degree_en}</div>
-                    </td>
-                    <td className="p-4 text-sm text-gray-600 dark:text-gray-300">
-                      {item.start_year} - {item.is_current ? 'Sekarang' : item.end_year}
-                    </td>
-                    <td className="p-4">
-                      <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Link 
-                          href={`/admin/education/${item.id}`}
-                          className="p-2 bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors"
-                          title="Edit"
-                        >
-                          <FaEdit />
-                        </Link>
-                        <button 
-                          onClick={() => handleDelete(item.id)}
-                          className="p-2 bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors"
-                          title="Hapus"
-                        >
-                          <FaTrash />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+      {/* Modal Form */}
+      {editingId && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 w-full max-w-2xl space-y-4 max-h-96 overflow-y-auto">
+            <h2 className="text-xl font-bold text-white">
+              {editingId === "new" ? "Tambah Pendidikan" : "Edit Pendidikan"}
+            </h2>
+
+            <input
+              type="text"
+              placeholder="Nama Sekolah / Universitas"
+              value={formData.school_name || ""}
+              onChange={(e) => setFormData({ ...formData, school_name: e.target.value })}
+              className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded text-white"
+            />
+
+            <div className="grid sm:grid-cols-2 gap-4">
+              <input
+                type="number"
+                placeholder="Tahun Mulai"
+                value={formData.start_year || ""}
+                onChange={(e) => setFormData({ ...formData, start_year: parseInt(e.target.value) })}
+                className="px-4 py-2 bg-zinc-800 border border-zinc-700 rounded text-white"
+              />
+              <input
+                type="number"
+                placeholder="Tahun Selesai (opsional)"
+                value={formData.end_year || ""}
+                onChange={(e) => setFormData({ ...formData, end_year: e.target.value ? parseInt(e.target.value) : undefined })}
+                className="px-4 py-2 bg-zinc-800 border border-zinc-700 rounded text-white"
+              />
+            </div>
+
+            <input
+              type="text"
+              placeholder="Lokasi"
+              value={formData.location || ""}
+              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+              className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded text-white"
+            />
+
+            <input
+              type="text"
+              placeholder="Image URL"
+              value={formData.image_url || ""}
+              onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+              className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded text-white"
+            />
+
+            <textarea
+              placeholder="Deskripsi..."
+              rows={3}
+              value={formData.description || ""}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded text-white"
+            />
+
+            <textarea
+              placeholder="Pencapaian (pisahkan dengan enter)..."
+              rows={3}
+              value={formData.achievements || ""}
+              onChange={(e) => setFormData({ ...formData, achievements: e.target.value })}
+              className="w-full px-4 py-2 bg-zinc-800 border border-zinc-700 rounded text-white"
+            />
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setEditingId(null)}
+                className="px-4 py-2 bg-zinc-800 text-white rounded hover:bg-zinc-700 transition"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600 transition"
+              >
+                Simpan
+              </button>
+            </div>
+          </div>
         </div>
+      )}
+
+      {/* List */}
+      <div className="space-y-3">
+        {items.length === 0 ? (
+          <p className="text-zinc-400">Belum ada data pendidikan.</p>
+        ) : (
+          items.map((item) => (
+            <div key={item.id} className="bg-zinc-900/40 border border-zinc-800 rounded-lg p-4 flex items-start justify-between">
+              <div className="flex-1">
+                <h3 className="font-semibold text-white">{item.school_name}</h3>
+                <p className="text-sm text-zinc-400">
+                  {item.start_year}
+                  {item.end_year && ` - ${item.end_year}`}
+                  {item.location && ` • ${item.location}`}
+                </p>
+                {item.description && <p className="text-sm text-zinc-300 mt-1">{item.description}</p>}
+              </div>
+              <div className="flex gap-2 ml-4">
+                <button
+                  onClick={() => {
+                    setEditingId(item.id)
+                    setFormData(item)
+                  }}
+                  className="text-sm px-3 py-1 bg-zinc-800 text-white rounded hover:bg-zinc-700 transition"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(item.id)}
+                  className="text-sm px-3 py-1 bg-red-600/20 text-red-400 rounded hover:bg-red-600/30 transition"
+                >
+                  Hapus
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   )

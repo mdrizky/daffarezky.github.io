@@ -1,145 +1,182 @@
-'use client'
+"use client"
 
-import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
-import { FaCheck, FaTrash, FaWhatsapp } from 'react-icons/fa'
-import { Message } from '@/types'
+import { useEffect, useState } from "react"
 
-export default function AdminMessages() {
-  const [messages, setMessages] = useState<Message[]>([])
+type Contact = {
+  id: string
+  name: string
+  email: string
+  whatsapp?: string
+  subject?: string
+  message: string
+  status: string
+  created_at: string
+}
+
+export default function AdminMessagesPage() {
+  const [contacts, setContacts] = useState<Contact[]>([])
   const [loading, setLoading] = useState(true)
+  const [selected, setSelected] = useState<Contact | null>(null)
+  const [filter, setFilter] = useState<"all" | "unread" | "read">("all")
 
   useEffect(() => {
-    fetchMessages()
+    loadMessages()
   }, [])
 
-  const fetchMessages = async () => {
+  async function loadMessages() {
+    setLoading(true)
     try {
-      const { data, error } = await supabase
-        .from('messages')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      if (data) setMessages(data)
-    } catch (error) {
-      console.error('Error fetching messages:', error)
+      const res = await fetch("/api/admin/contacts")
+      const { data } = await res.json()
+      setContacts(data || [])
+    } catch (err) {
+      console.error("Failed to load contacts:", err)
     } finally {
       setLoading(false)
     }
   }
 
-  const markAsRead = async (id: string) => {
+  async function deleteMessage(id: string) {
+    if (!confirm("Yakin hapus pesan ini?")) return
     try {
-      const { error } = await supabase
-        .from('messages')
-        .update({ is_read: true })
-        .eq('id', id)
-
-      if (error) throw error
-      setMessages(messages.map(m => m.id === id ? { ...m, is_read: true } : m))
-    } catch (error) {
-      console.error('Error marking message as read:', error)
+      const res = await fetch(`/api/admin/contacts?id=${id}`, { method: "DELETE" })
+      if (res.ok) {
+        setContacts(contacts.filter((c) => c.id !== id))
+        if (selected?.id === id) setSelected(null)
+      }
+    } catch (err) {
+      console.error("Failed to delete:", err)
     }
   }
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Yakin ingin menghapus pesan ini?')) return
-
+  async function toggleStatus(id: string, status: string) {
+    const newStatus = status === "read" ? "unread" : "read"
     try {
-      const { error } = await supabase.from('messages').delete().eq('id', id)
-      if (error) throw error
-      setMessages(messages.filter(m => m.id !== id))
-    } catch (error) {
-      console.error('Error deleting message:', error)
-      alert('Gagal menghapus pesan')
+      const res = await fetch("/api/admin/contacts", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status: newStatus }),
+      })
+      if (res.ok) {
+        setContacts(contacts.map((c) => (c.id === id ? { ...c, status: newStatus } : c)))
+        if (selected?.id === id) setSelected({ ...selected, status: newStatus })
+      }
+    } catch (err) {
+      console.error("Failed to update:", err)
     }
   }
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    )
-  }
+  const filtered = contacts.filter((c) => {
+    if (filter === "unread") return c.status === "unread"
+    if (filter === "read") return c.status === "read"
+    return true
+  })
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold font-syne text-gray-900 dark:text-white">Pesan Masuk</h1>
-        <p className="text-gray-500 dark:text-gray-400 mt-1">Kelola pesan dari pengunjung website Anda.</p>
-      </div>
-
-      <div className="space-y-4">
-        {messages.length === 0 ? (
-          <div className="text-center p-16 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl shadow-sm">
-            <div className="flex flex-col items-center justify-center gap-3 text-gray-400">
-              <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center text-2xl">📭</div>
-              <p>Belum ada pesan masuk.</p>
-            </div>
-          </div>
-        ) : (
-          messages.map((msg) => (
-            <div 
-              key={msg.id} 
-              className={`p-6 rounded-2xl border shadow-sm transition-all duration-300 ${
-                msg.is_read 
-                  ? 'bg-white dark:bg-white/5 border-gray-200 dark:border-white/5' 
-                  : 'bg-blue-50/50 dark:bg-blue-500/5 border-blue-200 dark:border-blue-500/30 ring-1 ring-blue-500/10'
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-white">Pesan Client</h1>
+        <div className="flex gap-2">
+          {(["all", "unread", "read"] as const).map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`px-3 py-1 rounded text-sm font-medium transition ${
+                filter === f
+                  ? "bg-cyan-500 text-white"
+                  : "bg-zinc-900 text-zinc-300 hover:bg-zinc-800"
               }`}
             >
-              <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-4">
-                <div>
-                  <h3 className="font-bold text-lg flex items-center gap-3 text-gray-900 dark:text-white">
-                    {msg.name}
-                    {!msg.is_read && (
-                      <span className="text-xs bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400 px-2.5 py-1 rounded-full font-bold">Baru</span>
-                    )}
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{msg.email}</p>
-                </div>
-                <div className="text-sm text-gray-500 whitespace-nowrap">
-                  {new Date(msg.created_at).toLocaleString('id-ID', {
-                    day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
-                  })}
-                </div>
-              </div>
+              {f === "all" ? "Semua" : f === "unread" ? "Belum dibaca" : "Dibaca"}
+            </button>
+          ))}
+        </div>
+      </div>
 
-              <div className="p-4 bg-gray-50 dark:bg-black/20 rounded-xl text-gray-700 dark:text-gray-300 whitespace-pre-wrap text-sm mb-6 border border-gray-100 dark:border-white/5">
-                {msg.message}
-              </div>
-
-              <div className="flex flex-wrap items-center gap-3">
-                <a
-                  href={`https://wa.me/?text=${encodeURIComponent(`Halo ${msg.name}, saya Daffa Rizky. Membalas pesan Anda dari website portfolio saya: "${msg.message.substring(0, 50)}..."`)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2.5 bg-[#25D366] text-white rounded-xl hover:bg-[#20bd5a] transition-colors text-sm font-semibold shadow-sm"
-                >
-                  <FaWhatsapp /> Balas via WA
-                </a>
-                
-                {!msg.is_read && (
-                  <button
-                    onClick={() => markAsRead(msg.id)}
-                    className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 dark:border-white/20 text-gray-700 dark:text-white rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-sm font-medium"
-                  >
-                    <FaCheck /> Tandai Dibaca
-                  </button>
-                )}
-
+      {loading ? (
+        <div className="p-4 text-zinc-400">Memuat pesan...</div>
+      ) : (
+        <div className="grid lg:grid-cols-3 gap-4 min-h-96">
+          {/* List */}
+          <div className="lg:col-span-1 space-y-2 max-h-96 overflow-y-auto">
+            {filtered.length === 0 ? (
+              <div className="p-4 text-zinc-400 text-sm">Tidak ada pesan.</div>
+            ) : (
+              filtered.map((c) => (
                 <button
-                  onClick={() => handleDelete(msg.id)}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20 rounded-xl hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors text-sm ml-auto"
+                  key={c.id}
+                  onClick={() => setSelected(c)}
+                  className={`w-full text-left px-4 py-3 rounded-lg border transition ${
+                    selected?.id === c.id
+                      ? "bg-cyan-500/20 border-cyan-500"
+                      : "bg-zinc-900/40 border-zinc-800 hover:border-zinc-700"
+                  } ${c.status === "unread" ? "font-bold" : ""}`}
                 >
-                  <FaTrash /> Hapus
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <div className="text-white text-sm truncate">{c.name}</div>
+                      <div className="text-xs text-zinc-400 truncate">{c.email}</div>
+                    </div>
+                    {c.status === "unread" && <div className="w-2 h-2 bg-cyan-500 rounded-full flex-shrink-0 mt-1" />}
+                  </div>
+                </button>
+              ))
+            )}
+          </div>
+
+          {/* Detail */}
+          {selected && (
+            <div className="lg:col-span-2 bg-zinc-900/40 border border-zinc-800 rounded-lg p-6 space-y-4">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h2 className="text-xl font-bold text-white">{selected.name}</h2>
+                  <p className="text-sm text-zinc-400">{selected.email}</p>
+                </div>
+                <button
+                  onClick={() => toggleStatus(selected.id, selected.status)}
+                  className={`px-3 py-1 rounded text-sm font-medium ${
+                    selected.status === "read"
+                      ? "bg-zinc-800 text-zinc-300"
+                      : "bg-cyan-500/20 text-cyan-300"
+                  }`}
+                >
+                  {selected.status === "read" ? "Tandai Belum dibaca" : "Tandai Dibaca"}
                 </button>
               </div>
+
+              {selected.whatsapp && (
+                <div>
+                  <p className="text-xs text-zinc-400">WhatsApp</p>
+                  <p className="text-white font-mono">{selected.whatsapp}</p>
+                </div>
+              )}
+
+              {selected.subject && (
+                <div>
+                  <p className="text-xs text-zinc-400">Subjek</p>
+                  <p className="text-white">{selected.subject}</p>
+                </div>
+              )}
+
+              <div>
+                <p className="text-xs text-zinc-400 mb-2">Pesan</p>
+                <p className="text-zinc-200 leading-relaxed whitespace-pre-wrap">{selected.message}</p>
+              </div>
+
+              <p className="text-xs text-zinc-500">
+                {new Date(selected.created_at).toLocaleString("id-ID")}
+              </p>
+
+              <button
+                onClick={() => deleteMessage(selected.id)}
+                className="px-4 py-2 bg-red-600/20 text-red-400 border border-red-600/50 rounded hover:bg-red-600/30 text-sm font-medium transition"
+              >
+                Hapus Pesan
+              </button>
             </div>
-          ))
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

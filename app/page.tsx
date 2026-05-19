@@ -8,6 +8,8 @@ import { useLanguage } from "@/components/LanguageProvider";
 import SocialLinks from "@/components/SocialLinks";
 import ProjectCard from "@/components/ProjectCard";
 import ServiceCard from "@/components/ServiceCard";
+import dynamic from 'next/dynamic'
+const TestimonialCarouselEmbla = dynamic(() => import('@/components/TestimonialCarouselEmbla'), { ssr: false })
 import type { Profile, Project, Service, Testimonial } from "@/types";
 
 export default function Home() {
@@ -243,42 +245,11 @@ export default function Home() {
         </section>
       )}
 
-      {/* 5. Testimonials */}
+      {/* 5. Testimonials (carousel) */}
       <section className="container mx-auto px-6 md:px-12">
         <h2 className="text-3xl md:text-5xl font-heading font-bold mb-12 text-center text-gray-900 dark:text-white">{t.testiTitle} <span className="text-gradient">{t.testiTitle2}</span></h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonialsData.length > 0 ? (
-            testimonialsData.map((testi) => (
-              <div key={testi.id} className="bg-white dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 p-8 rounded-2xl relative shadow-sm">
-                <div className="text-4xl text-[var(--color-neon-blue)] opacity-50 absolute top-4 right-6 font-serif">"</div>
-                <p className="text-gray-600 dark:text-gray-300 italic mb-6 relative z-10">
-                  {language === 'id' ? testi.content_id : testi.content_en}
-                </p>
-                <div className="flex items-center gap-4">
-                  {testi.avatar_url && (
-                    <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-200 dark:border-white/10">
-                      <img src={testi.avatar_url} alt={testi.name} className="w-full h-full object-cover" />
-                    </div>
-                  )}
-                  <div>
-                    <h4 className="font-bold text-gray-900 dark:text-white">{testi.name}</h4>
-                    <p className="text-xs text-[var(--color-neon-green)]">{testi.role}</p>
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            testimonials.map((testi, i) => (
-              <div key={i} className="bg-white dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 p-8 rounded-2xl relative shadow-sm">
-                <div className="text-4xl text-[var(--color-neon-blue)] opacity-50 absolute top-4 right-6 font-serif">"</div>
-                <p className="text-gray-600 dark:text-gray-300 italic mb-6 relative z-10">{testi.text}</p>
-                <div>
-                  <h4 className="font-bold text-gray-900 dark:text-white">{testi.name}</h4>
-                  <p className="text-xs text-[var(--color-neon-green)]">{testi.role}</p>
-                </div>
-              </div>
-            ))
-          )}
+        <div className="mx-auto max-w-5xl">
+          <TestimonialCarouselEmbla />
         </div>
       </section>
 

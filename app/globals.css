@@ -65,3 +65,33 @@
     @apply bg-gradient-to-r from-[var(--color-neon-green)] to-[var(--color-neon-blue)];
   }
 }
+
+/* Minimal highlight.js token colors for rehype-highlight */
+.hljs {
+  background: transparent;
+  color: #e6edf3;
+}
+.hljs-comment,
+.hljs-quote { color: #9ca3af; }
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst { color: #7dd3fc; }
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag .hljs-attr { color: #f97316; }
+.hljs-string,
+.hljs-doctag { color: #34d399; }
+.hljs-title,
+.hljs-section,
+.hljs-selector-id { color: #60a5fa; }
+.hljs-type,
+.hljs-class .hljs-title { color: #a78bfa; }
+.hljs-attr { color: #fbbf24 }
+.hljs-built_in,
+.hljs-builtin-name { color: #f59e0b }
+.hljs-bullet,
+.hljs-code { color: #f5f5f5 }
+.hljs-emphasis { font-style: italic }
+.hljs-strong { font-weight: 700 }
