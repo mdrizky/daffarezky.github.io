@@ -60,11 +60,30 @@ export default function CertificatesPage() {
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {displayCerts.map((cert) => (
-              <div key={cert.id} className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-3xl p-6 flex flex-col shadow-sm hover:shadow-md transition-all">
-                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-[var(--color-neon-green)]/10 text-[var(--color-neon-green)] mb-5">
-                  <span className="text-2xl">🏅</span>
+              <div key={cert.id} className="group bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-3xl p-6 flex flex-col shadow-sm hover:shadow-[0_0_30px_rgba(0,255,136,0.15)] hover:-translate-y-2 hover:border-[var(--color-neon-green)]/30 transition-all duration-300">
+                <div className="relative w-full h-40 mb-5 rounded-2xl overflow-hidden bg-gray-100 dark:bg-white/5 flex items-center justify-center">
+                  {cert.file_url && cert.file_url !== '#' && cert.file_url.match(/\.(jpeg|jpg|gif|png|webp)$/i) ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img 
+                      src={cert.file_url} 
+                      alt={language === 'id' ? cert.title_id : cert.title_en}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center text-[var(--color-neon-green)]/80 group-hover:scale-110 group-hover:text-[var(--color-neon-green)] transition-transform duration-300">
+                      <span className="text-4xl mb-2">🏅</span>
+                      <span className="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">PDF / Link</span>
+                    </div>
+                  )}
+                  {/* Overlay for quick view hint */}
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm">
+                    <span className="text-white font-bold bg-[var(--color-neon-blue)] px-4 py-2 rounded-full text-sm">
+                      {language === 'id' ? 'Lihat Detail' : 'Quick View'}
+                    </span>
+                  </div>
                 </div>
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-[var(--color-neon-blue)] transition-colors">
                   {language === 'id' ? cert.title_id : cert.title_en}
                 </h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
@@ -75,9 +94,9 @@ export default function CertificatesPage() {
                     href={cert.file_url || '#'}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center w-full px-4 py-3 rounded-2xl bg-gradient-neon text-[#0A0A0F] font-semibold transition-all hover:opacity-90"
+                    className="inline-flex items-center justify-center w-full px-4 py-3 rounded-2xl bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white font-semibold transition-all group-hover:bg-gradient-neon group-hover:text-[#0A0A0F] group-hover:shadow-[0_0_20px_rgba(0,255,136,0.3)]"
                   >
-                    {language === 'id' ? 'Lihat Sertifikat' : 'View Certificate'}
+                    {language === 'id' ? 'Buka Sertifikat' : 'Open Certificate'}
                   </Link>
                 </div>
               </div>

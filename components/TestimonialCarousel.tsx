@@ -25,7 +25,7 @@ const FALLBACK: Testimonial[] = [
     name: "Siti Rahayu",
     role: "Startup Founder",
     content_id: "Strategi digital yang diberikan sangat on-point. Konversi naik 40% dalam sebulan. Sangat merekomendasikan jasa Daffa.",
-    content_en: "The digital strategy provided was spot on. Conversions increased 40% in a month. Highly recommend Daffa's services.",
+    content_en: "The digital strategy provided was spot on. Conversions increased 40% in a month. Highly recommend Daffa&apos;s services.",
     avatar_url: null,
     created_at: new Date().toISOString(),
   },
@@ -100,9 +100,12 @@ export default function TestimonialCarousel() {
 
   useEffect(() => {
     if (!emblaApi) return;
-    onSelect();
+    const raf = requestAnimationFrame(() => onSelect());
     emblaApi.on("select", onSelect);
-    return () => { emblaApi.off("select", onSelect); };
+    return () => {
+      cancelAnimationFrame(raf);
+      emblaApi.off("select", onSelect);
+    };
   }, [emblaApi, onSelect]);
 
   useEffect(() => {

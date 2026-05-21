@@ -21,15 +21,15 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json()
-    const { school_name, description, start_year, end_year, location, achievements, image_url } = body
+    const { institution, degree_id, degree_en, start_year, end_year, description_id, description_en, is_current, logo_url } = body
 
-    if (!school_name || !start_year) {
-      return NextResponse.json({ error: "school_name and start_year required" }, { status: 400 })
+    if (!institution || !start_year) {
+      return NextResponse.json({ error: "institution and start_year required" }, { status: 400 })
     }
 
     const { data, error } = await supabase
       .from("education")
-      .insert([{ school_name, description, start_year, end_year, location, achievements, image_url }])
+      .insert([{ institution, degree_id, degree_en, start_year, end_year, description_id, description_en, is_current, logo_url }])
       .select()
 
     if (error) throw error
@@ -46,7 +46,7 @@ export async function PUT(req: Request) {
 
   try {
     const body = await req.json()
-    const { id, school_name, description, start_year, end_year, location, achievements, image_url } = body
+    const { id, institution, degree_id, degree_en, start_year, end_year, description_id, description_en, is_current, logo_url } = body
 
     if (!id) {
       return NextResponse.json({ error: "id required" }, { status: 400 })
@@ -54,7 +54,7 @@ export async function PUT(req: Request) {
 
     const { data, error } = await supabase
       .from("education")
-      .update({ school_name, description, start_year, end_year, location, achievements, image_url })
+      .update({ institution, degree_id, degree_en, start_year, end_year, description_id, description_en, is_current, logo_url })
       .eq("id", id)
       .select()
 

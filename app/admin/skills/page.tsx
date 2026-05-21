@@ -10,10 +10,6 @@ export default function AdminSkills() {
   const [skills, setSkills] = useState<Skill[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    fetchSkills()
-  }, [])
-
   const fetchSkills = async () => {
     try {
       const { data, error } = await supabase
@@ -29,6 +25,11 @@ export default function AdminSkills() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    fetchSkills()
+  }, [])
+
 
   const handleDelete = async (id: string) => {
     if (!window.confirm('Yakin ingin menghapus skill ini?')) return

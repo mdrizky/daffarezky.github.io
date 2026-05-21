@@ -21,11 +21,6 @@ export default function SkillForm() {
     category: 'Frontend',
     level: 'Beginner',
   })
-
-  useEffect(() => {
-    if (!isNew) fetchSkill()
-  }, [isNew, id])
-
   const fetchSkill = async () => {
     try {
       const { data, error } = await supabase.from('skills').select('*').eq('id', id).single()
@@ -46,6 +41,11 @@ export default function SkillForm() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (!isNew) fetchSkill()
+  }, [isNew, id])
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

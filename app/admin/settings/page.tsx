@@ -79,8 +79,9 @@ export default function AdminSettings() {
         .getPublicUrl(filePath)
 
       await saveLogo(urlData.publicUrl)
-    } catch (err: any) {
-      setLogoError(err.message || 'Gagal mengupload logo.')
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err)
+      setLogoError(msg || 'Gagal mengupload logo.')
     } finally {
       setLogoSaving(false)
     }
@@ -95,8 +96,9 @@ export default function AdminSettings() {
     setLogoError('')
     try {
       await saveLogo(logoUrlInput.trim())
-    } catch (err: any) {
-      setLogoError(err.message || 'Gagal menyimpan URL logo.')
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err)
+      setLogoError(msg || 'Gagal menyimpan URL logo.')
     } finally {
       setLogoSaving(false)
     }
@@ -109,8 +111,9 @@ export default function AdminSettings() {
     try {
       await saveLogo(null)
       setLogoUrlInput('')
-    } catch (err: any) {
-      setLogoError(err.message || 'Gagal menghapus logo.')
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err)
+      setLogoError(msg || 'Gagal menghapus logo.')
     } finally {
       setLogoSaving(false)
     }

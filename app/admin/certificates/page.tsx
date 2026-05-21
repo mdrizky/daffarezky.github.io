@@ -22,10 +22,11 @@ export default function AdminCertificates() {
   })
 
   useEffect(() => {
-    fetchItems()
+    const raf = requestAnimationFrame(() => fetchItems())
+    return () => cancelAnimationFrame(raf)
   }, [])
 
-  const fetchItems = async () => {
+  async function fetchItems() {
     try {
       const { data, error } = await supabase
         .from('certificates')

@@ -28,11 +28,12 @@ export default function BlogPostForm() {
 
   useEffect(() => {
     if (!isNew) {
-      fetchPost()
+      const raf = requestAnimationFrame(() => { if (!isNew) fetchPost() })
+      return () => cancelAnimationFrame(raf)
     }
   }, [isNew, id])
 
-  const fetchPost = async () => {
+  async function fetchPost() {
     try {
       const { data, error } = await supabase
         .from('blog_posts')

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import type { Profile } from "@/types";
 import { supabase } from "@/lib/supabase";
 import { FaWhatsapp, FaInstagram, FaGithub, FaLinkedin, FaTiktok, FaYoutube } from "react-icons/fa";
 
@@ -10,12 +11,12 @@ type SocialLinksProps = {
 };
 
 export default function SocialLinks({ variant = "icon-only", className = "" }: SocialLinksProps) {
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
       const { data } = await supabase.from('profile').select('*').limit(1);
-      if (data && data.length > 0) setProfile(data[0]);
+      if (data && data.length > 0) setProfile(data[0] as Profile);
     };
     fetchProfile();
   }, []);

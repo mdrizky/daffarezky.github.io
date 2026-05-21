@@ -16,12 +16,10 @@ export default function Navbar() {
   const pathname = usePathname();
   const { setTheme, resolvedTheme } = useTheme();
   const { language, setLanguage } = useLanguage();
+  const theme = resolvedTheme ?? 'light';
 
   useEffect(() => {
     setMounted(true);
-  }, []);
-
-  useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
         setIsScrolled(true);
@@ -98,15 +96,13 @@ export default function Navbar() {
 
           {/* Theme & Language Toggles */}
           <div className="flex items-center gap-2 ml-2">
-            {mounted && (
-              <button
-                onClick={toggleTheme}
-                className="p-2.5 rounded-xl bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/20 transition-all"
-                title={resolvedTheme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-              >
-                {resolvedTheme === 'dark' ? <FaSun className="text-amber-400" /> : <FaMoon className="text-indigo-500" />}
-              </button>
-            )}
+            <button
+              onClick={toggleTheme}
+              className="p-2.5 rounded-xl bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/20 transition-all"
+              title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+            >
+              {theme === 'dark' ? <FaSun className="text-amber-400" /> : <FaMoon className="text-indigo-500" />}
+            </button>
             <button
               onClick={toggleLanguage}
               className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/20 transition-all text-xs font-bold"

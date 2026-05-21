@@ -33,11 +33,7 @@ export default function SiteLogo({
   const [name, setName] = useState<string>(cachedLogo?.name ?? "Daffa Rizky");
 
   useEffect(() => {
-    if (cachedLogo) {
-      setLogoUrl(cachedLogo.logoUrl);
-      setName(cachedLogo.name);
-      return;
-    }
+    if (cachedLogo) return;
 
     if (!fetchPromise) {
       fetchPromise = Promise.resolve(
@@ -58,8 +54,8 @@ export default function SiteLogo({
 
     fetchPromise.then(() => {
       if (cachedLogo) {
-        setLogoUrl(cachedLogo.logoUrl);
-        setName(cachedLogo.name);
+        setLogoUrl(cachedLogo.logoUrl ?? null);
+        setName(cachedLogo.name ?? "Daffa Rizky");
       }
     });
   }, []);

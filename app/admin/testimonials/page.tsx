@@ -40,15 +40,6 @@ export default function AdminTestimonials() {
   const [toast, setToast] = useState<string | null>(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
-  useEffect(() => {
-    fetchItems();
-  }, []);
-
-  const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 3000);
-  };
-
   const fetchItems = async () => {
     setLoading(true);
     const { data } = await supabase
@@ -58,6 +49,16 @@ export default function AdminTestimonials() {
     setItems(data || []);
     setLoading(false);
   };
+
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
+ 
 
   const openNew = () => {
     setEditingId("new");

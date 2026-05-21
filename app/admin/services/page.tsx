@@ -9,12 +9,8 @@ export default function AdminServices() {
   const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [editForm, setEditForm] = useState<any>({})
+  const [editForm, setEditForm] = useState<Partial<Service>>({})
   const [saving, setSaving] = useState(false)
-
-  useEffect(() => {
-    fetchServices()
-  }, [])
 
   const fetchServices = async () => {
     try {
@@ -31,6 +27,10 @@ export default function AdminServices() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    fetchServices()
+  }, [])
 
   const startEdit = (service: Service) => {
     setEditingId(service.id)

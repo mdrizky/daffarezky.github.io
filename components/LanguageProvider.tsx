@@ -12,15 +12,11 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguage] = useState<Language>('id')
-
-  useEffect(() => {
-    // Load from local storage on mount
-    const savedLang = localStorage.getItem('app-language') as Language
-    if (savedLang) {
-      setLanguage(savedLang)
-    }
-  }, [])
+  const [language, setLanguage] = useState<Language>(() => {
+    if (typeof window === 'undefined') return 'id'
+    const savedLang = window.localStorage.getItem('app-language') as Language
+    return savedLang === 'en' ? 'en' : 'id'
+  })
 
   const handleSetLanguage = (lang: Language) => {
     setLanguage(lang)

@@ -12,7 +12,7 @@ import dynamic from 'next/dynamic'
 import type { Profile, Project, Service } from "@/types";
 
 const TestimonialCarousel = dynamic(() => import('@/components/TestimonialCarousel'), { ssr: false })
-const StatsCounter = dynamic(() => import('@/components/StatsCounter'), { ssr: false })
+const PartnerSlider = dynamic(() => import('@/components/PartnerSlider'), { ssr: false })
 
 export default function Home() {
   const { language } = useLanguage();
@@ -130,9 +130,9 @@ export default function Home() {
               <Link href="/kontak" className="rounded-full bg-gradient-neon text-[#0A0A0F] px-8 py-3 font-bold shadow-[0_0_20px_rgba(0,255,136,0.3)] hover:scale-105 transition-all">
                 Hire Me 🔥
               </Link>
-              <a href="/cv.pdf" target="_blank" className="rounded-full border border-gray-300 dark:border-white/20 bg-white/50 dark:bg-transparent px-8 py-3 font-bold text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
+              <Link href="/cv" className="rounded-full border border-gray-300 dark:border-white/20 bg-white/50 dark:bg-transparent px-8 py-3 font-bold text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
                 {t.downloadCv}
-              </a>
+              </Link>
             </div>
 
             <div className="mt-8">
@@ -257,17 +257,9 @@ export default function Home() {
         <TestimonialCarousel />
       </section>
 
-      {/* 5b. Stats from DB */}
+      {/* 6. Partner Slider */}
       <section className="container mx-auto px-6 md:px-12">
-        <div className="text-center mb-10">
-          <h2 className="text-2xl md:text-3xl font-heading font-bold text-gray-900 dark:text-white">
-            {language === 'id' ? 'Data ' : 'Real '}<span className="text-gradient">{language === 'id' ? 'Real-time' : 'Statistics'}</span>
-          </h2>
-          <p className="text-gray-500 dark:text-gray-400 text-sm mt-2">
-            {language === 'id' ? 'Statistik langsung dari database.' : 'Live stats directly from the database.'}
-          </p>
-        </div>
-        <StatsCounter language={language} />
+        <PartnerSlider language={language} />
       </section>
 
       {/* 6. CTA Section */}

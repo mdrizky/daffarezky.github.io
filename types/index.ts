@@ -106,6 +106,11 @@ export type Education = {
   description_id: string
   description_en: string
   is_current: boolean
+  logo_url?: string
+  location?: string
+  achievements?: string
+  gallery?: string[]
+  certificate_url?: string
   created_at: string
 }
 

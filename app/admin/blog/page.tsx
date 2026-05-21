@@ -11,10 +11,11 @@ export default function AdminBlog() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchPosts()
+    const raf = requestAnimationFrame(() => fetchPosts())
+    return () => cancelAnimationFrame(raf)
   }, [])
 
-  const fetchPosts = async () => {
+  async function fetchPosts() {
     try {
       const { data, error } = await supabase
         .from('blog_posts')
