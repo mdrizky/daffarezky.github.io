@@ -87,6 +87,35 @@ export default function AdminProfile() {
     }
   }
 
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    try {
+      setSaving(true)
+      const fileExt = file.name.split('.').pop()
+      const fileName = `logo-${Math.random()}.${fileExt}`
+      const filePath = `profile/${fileName}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('portfolio-images')
+        .upload(filePath, file)
+
+      if (uploadError) throw uploadError
+
+      const { data } = supabase.storage
+        .from('portfolio-images')
+        .getPublicUrl(filePath)
+
+      setProfile(prev => ({ ...prev, logo_url: data.publicUrl }))
+    } catch (error) {
+      console.error('Error uploading logo:', error)
+      alert('Gagal mengupload logo')
+    } finally {
+      setSaving(false)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
@@ -137,17 +166,17 @@ export default function AdminProfile() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-1">
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Foto Profile</label>
-              <div className="border-2 border-dashed border-gray-300 dark:border-white/20 rounded-2xl p-4 text-center hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
+              <div className="border-2 border-dashed border-gray-300 dark:border-white/20 rounded-2xl p-4 text-center hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group mb-6">
                 {profile.photo_url ? (
-                  <div className="relative aspect-square w-full max-w-[200px] mx-auto mb-4 rounded-full overflow-hidden border-4 border-gray-100 dark:border-white/10 shadow-lg">
+                  <div className="relative aspect-square w-full max-w-[150px] mx-auto mb-4 rounded-full overflow-hidden border-4 border-gray-100 dark:border-white/10 shadow-lg">
                     <img src={profile.photo_url} alt="Profile" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center py-10 text-gray-400 dark:text-gray-500">
-                    <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-3">
-                      <FaImage className="text-2xl" />
+                  <div className="flex flex-col items-center justify-center py-6 text-gray-400 dark:text-gray-500">
+                    <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-3">
+                      <FaImage className="text-xl" />
                     </div>
-                    <p className="text-sm font-medium">Belum ada foto</p>
+                    <p className="text-xs font-medium">Belum ada foto</p>
                   </div>
                 )}
                 <input
@@ -159,19 +188,40 @@ export default function AdminProfile() {
                 />
                 <label
                   htmlFor="photo-upload"
-                  className="cursor-pointer inline-block px-5 py-2.5 bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white font-medium hover:bg-gray-200 dark:hover:bg-white/20 rounded-xl text-sm transition-colors shadow-sm"
+                  className="cursor-pointer inline-block px-5 py-2 bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white font-medium hover:bg-gray-200 dark:hover:bg-white/20 rounded-xl text-xs transition-colors shadow-sm"
                 >
                   Upload Foto
                 </label>
               </div>
-              <input
-                  type="text"
-                  name="photo_url"
-                  value={profile.photo_url || ''}
-                  onChange={handleChange}
-                  className="w-full mt-4 px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white text-sm"
-                  placeholder="Atau paste URL foto"
+
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Logo Website</label>
+              <div className="border-2 border-dashed border-gray-300 dark:border-white/20 rounded-2xl p-4 text-center hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
+                {profile.logo_url ? (
+                  <div className="relative aspect-square w-full max-w-[150px] mx-auto mb-4 rounded-xl overflow-hidden border-4 border-gray-100 dark:border-white/10 shadow-lg bg-gray-900 flex items-center justify-center">
+                    <img src={profile.logo_url} alt="Logo" className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500" />
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-6 text-gray-400 dark:text-gray-500">
+                    <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-3">
+                      <FaImage className="text-xl" />
+                    </div>
+                    <p className="text-xs font-medium">Belum ada logo</p>
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleLogoUpload}
+                  className="hidden"
+                  id="logo-upload"
                 />
+                <label
+                  htmlFor="logo-upload"
+                  className="cursor-pointer inline-block px-5 py-2 bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white font-medium hover:bg-gray-200 dark:hover:bg-white/20 rounded-xl text-xs transition-colors shadow-sm"
+                >
+                  Upload Logo
+                </label>
+              </div>
             </div>
 
             <div className="md:col-span-2 space-y-6">

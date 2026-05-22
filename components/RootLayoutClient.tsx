@@ -18,15 +18,16 @@ const Analytics = dynamic(
 export default function RootLayoutClient({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const isAdmin = pathname?.startsWith('/admin')
+  const isCV = pathname === '/cv'
 
   return (
     <>
-      {!isAdmin && <Navbar />}
+      {!isAdmin && !isCV && <Navbar />}
       <main className="flex-grow">
         {children}
       </main>
-      {!isAdmin && <Footer />}
-      {!isAdmin && <FloatingWA />}
+      {!isAdmin && !isCV && <Footer />}
+      {!isAdmin && !isCV && <FloatingWA />}
       {/* Vercel Analytics — loads after page is interactive */}
       <Analytics />
     </>

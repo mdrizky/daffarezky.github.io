@@ -10,30 +10,15 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      
-      if (!session && pathname !== '/admin/login') {
-        router.push('/admin/login')
-      } else if (session && pathname === '/admin/login') {
-        router.push('/admin')
-      } else {
-        setLoading(false)
-      }
-    }
-
-    checkAuth()
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT') {
-        router.push('/admin/login')
-      } else if (event === 'SIGNED_IN' && pathname === '/admin/login') {
-        router.push('/admin')
-      }
-    })
-
-    return () => {
-      subscription.unsubscribe()
+    // A simple PIN auth check via localStorage
+    const isAuthenticated = localStorage.getItem('admin_pin_auth') === 'true'
+    
+    if (!isAuthenticated && pathname !== '/admin/login') {
+      router.push('/admin/login')
+    } else if (isAuthenticated && pathname === '/admin/login') {
+      router.push('/admin')
+    } else {
+      setLoading(false)
     }
   }, [router, pathname])
 

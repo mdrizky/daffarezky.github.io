@@ -34,8 +34,8 @@ export default function Sidebar() {
     { name: "Settings", path: "/admin/settings", icon: <FaUserEdit /> },
   ];
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
+  const handleLogout = () => {
+    localStorage.removeItem('admin_pin_auth');
     router.push("/admin/login");
   };
 
