@@ -17,17 +17,22 @@ export default function AdminLogin() {
 
   // Load attempts from localStorage on mount
   useEffect(() => {
-    const savedAttempts = localStorage.getItem('admin_pin_attempts')
-    const savedLockout = localStorage.getItem('admin_pin_lockout')
-    if (savedAttempts) setAttempts(parseInt(savedAttempts))
-    if (savedLockout) {
-      const lockoutEnd = parseInt(savedLockout)
-      if (lockoutEnd > Date.now()) {
-        setLockoutTime(lockoutEnd)
-      } else {
-        localStorage.removeItem('admin_pin_lockout')
-        localStorage.removeItem('admin_pin_attempts')
+    try {
+      const savedAttempts = localStorage.getItem('admin_pin_attempts')
+      const savedLockout = localStorage.getItem('admin_pin_lockout')
+      if (savedAttempts) setAttempts(parseInt(savedAttempts))
+      if (savedLockout) {
+        const lockoutEnd = parseInt(savedLockout)
+        if (lockoutEnd > Date.now()) {
+          setLockoutTime(lockoutEnd)
+        } else {
+          localStorage.removeItem('admin_pin_lockout')
+          localStorage.removeItem('admin_pin_attempts')
+        }
       }
+    } catch (error) {
+      // Ignore localStorage errors (e.g., in private browsing)
+      console.error('localStorage access error:', error)
     }
   }, [])
 
@@ -35,14 +40,19 @@ export default function AdminLogin() {
   useEffect(() => {
     if (lockoutTime) {
       const interval = setInterval(() => {
-        const remaining = Math.ceil((lockoutTime - Date.now()) / 1000)
-        setRemainingTime(remaining)
-        if (remaining <= 0) {
+        try {
+          const remaining = Math.ceil((lockoutTime - Date.now()) / 1000)
+          setRemainingTime(remaining)
+          if (remaining <= 0) {
+            clearInterval(interval)
+            setLockoutTime(null)
+            setAttempts(0)
+            localStorage.removeItem('admin_pin_lockout')
+            localStorage.removeItem('admin_pin_attempts')
+          }
+        } catch (error) {
+          console.error('Timer error:', error)
           clearInterval(interval)
-          setLockoutTime(null)
-          setAttempts(0)
-          localStorage.removeItem('admin_pin_lockout')
-          localStorage.removeItem('admin_pin_attempts')
         }
       }, 1000)
       return () => clearInterval(interval)
@@ -62,31 +72,37 @@ export default function AdminLogin() {
     setLoading(true)
     setError('')
 
-    // Simulate network delay for better UX
-    await new Promise(resolve => setTimeout(resolve, 500))
-
     const validPin = process.env.NEXT_PUBLIC_ADMIN_PIN || '240708'
 
     if (pin === validPin) {
       // Reset attempts on success
-      localStorage.removeItem('admin_pin_attempts')
-      localStorage.removeItem('admin_pin_lockout')
-      localStorage.setItem('admin_pin_auth', 'true')
+      try {
+        localStorage.removeItem('admin_pin_attempts')
+        localStorage.removeItem('admin_pin_lockout')
+        localStorage.setItem('admin_pin_auth', 'true')
+      } catch (error) {
+        console.error('localStorage error:', error)
+      }
       router.push('/admin')
     } else {
       // Increment attempts
       const newAttempts = attempts + 1
       setAttempts(newAttempts)
-      localStorage.setItem('admin_pin_attempts', newAttempts.toString())
+      try {
+        localStorage.setItem('admin_pin_attempts', newAttempts.toString())
 
-      // Lockout after 5 failed attempts (30 seconds)
-      if (newAttempts >= 5) {
-        const lockoutEnd = Date.now() + 30000
-        setLockoutTime(lockoutEnd)
-        localStorage.setItem('admin_pin_lockout', lockoutEnd.toString())
-        setError('Terlalu banyak percobaan salah. Tunggu 30 detik sebelum mencoba lagi.')
-      } else {
-        setError(`PIN salah. Percobaan tersisa: ${5 - newAttempts}`)
+        // Lockout after 5 failed attempts (30 seconds)
+        if (newAttempts >= 5) {
+          const lockoutEnd = Date.now() + 30000
+          setLockoutTime(lockoutEnd)
+          localStorage.setItem('admin_pin_lockout', lockoutEnd.toString())
+          setError('Terlalu banyak percobaan salah. Tunggu 30 detik sebelum mencoba lagi.')
+        } else {
+          setError(`PIN salah. Percobaan tersisa: ${5 - newAttempts}`)
+        }
+      } catch (error) {
+        console.error('localStorage error:', error)
+        setError('PIN salah.')
       }
       setPin('')
     }
