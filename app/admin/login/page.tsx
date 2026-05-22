@@ -95,7 +95,7 @@ export default function AdminLogin() {
     setIsSubmitting(false)
   }
 
-  const isLocked = lockoutTime && lockoutTime > Date.now()
+  const isLocked = Boolean(lockoutTime && lockoutTime > Date.now())
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[#0A0A0F] via-[#0D1117] to-[#0A0A0F]">
