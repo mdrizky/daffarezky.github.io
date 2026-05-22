@@ -1,23 +1,20 @@
-'use client'
+"use client"
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
-import { FaLock, FaEnvelope } from 'react-icons/fa'
+import { FaLock, FaEye, FaEyeSlash } from 'react-icons/fa'
 
 export default function AdminLogin() {
   const [pin, setPin] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showPin, setShowPin] = useState(false)
   const router = useRouter()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
-
-    // Simulasi loading sebentar agar UI terasa smooth
-    await new Promise(resolve => setTimeout(resolve, 500))
 
     const validPin = process.env.NEXT_PUBLIC_ADMIN_PIN || '240708'
 
@@ -41,7 +38,7 @@ export default function AdminLogin() {
 
         <div className="relative z-10">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold font-syne mb-2 bg-gradient-to-r from-[#00FF88] to-[#0099FF] text-transparent bg-clip-text">
+              <h1 className="text-4xl sm:text-5xl font-bold font-syne mb-2 bg-gradient-to-r from-[#00FF88] to-[#0099FF] text-transparent bg-clip-text">
               Admin Area
             </h1>
             <p className="text-gray-400 text-sm">
@@ -60,27 +57,35 @@ export default function AdminLogin() {
               <label className="block text-sm font-medium text-gray-300 mb-2 text-center">
                 Masukkan PIN
               </label>
-              <div className="relative max-w-[200px] mx-auto">
+              <div className="relative max-w-[280px] mx-auto">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <FaLock className="text-gray-500" />
+                  <FaLock className="text-gray-400" />
                 </div>
                 <input
-                  type="password"
+                  type={showPin ? 'text' : 'password'}
                   value={pin}
                   onChange={(e) => setPin(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 text-center tracking-[0.5em] text-xl font-bold bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-[#00FF88] text-white placeholder-gray-600 transition-colors"
-                  placeholder="******"
+                  className="w-full pl-12 pr-12 py-4 text-center tracking-[0.6em] text-2xl sm:text-3xl font-extrabold bg-white/6 border border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00FF88] text-white placeholder-gray-500 transition-all"
+                  placeholder="••••••"
                   maxLength={6}
                   required
                   autoFocus
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPin((s) => !s)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-300"
+                  aria-label={showPin ? 'Sembunyikan PIN' : 'Tampilkan PIN'}
+                >
+                  {showPin ? <FaEyeSlash /> : <FaEye />}
+                </button>
               </div>
             </div>
 
             <button
               type="submit"
               disabled={loading || pin.length < 4}
-              className="w-full py-3 px-4 bg-gradient-to-r from-[#00FF88] to-[#0099FF] text-[#0A0A0F] font-bold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-4 px-6 bg-gradient-to-r from-[#00FF88] to-[#0099FF] text-[#0A0A0F] font-extrabold rounded-2xl hover:opacity-95 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-lg"
             >
               {loading ? (
                 <>
@@ -96,10 +101,17 @@ export default function AdminLogin() {
           <div className="mt-8 text-center">
             <button 
               onClick={() => router.push('/')}
-              className="text-gray-500 text-sm hover:text-white transition-colors"
+              className="text-gray-400 text-sm hover:text-white transition-colors"
             >
               ← Kembali ke Beranda
             </button>
+          </div>
+
+          <div className="absolute left-0 right-0 bottom-0 p-4 flex items-center justify-center pointer-events-none">
+            <div className="w-full max-w-lg bg-gradient-to-r from-transparent via-white/5 to-transparent rounded-full py-3 px-6 backdrop-blur-md border border-white/6 flex items-center justify-between text-xs text-gray-300">
+              <span>Built with ❤️ — Daffa Rizky</span>
+              <span className="opacity-80">Admin PIN protected</span>
+            </div>
           </div>
         </div>
       </div>
