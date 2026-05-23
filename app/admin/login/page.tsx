@@ -72,7 +72,7 @@ export default function AdminLogin() {
     setLoading(true)
     setError('')
 
-    const validPin = process.env.NEXT_PUBLIC_ADMIN_PIN || '240708'
+    const validPin = '240708'
 
     if (pin === validPin) {
       // Reset attempts on success
