@@ -20,6 +20,7 @@ const dmSans = DM_Sans({
   weight: ["400", "500", "700"]
 });
 
+// Google Search Console verification
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://portofolio-daffarezky.vercel.app";
 
 export const metadata: Metadata = {
