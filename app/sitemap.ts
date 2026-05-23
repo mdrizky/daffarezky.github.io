@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://daffa-portfolio.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://portofolio-daffarezky.vercel.app";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: MetadataRoute.Sitemap = [
