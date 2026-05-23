@@ -127,6 +127,7 @@ export default function RootLayout({
   return (
     <html lang="id" className="scroll-smooth" suppressHydrationWarning>
       <head>
+        <meta name="google-site-verification" content="google792e6af93a3baa77" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
