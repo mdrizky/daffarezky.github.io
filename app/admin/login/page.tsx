@@ -179,7 +179,7 @@ export default function AdminLogin() {
 
             <button
               type="submit"
-              disabled={loading || pin.length < 4 || isLocked}
+              disabled={loading || isLocked}
               className={`w-full py-5 px-6 bg-gradient-to-r from-[#00FF88] to-[#0099FF] text-[#0A0A0F] font-extrabold rounded-2xl hover:opacity-95 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-lg transform ${isSubmitting ? 'scale-95' : 'hover:scale-[1.02]'}`}
             >
               {loading ? (
