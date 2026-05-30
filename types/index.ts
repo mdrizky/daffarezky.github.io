@@ -123,3 +123,34 @@ export type LearningJourney = {
   description_en: string
   created_at: string
 }
+
+export type Experience = {
+  id: string
+  title_id: string
+  title_en: string
+  organization: string
+  role: string
+  start_date: string
+  end_date?: string
+  is_current: boolean
+  description_id?: string
+  description_en?: string
+  category: string
+  order_index: number
+  created_at: string
+}
+
+export type Concept = {
+  id: string
+  title_id: string
+  title_en: string
+  subtitle_id?: string
+  subtitle_en?: string
+  description_id?: string
+  description_en?: string
+  technology: string[]
+  status: string
+  featured: boolean
+  order_index: number
+  created_at: string
+}
