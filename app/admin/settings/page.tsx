@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import Image from 'next/image'
 import { FaUserShield, FaExclamationTriangle, FaImage, FaTrash, FaSave, FaCheckCircle } from 'react-icons/fa'
-import { invalidateSiteLogoCache } from '@/components/SiteLogo'
 
 export default function AdminSettings() {
   // ── Admin account ──────────────────────────────────────────────
@@ -132,7 +131,6 @@ export default function AdminSettings() {
     if (error) throw error
 
     setLogoUrl(url)
-    invalidateSiteLogoCache()
     setLogoSuccess(true)
     setTimeout(() => setLogoSuccess(false), 3000)
   }

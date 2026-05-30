@@ -45,8 +45,8 @@ export default function Home() {
   const bio = profile
     ? (language === 'id' ? profile.bio_id : profile.bio_en)
     : (language === 'id'
-        ? "Membantu brand dan bisnis bertransformasi di era digital melalui strategi yang tepat, desain yang memukau, dan eksekusi yang terukur."
-        : "Helping brands and businesses transform in the digital era through precise strategies, stunning designs, and measurable execution.");
+        ? "Freelance Developer spesialis Next.js, React, dan TypeScript. Bantu bangun website modern, aplikasi mobile, dan solusi teknologi kustom untuk bisnis dan startup."
+        : "Freelance Developer specializing in Next.js, React, and TypeScript. Building modern websites, mobile apps, and custom tech solutions for businesses and startups.");
 
   const t = {
     greeting: language === 'id' ? 'Halo, Saya Daffa Rizky 👋' : 'Hi, I\'m Daffa Rizky 👋',
@@ -57,11 +57,11 @@ export default function Home() {
     projects: language === 'id' ? 'Proyek' : 'Projects',
     tools: language === 'id' ? 'Tools' : 'Tools',
     passion: language === 'id' ? 'Semangat' : 'Passion',
-    aboutTitle1: language === 'id' ? 'Mengubah ide menjadi ' : 'Turning ideas into ',
-    aboutTitle2: language === 'id' ? 'realitas digital.' : 'digital reality.',
+    aboutTitle1: language === 'id' ? 'Mengubah kode menjadi ' : 'Turning code into ',
+    aboutTitle2: language === 'id' ? 'solusi digital.' : 'digital solutions.',
     aboutDesc: language === 'id'
-      ? 'Sebagai seorang siswa SMK yang penuh semangat, saya berfokus pada pengembangan strategi bisnis digital, pembuatan website modern, dan eksekusi marketing yang berbasis data.'
-      : 'As an enthusiastic vocational student, I focus on developing digital business strategies, building modern websites, and executing data-driven marketing.',
+      ? 'Freelance Developer spesialis Next.js, React, dan TypeScript. Bangun website modern, aplikasi mobile, dan solusi teknologi kustom dengan performa tinggi dan desain yang memukau.'
+      : 'Freelance Developer specializing in Next.js, React, and TypeScript. Building modern websites, mobile apps, and custom tech solutions with high performance and stunning design.',
     knowMore: language === 'id' ? 'Kenal Lebih Dekat' : 'Get to Know Me',
     featured: language === 'id' ? 'Proyek' : 'Projects',
     featuredTitle: language === 'id' ? 'Unggulan' : 'Featured',
@@ -70,16 +70,16 @@ export default function Home() {
     servicesTitle: language === 'id' ? 'Pilihan' : 'Available',
     servicesTitle2: language === 'id' ? 'Layanan' : 'Services',
     servicesDesc: language === 'id'
-      ? 'Tingkatkan visibilitas dan performa bisnis Anda dengan paket layanan yang disesuaikan untuk kebutuhan Anda.'
-      : 'Boost your business visibility and performance with tailored service packages for your needs.',
+      ? 'Layanan development profesional untuk website, aplikasi mobile, dan solusi teknologi kustom dengan teknologi modern.'
+      : 'Professional development services for websites, mobile apps, and custom tech solutions with modern technology.',
     servicesMore: language === 'id' ? 'Lihat detail layanan lengkap' : 'See full services details',
     testiTitle: language === 'id' ? 'Apa Kata' : 'What They',
     testiTitle2: language === 'id' ? 'Mereka' : 'Say',
     ctaTitle1: language === 'id' ? 'Siap ' : 'Ready to ',
     ctaTitle2: language === 'id' ? 'Berkolaborasi?' : 'Collaborate?',
     ctaDesc: language === 'id'
-      ? 'Mari diskusikan ide Anda dan wujudkan menjadi produk digital yang luar biasa.'
-      : "Let's discuss your ideas and turn them into remarkable digital products.",
+      ? 'Mari diskusikan proyek Anda dan bangun solusi teknologi yang powerful dengan Next.js, React, dan TypeScript.'
+      : "Let's discuss your project and build powerful tech solutions with Next.js, React, and TypeScript.",
     ctaButton: language === 'id' ? 'Hubungi via WhatsApp' : 'Contact via WhatsApp',
   };
 

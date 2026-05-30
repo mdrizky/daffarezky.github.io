@@ -26,25 +26,30 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://portofolio-daffarez
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Daffa Rizky | Web & Mobile Developer",
+    default: "Daffa Rizky | Freelance Web & Mobile Developer",
     template: "%s | Daffa Rizky",
   },
   description:
-    "Portfolio modern Daffa Rizky — Web Developer, Mobile Developer, dan UI/UX Designer. Jasa pembuatan website, aplikasi mobile, dan produk digital profesional.",
+    "Freelance Developer Indonesia - Daffa Rizky. Spesialis Next.js, React, TypeScript, dan Mobile Development. Bantu bangun website modern, aplikasi mobile, dan solusi teknologi kustom untuk bisnis dan startup.",
   verification: {
     google: "uXSaWSLWd1NJfDFox7Y1hYIhEwlhMxQVNuAD2AAJ_qM",
   },
   keywords: [
-    "Web Developer Indonesia",
-    "Mobile Developer Indonesia",
-    "Portfolio Developer",
-    "Next.js Developer",
     "Freelance Developer Indonesia",
+    "Web Developer Freelance",
+    "Mobile Developer Freelance",
+    "Next.js Developer",
+    "React Developer",
+    "TypeScript Developer",
+    "Full Stack Developer",
+    "Frontend Developer",
+    "Backend Developer",
     "Jasa Pembuatan Website",
     "Jasa Aplikasi Mobile",
-    "UI UX Designer Indonesia",
+    "Jasa Development",
     "Daffa Rizky",
-    "Digital Business Strategist",
+    "Developer Jakarta",
+    "Developer Indonesia",
   ],
   authors: [{ name: "Daffa Rizky", url: siteUrl }],
   creator: "Daffa Rizky",
@@ -64,17 +69,17 @@ export const metadata: Metadata = {
     canonical: siteUrl,
   },
   openGraph: {
-    title: "Daffa Rizky | Web & Mobile Developer",
+    title: "Daffa Rizky | Freelance Web & Mobile Developer",
     description:
-      "Portfolio modern Daffa Rizky — Web Developer, Mobile Developer, dan UI/UX Designer. Jasa pembuatan website, aplikasi mobile, dan produk digital profesional.",
+      "Freelance Developer Indonesia - Spesialis Next.js, React, TypeScript. Bangun website modern, aplikasi mobile, dan solusi teknologi kustom.",
     url: siteUrl,
-    siteName: "Daffa Rizky Portfolio",
+    siteName: "Daffa Rizky - Freelance Developer",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Daffa Rizky — Web & Mobile Developer Portfolio",
+        alt: "Daffa Rizky - Freelance Web & Mobile Developer",
       },
     ],
     locale: "id_ID",
@@ -82,9 +87,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Daffa Rizky | Web & Mobile Developer",
+    title: "Daffa Rizky | Freelance Web & Mobile Developer",
     description:
-      "Portfolio modern Daffa Rizky — Web Developer, Mobile Developer, dan UI/UX Designer.",
+      "Freelance Developer Indonesia - Spesialis Next.js, React, TypeScript.",
     images: ["/og-image.jpg"],
     creator: "@daffarizky",
   },
@@ -110,9 +115,9 @@ export default function RootLayout({
     name: "Daffa Rizky",
     url: siteUrl,
     image: `${siteUrl}/og-image.jpg`,
-    jobTitle: "Web & Mobile Developer",
+    jobTitle: "Freelance Web & Mobile Developer",
     description:
-      "Portfolio modern Daffa Rizky — Web Developer, Mobile Developer, dan UI/UX Designer.",
+      "Freelance Developer Indonesia - Spesialis Next.js, React, TypeScript, dan Mobile Development.",
     sameAs: [
       "https://github.com/daffarizky",
       "https://linkedin.com/in/daffarizky",
@@ -121,10 +126,12 @@ export default function RootLayout({
     knowsAbout: [
       "Web Development",
       "Mobile Development",
-      "UI/UX Design",
       "Next.js",
       "React",
       "TypeScript",
+      "Full Stack Development",
+      "Frontend Development",
+      "Backend Development",
     ],
   };
 
