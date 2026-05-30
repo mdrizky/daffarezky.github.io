@@ -35,6 +35,10 @@ CREATE INDEX IF NOT EXISTS idx_islamic_order ON islamic(order_index);
 -- Enable Row Level Security
 ALTER TABLE islamic ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Allow read access for everyone" ON islamic;
+DROP POLICY IF EXISTS "Allow full access for authenticated users" ON islamic;
+
 -- Create policy to allow read access for everyone
 CREATE POLICY "Allow read access for everyone" ON islamic
   FOR SELECT USING (true);

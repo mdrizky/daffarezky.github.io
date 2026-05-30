@@ -35,6 +35,10 @@ CREATE INDEX IF NOT EXISTS idx_concepts_order ON concepts(order_index);
 -- Enable Row Level Security
 ALTER TABLE concepts ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Allow read access for everyone" ON concepts;
+DROP POLICY IF EXISTS "Allow full access for authenticated users" ON concepts;
+
 -- Create policy to allow read access for everyone
 CREATE POLICY "Allow read access for everyone" ON concepts
   FOR SELECT USING (true);

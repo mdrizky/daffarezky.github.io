@@ -31,6 +31,10 @@ CREATE INDEX IF NOT EXISTS idx_experience_order ON experience(order_index);
 -- Enable Row Level Security
 ALTER TABLE experience ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Allow read access for everyone" ON experience;
+DROP POLICY IF EXISTS "Allow full access for authenticated users" ON experience;
+
 -- Create policy to allow read access for everyone
 CREATE POLICY "Allow read access for everyone" ON experience
   FOR SELECT USING (true);
