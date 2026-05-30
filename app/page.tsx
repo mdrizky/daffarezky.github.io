@@ -42,6 +42,25 @@ export default function Home() {
     fetchData();
   }, []);
 
+  // Fetch current projects (is_current = true)
+  const [currentProjects, setCurrentProjects] = useState<Project[]>([]);
+  
+  useEffect(() => {
+    const fetchCurrentProjects = async () => {
+      try {
+        const { data } = await supabase
+          .from("projects")
+          .select("*")
+          .eq("is_current", true)
+          .limit(3);
+        if (data) setCurrentProjects(data);
+      } catch (error) {
+        console.error("Error fetching current projects:", error);
+      }
+    };
+    fetchCurrentProjects();
+  }, []);
+
   const bio = profile
     ? (language === 'id' ? profile.bio_id : profile.bio_en)
     : (language === 'id'
@@ -81,6 +100,10 @@ export default function Home() {
       ? 'Mari diskusikan proyek Anda dan bangun solusi teknologi yang powerful dengan Next.js, React, dan TypeScript.'
       : "Let's discuss your project and build powerful tech solutions with Next.js, React, and TypeScript.",
     ctaButton: language === 'id' ? 'Hubungi via WhatsApp' : 'Contact via WhatsApp',
+    currentProjects: language === 'id' ? 'Sedang Dikerjakan' : 'Currently Working',
+    currentProjectsDesc: language === 'id' ? 'Project yang sedang saya kerjakan saat ini.' : 'Projects I am currently working on.',
+    viewDetails: language === 'id' ? 'Lihat Detail' : 'View Details',
+    progress: language === 'id' ? 'Progres' : 'Progress',
   };
 
   const testimonials = language === 'id' ? [
@@ -196,6 +219,73 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Current Projects Section */}
+      {currentProjects.length > 0 && (
+        <section className="container mx-auto px-6 md:px-12">
+          <div className="flex justify-between items-end mb-12">
+            <div>
+              <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4 text-gray-900 dark:text-white">
+                {t.currentProjects}
+              </h2>
+              <p className="text-gray-500 dark:text-gray-400">{t.currentProjectsDesc}</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {currentProjects.map((project) => (
+              <div key={project.id} className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl overflow-hidden hover:border-[var(--color-neon-green)]/50 transition-colors shadow-sm">
+                <div className="relative aspect-video">
+                  <Image
+                    src={project.image_url}
+                    alt={language === 'id' ? project.title_id : project.title_en}
+                    fill
+                    className="object-cover"
+                  />
+                  {project.is_current && (
+                    <div className="absolute top-4 right-4 px-3 py-1 bg-[var(--color-neon-green)] text-black text-xs font-bold rounded-full flex items-center gap-1">
+                      <span className="w-2 h-2 bg-black rounded-full animate-pulse"></span>
+                      {t.currentProjects}
+                    </div>
+                  )}
+                </div>
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
+                    {language === 'id' ? project.title_id : project.title_en}
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 line-clamp-2">
+                    {language === 'id' ? project.description_id : project.description_en}
+                  </p>
+                  
+                  {/* Progress Bar */}
+                  <div className="mb-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{t.progress}</span>
+                      <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{project.progress}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 dark:bg-white/10 rounded-full h-2">
+                      <div
+                        className={`h-2 rounded-full transition-all duration-500 ${
+                          project.progress === 100 ? 'bg-green-500' : 
+                          project.progress >= 50 ? 'bg-blue-500' : 'bg-yellow-500'
+                        }`}
+                        style={{ width: `${project.progress}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  
+                  <Link
+                    href={`/portfolio/${project.id}`}
+                    className="inline-flex items-center gap-2 text-sm font-bold text-[var(--color-neon-blue)] hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    {t.viewDetails} <span>→</span>
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* 3. Featured Projects */}
       {projects.length > 0 && (

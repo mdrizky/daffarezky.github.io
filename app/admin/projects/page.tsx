@@ -88,6 +88,8 @@ export default function AdminProjects() {
               <tr>
                 <th className="p-4 font-semibold text-sm">Project (ID & EN)</th>
                 <th className="p-4 font-semibold text-sm">Kategori</th>
+                <th className="p-4 font-semibold text-sm">Progres</th>
+                <th className="p-4 font-semibold text-sm text-center">Current</th>
                 <th className="p-4 font-semibold text-sm text-center">Featured</th>
                 <th className="p-4 font-semibold text-sm text-right">Aksi</th>
               </tr>
@@ -95,7 +97,7 @@ export default function AdminProjects() {
             <tbody className="divide-y divide-gray-100 dark:divide-white/5">
               {projects.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="p-12 text-center text-gray-500">
+                  <td colSpan={6} className="p-12 text-center text-gray-500">
                     <div className="flex flex-col items-center justify-center gap-3">
                       <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center text-2xl">📁</div>
                       <p>Belum ada project. Silakan tambah project baru.</p>
@@ -128,6 +130,28 @@ export default function AdminProjects() {
                     </td>
                     <td className="p-4">
                       <span className="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-300 rounded-full border border-gray-200 dark:border-white/5">{project.category}</span>
+                    </td>
+                    <td className="p-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-24 bg-gray-200 dark:bg-white/10 rounded-full h-2">
+                          <div
+                            className={`h-2 rounded-full ${
+                              project.progress === 100 ? 'bg-green-500' : 
+                              project.progress >= 50 ? 'bg-blue-500' : 'bg-yellow-500'
+                            }`}
+                            style={{ width: `${project.progress}%` }}
+                          ></div>
+                        </div>
+                        <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{project.progress}%</span>
+                      </div>
+                    </td>
+                    <td className="p-4 text-center">
+                      {project.is_current && (
+                        <span className="px-2 py-1 bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300 text-xs font-bold rounded-full">Active</span>
+                      )}
+                      {project.completion_date && (
+                        <div className="text-xs text-gray-500 dark:text-gray-400">{project.completion_date}</div>
+                      )}
                     </td>
                     <td className="p-4 text-center">
                       <button 

@@ -11,6 +11,13 @@ export type Project = {
   featured: boolean
   category: string
   created_at: string
+  progress: number
+  start_date?: string
+  completion_date?: string
+  is_current: boolean
+  estimated_hours?: string
+  actual_hours?: string
+  difficulty: string
 }
 
 export type BlogPost = {
@@ -150,6 +157,21 @@ export type Concept = {
   description_en?: string
   technology: string[]
   status: string
+  featured: boolean
+  order_index: number
+  created_at: string
+}
+
+export type Islamic = {
+  id: string
+  title_id: string
+  title_en: string
+  subtitle_id?: string
+  subtitle_en?: string
+  description_id?: string
+  description_en?: string
+  category: string
+  reference?: string
   featured: boolean
   order_index: number
   created_at: string
