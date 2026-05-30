@@ -24,7 +24,8 @@ export default function SiteLogo({
   textSize = "text-xl",
 }: SiteLogoProps) {
   const name = "Daffa Rizky";
-  const logoUrl = "/logo.png";
+  // Cache busting version - increment this number when logo changes
+  const logoUrl = "/logo.png?v=3";
 
   return (
     <Link href={href} className={`flex items-center gap-2 group ${className}`}>

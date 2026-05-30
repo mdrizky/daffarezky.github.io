@@ -10,6 +10,8 @@ const nextConfig: NextConfig = {
         pathname: '/storage/v1/object/public/**',
       },
     ],
+    // Disable optimization for local images to allow query parameters for cache busting
+    unoptimized: true,
   },
 };
 
