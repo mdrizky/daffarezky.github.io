@@ -54,10 +54,11 @@ export default function PengalamanPage() {
   }, {} as Record<string, Experience[]>);
 
   const categoryIcons: Record<string, any> = {
-    'Leadership': <FaBriefcase />,
-    'Religious': <FaBook />,
-    'Training': <FaAward />,
-    'Achievement': <FaAward />,
+    'Organisasi': <FaUsers />,
+    'Freelance': <FaBriefcase />,
+    'Kompetisi': <FaAward />,
+    'Volunteer': <FaUsers />,
+    'Magang': <FaBriefcase />,
   };
 
   if (loading) {

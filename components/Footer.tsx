@@ -42,13 +42,19 @@ export default function Footer() {
       <div className="container mx-auto px-6 md:px-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
           {/* Brand */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-6">
             <SiteLogo size={40} textSize="text-xl" />
-            <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-sm">
+            <p className="text-gray-500 dark:text-gray-400 max-w-sm leading-relaxed">
               {language === 'id'
-                ? 'Mengubah ide menjadi realitas digital. Seorang Digital Business Strategist yang membantu brand tumbuh di era digital.'
-                : 'Turning ideas into digital reality. Aspiring Digital Business Strategist helping brands grow in the digital era.'}
+                ? 'Web & Mobile Developer yang berfokus pada pengembangan teknologi, inovasi digital, dan solusi yang memberikan dampak positif bagi masyarakat.'
+                : 'Web & Mobile Developer focused on technology development, digital innovation, and solutions that provide a positive impact on society.'}
             </p>
+            <div className="flex flex-col gap-1">
+              <span className="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">Motto</span>
+              <p className="text-sm font-medium text-[var(--color-neon-blue)]">
+                Teknologi • Inovasi • Kebermanfaatan
+              </p>
+            </div>
           </div>
 
           {/* Quick Links */}
@@ -85,9 +91,9 @@ export default function Footer() {
         </div>
 
         {/* Bottom */}
-        <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-gray-200 dark:border-white/5 relative">
+        <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-gray-200 dark:border-white/5 relative gap-4 text-center md:text-left">
           <p className="text-gray-500 text-sm">
-            © {new Date().getFullYear()} {profileName}. {language === 'id' ? 'Dibangun dengan penuh semangat.' : 'Built with passion.'}
+            © 2026 {profileName}. {language === 'id' ? 'Dibangun dengan dedikasi, pembelajaran, dan semangat kebermanfaatan.' : 'Built with dedication, learning, and the spirit of benefit.'}
           </p>
           
           {/* Hidden Admin Link */}

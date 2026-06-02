@@ -4,66 +4,40 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/components/LanguageProvider";
 import SkillBadge from "@/components/SkillBadge";
-import type { Skill } from "@/types";
+import type { Skill, Certificate } from "@/types";
 import { 
   SiHtml5, SiCss as SiCss3, SiJavascript, SiReact, 
   SiGooglesheets, SiLooker, SiGoogleanalytics,
   SiCanva, SiFigma, SiNotion, SiTrello,
-  SiOpenai, SiAnthropic, SiN8N
+  SiOpenai, SiAnthropic, SiN8N, SiNextdotjs, SiLaravel, SiFlutter
 } from "react-icons/si";
-import { FaBullseye, FaPenNib, FaSearchDollar, FaFilter, FaRobot, FaTools } from "react-icons/fa";
+import { FaBullseye, FaPenNib, FaSearchDollar, FaFilter, FaRobot, FaTools, FaFileDownload } from "react-icons/fa";
 
-export default function SkillsPage() {
+export default function KeahlianPage() {
   const [skills, setSkills] = useState<Skill[]>([]);
+  const [certificates, setCertificates] = useState<Certificate[]>([]);
   const [loading, setLoading] = useState(true);
   const { language } = useLanguage();
 
   useEffect(() => {
-    const fetchSkills = async () => {
+    const fetchData = async () => {
       try {
-        const { data } = await supabase.from("skills").select("*");
+        const [skillsRes, certsRes] = await Promise.all([
+          supabase.from("skills").select("*"),
+          supabase.from("certificates").select("*")
+        ]);
         
-        if (data && data.length > 0) {
-          setSkills(data);
-        } else {
-          // Fallback default skills data
-          const defaultSkills = [
-            { id: "1", category: "Frontend", name: "HTML", level: "Advanced", icon: "html" },
-            { id: "2", category: "Frontend", name: "CSS", level: "Advanced", icon: "css" },
-            { id: "3", category: "Frontend", name: "JavaScript", level: "Intermediate", icon: "js" },
-            { id: "4", category: "Frontend", name: "React basics", level: "Beginner", icon: "react" },
-            
-            { id: "5", category: "Analytics", name: "Google Sheets", level: "Advanced", icon: "sheets" },
-            { id: "6", category: "Analytics", name: "Looker Studio", level: "Intermediate", icon: "looker" },
-            { id: "7", category: "Analytics", name: "Google Analytics", level: "Intermediate", icon: "analytics" },
-            
-            { id: "8", category: "Tools", name: "Canva", level: "Advanced", icon: "canva" },
-            { id: "9", category: "Tools", name: "Figma (basic)", level: "Beginner", icon: "figma" },
-            { id: "10", category: "Tools", name: "Notion", level: "Advanced", icon: "notion" },
-            { id: "11", category: "Tools", name: "Trello", level: "Intermediate", icon: "trello" },
-            
-            { id: "12", category: "Marketing", name: "SEO basics", level: "Intermediate", icon: "seo" },
-            { id: "13", category: "Marketing", name: "Content Strategy", level: "Advanced", icon: "content" },
-            { id: "14", category: "Marketing", name: "Copywriting", level: "Intermediate", icon: "copy" },
-            { id: "15", category: "Marketing", name: "Funnel Design", level: "Intermediate", icon: "funnel" },
-            
-            { id: "16", category: "AI Tools", name: "ChatGPT", level: "Advanced", icon: "chatgpt" },
-            { id: "17", category: "AI Tools", name: "Claude AI", level: "Advanced", icon: "claude" },
-            { id: "18", category: "AI Tools", name: "Midjourney", level: "Intermediate", icon: "midjourney" },
-            { id: "19", category: "AI Tools", name: "n8n basics", level: "Beginner", icon: "n8n" },
-          ];
-          setSkills(defaultSkills as Skill[]);
-        }
+        if (skillsRes.data) setSkills(skillsRes.data);
+        if (certsRes.data) setCertificates(certsRes.data);
       } catch (error) {
-        console.error("Error fetching skills:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchSkills();
+    fetchData();
   }, []);
 
-  // Grouping function
   const groupSkills = (items: Skill[]) => {
     return items.reduce((acc, skill) => {
       if (!acc[skill.category]) acc[skill.category] = [];
@@ -72,17 +46,6 @@ export default function SkillsPage() {
     }, {} as Record<string, Skill[]>);
   };
 
-  if (loading) {
-    return (
-      <div className="pt-32 pb-24 min-h-screen flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-[#00FF88] border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  const groupedSkills = groupSkills(skills);
-  const categories = Object.keys(groupedSkills);
-
   const getIconElement = (iconName: string) => {
     switch (iconName.toLowerCase()) {
       case 'html': return <SiHtml5 className="text-[#E34F26]" />;
@@ -90,6 +53,9 @@ export default function SkillsPage() {
       case 'js':
       case 'javascript': return <SiJavascript className="text-[#F7DF1E]" />;
       case 'react': return <SiReact className="text-[#61DAFB]" />;
+      case 'nextjs': return <SiNextdotjs className="text-black dark:text-white" />;
+      case 'laravel': return <SiLaravel className="text-[#FF2D20]" />;
+      case 'flutter': return <SiFlutter className="text-[#02569B]" />;
       case 'sheets': return <SiGooglesheets className="text-[#34A853]" />;
       case 'looker': return <SiLooker className="text-[#4285F4]" />;
       case 'analytics': return <SiGoogleanalytics className="text-[#E37400]" />;
@@ -109,24 +75,38 @@ export default function SkillsPage() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="pt-32 pb-24 min-h-screen flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-[#00FF88] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  const groupedSkills = groupSkills(skills);
+  const categories = Object.keys(groupedSkills);
+
   return (
-    <div className="pt-32 pb-24 min-h-screen">
+    <div className="pt-32 pb-24 min-h-screen bg-gray-50 dark:bg-[#0A0A0F] transition-colors duration-300">
       <div className="container mx-auto px-6 md:px-12">
+        {/* Header */}
         <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <h1 className="text-4xl md:text-6xl font-heading font-bold mb-4 text-gray-900 dark:text-white">
-            Skills & <span className="text-gradient">Tools</span>
+            {language === 'id' ? 'Keahlian & ' : 'Skills & '}<span className="text-gradient">{language === 'id' ? 'Sertifikasi' : 'Certifications'}</span>
           </h1>
           <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto text-lg">
             {language === 'id'
-              ? 'Teknologi, platform, dan strategi yang saya gunakan untuk menciptakan solusi digital.'
-              : 'Technologies, platforms, and strategies I use to create digital solutions.'}
+              ? 'Teknologi, platform, dan sertifikasi profesional yang mendukung kompetensi saya.'
+              : 'Technologies, platforms, and professional certifications that support my competence.'}
           </p>
         </div>
 
-        <div className="space-y-16 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+        {/* Skills Section */}
+        <div className="space-y-16 mb-32 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
           {categories.map((category) => (
             <div key={category}>
-              <h2 className="text-2xl font-heading font-bold mb-6 text-gray-900 dark:text-white border-b border-gray-200 dark:border-white/10 pb-2">
+              <h2 className="text-2xl font-heading font-bold mb-8 text-gray-900 dark:text-white flex items-center gap-4">
+                <span className="w-8 h-1 bg-gradient-neon rounded-full"></span>
                 {category}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -148,6 +128,37 @@ export default function SkillsPage() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Certificates Section */}
+        <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 delay-400">
+          <h2 className="text-3xl font-heading font-bold mb-12 text-center text-gray-900 dark:text-white">
+            {language === 'id' ? 'Sertifikasi ' : 'Professional '}<span className="text-gradient">{language === 'id' ? 'Profesional' : 'Certifications'}</span>
+          </h2>
+          
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {certificates.map((cert) => (
+              <div key={cert.id} className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 p-8 rounded-3xl flex flex-col items-center text-center group hover:border-[var(--color-neon-green)]/50 transition-all hover:-translate-y-2 shadow-sm">
+                <div className="w-20 h-20 rounded-2xl bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-6 text-[var(--color-neon-green)] group-hover:scale-110 transition-transform shadow-inner">
+                  <FaFileDownload size={32} />
+                </div>
+                <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-white leading-tight">
+                  {language === 'id' ? cert.title_id : cert.title_en}
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 font-medium">
+                  {cert.issuer} • {cert.date_issued}
+                </p>
+                <a 
+                  href={cert.file_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-auto px-6 py-2 rounded-full border border-gray-200 dark:border-white/10 text-sm font-bold text-[var(--color-neon-blue)] hover:bg-[var(--color-neon-blue)] hover:text-white transition-all"
+                >
+                  {language === 'id' ? 'Lihat PDF' : 'View PDF'}
+                </a>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

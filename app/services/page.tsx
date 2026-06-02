@@ -25,35 +25,35 @@ export default function ServicesPage() {
           setServices([
             {
               id: "1",
-              name_id: "Paket Basic",
-              name_en: "Basic Package",
-              price: "Rp 150.000",
-              description_id: "Solusi cepat untuk memulai digital presence Anda.",
-              description_en: "Quick solution to start your digital presence.",
-              features_id: ["Analisis kompetitor (3 kompetitor)", "Riset keyword basic", "1 halaman copywriting", "Revisi 1x", "Delivery 3 hari"],
-              features_en: ["Competitor analysis (3 competitors)", "Basic keyword research", "1 page copywriting", "1 revision", "3-day delivery"],
-              is_popular: false
-            },
-            {
-              id: "2",
-              name_id: "Paket Standard",
-              name_en: "Standard Package",
-              price: "Rp 350.000",
-              description_id: "Pilihan terbaik untuk membangun brand dan memulai campaign.",
-              description_en: "Best choice to build your brand and launch campaigns.",
-              features_id: ["Semua di Basic +", "Brand identity", "Konten IG (5 post)", "KPI dashboard setup", "Revisi 2x", "Delivery 5 hari"],
-              features_en: ["Everything in Basic +", "Brand identity", "IG content (5 posts)", "KPI dashboard setup", "2 revisions", "5-day delivery"],
+              name_id: "Pembuatan Website",
+              name_en: "Website Development",
+              price: "Mulai dari Rp 1.500.000",
+              description_id: "Website modern, responsif, dan profesional untuk berbagai kebutuhan.",
+              description_en: "Modern, responsive, and professional websites for various needs.",
+              features_id: ["Landing Page", "Company Profile", "Blog", "SEO Friendly"],
+              features_en: ["Landing Page", "Company Profile", "Blog", "SEO Friendly"],
               is_popular: true
             },
             {
+              id: "2",
+              name_id: "Aplikasi Mobile",
+              name_en: "Mobile Application",
+              price: "Mulai dari Rp 5.000.000",
+              description_id: "Aplikasi mobile (Android & iOS) dengan performa tinggi dan UI/UX modern.",
+              description_en: "High-performance mobile apps (Android & iOS) with modern UI/UX.",
+              features_id: ["Flutter / React Native", "Custom Features", "Play Store & App Store", "API Integration"],
+              features_en: ["Flutter / React Native", "Custom Features", "Play Store & App Store", "API Integration"],
+              is_popular: false
+            },
+            {
               id: "3",
-              name_id: "Paket Premium",
-              name_en: "Premium Package",
-              price: "Rp 750.000",
-              description_id: "Solusi lengkap end-to-end untuk pertumbuhan bisnis maksimal.",
-              description_en: "Complete end-to-end solution for maximum business growth.",
-              features_id: ["Semua di Standard +", "Landing page", "Strategi konten 1 bulan", "SEO on-page", "Konsultasi WA 2 minggu", "Revisi unlimited", "Delivery 10 hari"],
-              features_en: ["Everything in Standard +", "Landing page", "1-month content strategy", "On-page SEO", "2-week WA consultation", "Unlimited revisions", "10-day delivery"],
+              name_id: "Dashboard Admin",
+              name_en: "Admin Dashboard",
+              price: "Mulai dari Rp 3.500.000",
+              description_id: "Sistem manajemen data internal yang efisien dan mudah digunakan.",
+              description_en: "Efficient and easy-to-use internal data management system.",
+              features_id: ["User Management", "Data Analytics", "Real-time Updates", "Secure Access"],
+              features_en: ["User Management", "Data Analytics", "Real-time Updates", "Secure Access"],
               is_popular: false
             }
           ]);

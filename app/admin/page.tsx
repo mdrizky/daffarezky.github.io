@@ -66,12 +66,10 @@ export default function AdminDashboard() {
   const statCards = [
     { title: 'Portfolio', value: stats.projects, icon: FaProjectDiagram, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-500/10', border: 'border-blue-200 dark:border-blue-500/20', href: '/admin/projects' },
     { title: 'Artikel Blog', value: stats.blogs, icon: FaBlog, color: 'text-green-500', bg: 'bg-green-50 dark:bg-green-500/10', border: 'border-green-200 dark:border-green-500/20', href: '/admin/blog' },
-    { title: 'Pesan Belum Dibaca', value: stats.messages, icon: FaEnvelope, color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-yellow-500/10', border: 'border-amber-200 dark:border-yellow-500/20', href: '/admin/messages' },
-    { title: 'Paket Jasa', value: stats.services, icon: FaCogs, color: 'text-purple-500', bg: 'bg-purple-50 dark:bg-purple-500/10', border: 'border-purple-200 dark:border-purple-500/20', href: '/admin/services' },
-    { title: 'Skills', value: stats.skills, icon: FaTools, color: 'text-cyan-500', bg: 'bg-cyan-50 dark:bg-cyan-500/10', border: 'border-cyan-200 dark:border-cyan-500/20', href: '/admin/skills' },
-    { title: 'Pendidikan', value: stats.education, icon: FaGraduationCap, color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-500/10', border: 'border-rose-200 dark:border-rose-500/20', href: '/admin/education' },
-    { title: 'Learning', value: stats.learning, icon: FaBriefcase, color: 'text-indigo-500', bg: 'bg-indigo-50 dark:bg-indigo-500/10', border: 'border-indigo-200 dark:border-indigo-500/20', href: '/admin/learning-journey' },
-    { title: 'Sertifikat', value: stats.certificates, icon: FaCertificate, color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-500/10', border: 'border-orange-200 dark:border-orange-500/20', href: '/admin/certificates' },
+    { title: 'Pesan', value: stats.messages, icon: FaEnvelope, color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-yellow-500/10', border: 'border-amber-200 dark:border-yellow-500/20', href: '/admin/messages' },
+    { title: 'Layanan', value: stats.services, icon: FaCogs, color: 'text-purple-500', bg: 'bg-purple-50 dark:bg-purple-500/10', border: 'border-purple-200 dark:border-purple-500/20', href: '/admin/services' },
+    { title: 'Keahlian', value: stats.skills, icon: FaTools, color: 'text-cyan-500', bg: 'bg-cyan-50 dark:bg-cyan-500/10', border: 'border-cyan-200 dark:border-cyan-500/20', href: '/admin/skills' },
+    { title: 'Pengalaman', value: stats.learning, icon: FaBriefcase, color: 'text-indigo-500', bg: 'bg-indigo-50 dark:bg-indigo-500/10', border: 'border-indigo-200 dark:border-indigo-500/20', href: '/admin/experience' },
   ]
 
   if (loading) {

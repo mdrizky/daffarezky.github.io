@@ -21,20 +21,15 @@ export default function Sidebar() {
 
   const menuItems = [
     { name: "Dashboard", path: "/admin", icon: <FaHome /> },
-    { name: "Profile", path: "/admin/profile", icon: <FaUserEdit /> },
-    { name: "Education", path: "/admin/education", icon: <FaGraduationCap /> },
-    { name: "Certificates", path: "/admin/certificates", icon: <FaCertificate /> },
-    { name: "Skills", path: "/admin/skills", icon: <FaTools /> },
-    { name: "Experience", path: "/admin/experience", icon: <FaBriefcase /> },
-    { name: "Concepts", path: "/admin/concepts", icon: <FaBriefcase /> },
-    { name: "Islamic", path: "/admin/islamic", icon: <FaBriefcase /> },
-    { name: "Services", path: "/admin/services", icon: <FaCogs /> },
+    { name: "Profil", path: "/admin/profile", icon: <FaUserEdit /> },
     { name: "Portfolio", path: "/admin/projects", icon: <FaProjectDiagram /> },
-    { name: "Testimonials", path: "/admin/testimonials", icon: <FaEnvelope /> },
+    { name: "Keahlian", path: "/admin/skills", icon: <FaTools /> },
+    { name: "Pengalaman", path: "/admin/experience", icon: <FaBriefcase /> },
+    { name: "Layanan", path: "/admin/services", icon: <FaCogs /> },
     { name: "Blog", path: "/admin/blog", icon: <FaBlog /> },
-    { name: "Learning", path: "/admin/learning-journey", icon: <FaBriefcase /> },
-    { name: "Messages", path: "/admin/messages", icon: <FaEnvelope /> },
-    { name: "Settings", path: "/admin/settings", icon: <FaUserEdit /> },
+    { name: "Pesan", path: "/admin/messages", icon: <FaEnvelope /> },
+    { name: "Testimonials", path: "/admin/testimonials", icon: <FaEnvelope /> },
+    { name: "Settings", path: "/admin/settings", icon: <FaCogs /> },
   ];
 
   const handleLogout = () => {

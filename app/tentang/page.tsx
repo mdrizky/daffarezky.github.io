@@ -1,39 +1,23 @@
 'use client'
 
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/components/LanguageProvider";
-import { FaGraduationCap, FaBriefcase, FaFileDownload } from "react-icons/fa";
-import dynamic from "next/dynamic";
-import type { Profile, Certificate, Education, LearningJourney } from "@/types";
-
-
+import type { Profile } from "@/types";
 
 export default function TentangPage() {
   const { language } = useLanguage();
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [certificates, setCertificates] = useState<Certificate[]>([]);
-  const [education, setEducation] = useState<Education[]>([]);
-  const [learningJourneyData, setLearningJourneyData] = useState<LearningJourney[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [profileRes, certsRes, eduRes, learnRes] = await Promise.all([
-          supabase.from("profile").select("*").limit(1),
-          supabase.from("certificates").select("*"),
-          supabase.from("education").select("*").order("start_year", { ascending: false }),
-          supabase.from("learning_journey").select("*").order("year", { ascending: false }),
-        ]);
-        if (profileRes.data && profileRes.data.length > 0) setProfile(profileRes.data[0]);
-        if (certsRes.data) setCertificates(certsRes.data);
-        if (eduRes.data) setEducation(eduRes.data);
-        if (learnRes.data) setLearningJourneyData(learnRes.data);
+        const { data } = await supabase.from("profile").select("*").limit(1);
+        if (data && data.length > 0) setProfile(data[0]);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching profile:", error);
       } finally {
         setLoading(false);
       }
@@ -41,60 +25,54 @@ export default function TentangPage() {
     fetchData();
   }, []);
 
-  const bio = profile
-    ? (language === 'id' ? profile.bio_id : profile.bio_en)
-    : null;
-
   const t = {
     pageTitle: language === 'id' ? 'Tentang' : 'About',
     pageTitleGrad: language === 'id' ? 'Saya' : 'Me',
     pageDesc: language === 'id'
       ? 'Mengenal lebih dekat siapa di balik layar, perjalanan, dan visi saya di dunia digital.'
       : 'Get to know the person behind the screen, the journey, and my vision in the digital world.',
-    greeting: language === 'id' ? 'Hi, saya' : "Hi, I'm",
-    whyMe: language === 'id' ? 'Mengapa Memilih Saya?' : 'Why Choose Me?',
-    whyItems: language === 'id'
-      ? ["Fokus pada ROI & Konversi", "Desain Premium & Modern", "Up-to-date dengan tren AI", "Komunikasi & Delivery Cepat"]
-      : ["Focus on ROI & Conversion", "Premium & Modern Design", "Up-to-date with AI trends", "Fast Communication & Delivery"],
-    defaultBio1: language === 'id'
-      ? 'Saya adalah seorang siswa SMK jurusan Bisnis Digital yang memiliki passion mendalam terhadap teknologi, pengembangan website, dan strategi pemasaran di era modern.'
-      : 'I am a vocational school student majoring in Digital Business with a deep passion for technology, web development, and modern marketing strategies.',
-    defaultBio2: language === 'id'
-      ? 'Bagi saya, digital marketing bukan hanya tentang membuat iklan, melainkan memahami perilaku audiens, membangun brand identity yang kuat, dan menciptakan konversi melalui UI/UX yang tepat.'
-      : 'For me, digital marketing is not just about creating ads, but understanding audience behavior, building strong brand identity, and creating conversions through proper UI/UX.',
-    education: language === 'id' ? 'Pendidikan' : 'Education',
-    inProgress: language === 'id' ? 'SEDANG BERJALAN' : 'IN PROGRESS',
-    learning: language === 'id' ? 'Perjalanan Belajar' : 'Learning Journey',
-    certs: language === 'id' ? 'Sertifikat &' : 'Certificates &',
-    certsGrad: language === 'id' ? 'Penghargaan' : 'Awards',
-    viewPdf: language === 'id' ? 'Lihat PDF' : 'View PDF',
-    ctaTitle: language === 'id' ? 'Tertarik Bekerja Sama?' : 'Interested in Working Together?',
-    ctaDesc: language === 'id'
-      ? 'Jangan ragu untuk menghubungi saya jika Anda butuh bantuan dalam membangun produk digital atau merumuskan strategi bisnis Anda.'
-      : "Don't hesitate to reach out if you need help building digital products or formulating your business strategy.",
-    ctaButton: language === 'id' ? 'Hubungi Saya' : 'Contact Me',
+    perkenalan: language === 'id' ? 'Perkenalan Diri' : 'Introduction',
+    visi: language === 'id' ? 'Visi Pribadi' : 'Personal Vision',
+    fokus: language === 'id' ? 'Fokus Pengembangan' : 'Development Focus',
+    nilai: language === 'id' ? 'Nilai yang Saya Pegang' : 'My Values',
+    perjalanan: language === 'id' ? 'Perjalanan Belajar' : 'Learning Journey',
+    quote: language === 'id' ? 'Quote Islami' : 'Islamic Quote',
   };
 
-  const learningJourney = language === 'id' ? [
-    { year: "2024", title: "Branding & Positioning", desc: "Mempelajari dasar-dasar membangun identitas brand yang kuat." },
-    { year: "2024", title: "Content & Funnel Strategy", desc: "Membuat alur akuisisi pelanggan dari konten organik hingga konversi." },
-    { year: "2025", title: "KPI Dashboard & Analytics", desc: "Eksplorasi Looker Studio dan Google Analytics untuk tracking data." },
-    { year: "2025", title: "SEO & Blog Strategy", desc: "Optimalisasi on-page SEO dan keyword research." },
-    { year: "2026", title: "AI Workflow & Super App", desc: "Automasi menggunakan n8n, ChatGPT, dan integrasi AI ke dalam produk." }
-  ] : [
-    { year: "2024", title: "Branding & Positioning", desc: "Learning the fundamentals of building strong brand identity." },
-    { year: "2024", title: "Content & Funnel Strategy", desc: "Creating customer acquisition funnels from organic content to conversion." },
-    { year: "2025", title: "KPI Dashboard & Analytics", desc: "Exploring Looker Studio and Google Analytics for data tracking." },
-    { year: "2025", title: "SEO & Blog Strategy", desc: "On-page SEO optimization and keyword research." },
-    { year: "2026", title: "AI Workflow & Super App", desc: "Automation using n8n, ChatGPT, and AI integration into products." }
+  const introduction = language === 'id' 
+    ? "Assalamu'alaikum. Saya Muhammad Daffa Rezky Adyra, seorang pengembang web dan mobile yang memiliki ketertarikan besar pada teknologi, inovasi digital, Internet of Things (IoT), dan pengembangan solusi yang memberikan manfaat bagi masyarakat. Saya percaya bahwa teknologi bukan hanya alat, tetapi sarana untuk menciptakan perubahan positif dan kebermanfaatan yang lebih luas."
+    : "Assalamu'alaikum. I am Muhammad Daffa Rezky Adyra, a web and mobile developer who has a great interest in technology, digital innovation, Internet of Things (IoT), and developing solutions that benefit society. I believe that technology is not just a tool, but a means to create positive change and broader usefulness.";
+
+  const vision = language === 'id'
+    ? "Menjadi profesional di bidang teknologi yang tidak hanya unggul secara teknis, tetapi juga menjunjung tinggi nilai-nilai Islam, integritas, dan kebermanfaatan dalam setiap karya yang dibangun."
+    : "To be a professional in the field of technology who is not only technically excellent but also upholds Islamic values, integrity, and usefulness in every work built.";
+
+  const focusItems = [
+    { title: "Web Development", icon: "🌐" },
+    { title: "Mobile Development", icon: "📱" },
+    { title: "Artificial Intelligence", icon: "🤖" },
+    { title: "Internet of Things (IoT)", icon: "📡" },
+    { title: "UI/UX Design", icon: "🎨" },
+    { title: "Cloud Computing", icon: "☁️" },
   ];
 
-  const defaultCerts = [
-    { id: "1", title_id: "Sertifikat Tasheel", title_en: "Tasheel Certificate", issuer: "Tasheel", file_url: "#", date_issued: "2024" },
-    { id: "2", title_id: "Surat Rekomendasi Tasheel", title_en: "Tasheel Recommendation", issuer: "Tasheel", file_url: "#", date_issued: "2024" },
-    { id: "3", title_id: "Dicoding: Financial Literacy", title_en: "Dicoding: Financial Literacy", issuer: "Dicoding", file_url: "#", date_issued: "2025" },
-    { id: "4", title_id: "Sertifikat Kompetensi", title_en: "Competency Certificate", issuer: "LSP", file_url: "#", date_issued: "2026" }
+  const valueItems = language === 'id' ? [
+    { title: "Islam sebagai landasan hidup", icon: "🕌" },
+    { title: "Belajar sepanjang hayat", icon: "💡" },
+    { title: "Kolaborasi dan komunikasi", icon: "🤝" },
+    { title: "Inovasi dan kebermanfaatan", icon: "🚀" },
+    { title: "Konsistensi dalam berkarya", icon: "🎯" },
+  ] : [
+    { title: "Islam as the foundation of life", icon: "🕌" },
+    { title: "Lifelong learning", icon: "💡" },
+    { title: "Collaboration and communication", icon: "🤝" },
+    { title: "Innovation and usefulness", icon: "🚀" },
+    { title: "Consistency in working", icon: "🎯" },
   ];
+
+  const quote = language === 'id'
+    ? { text: "Sebaik-baik manusia adalah yang paling bermanfaat bagi manusia lainnya.", ref: "Hadits Riwayat Ahmad" }
+    : { text: "The best of humans are those who are most beneficial to others.", ref: "Hadith Narrated by Ahmad" };
 
   if (loading) {
     return (
@@ -104,13 +82,11 @@ export default function TentangPage() {
     );
   }
 
-  const displayCerts = certificates.length > 0 ? certificates : defaultCerts as Certificate[];
-
   return (
-    <div className="pt-32 pb-24">
+    <div className="pt-32 pb-24 min-h-screen bg-gray-50 dark:bg-[#0A0A0F] transition-colors duration-300">
       <div className="container mx-auto px-6 md:px-12">
         {/* Header */}
-        <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="text-center mb-20 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <h1 className="text-4xl md:text-6xl font-heading font-bold mb-4">
             {t.pageTitle} <span className="text-gradient">{t.pageTitleGrad}</span>
           </h1>
@@ -119,170 +95,104 @@ export default function TentangPage() {
           </p>
         </div>
 
-        {/* Profile Section */}
-        <div className="grid lg:grid-cols-12 gap-12 items-start mb-24 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
-          <div className="lg:col-span-5 relative">
-            <div className="relative aspect-[4/5] rounded-3xl overflow-hidden bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 p-2 shadow-sm">
-              <div className="absolute inset-0 bg-gradient-to-tr from-[var(--color-neon-blue)]/20 to-transparent mix-blend-overlay z-10"></div>
-              <Image
-                src={profile?.photo_url || "/foto.jpg"}
-                alt={profile?.name || "Daffa Rizky"}
-                fill
-                className="object-cover rounded-2xl"
-              />
+        <div className="max-w-4xl mx-auto space-y-32">
+          {/* 1. Perkenalan Diri */}
+          <section className="animate-in fade-in slide-in-from-bottom-8 duration-700">
+            <div className="flex flex-col md:flex-row gap-12 items-center">
+              <div className="w-full md:w-1/3">
+                <div className="relative aspect-square rounded-3xl overflow-hidden border border-gray-200 dark:border-white/10 shadow-xl">
+                  <Image
+                    src={profile?.photo_url || "/foto.jpg"}
+                    alt={profile?.name || "Daffa Rizky"}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              </div>
+              <div className="w-full md:w-2/3">
+                <h2 className="text-3xl font-heading font-bold mb-6 text-gray-900 dark:text-white border-b border-gray-200 dark:border-white/10 pb-4">
+                  {t.perkenalan}
+                </h2>
+                <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
+                  {introduction}
+                </p>
+              </div>
             </div>
-            <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-[var(--color-neon-green)] blur-[64px] opacity-30 -z-10"></div>
-          </div>
+          </section>
 
-          <div className="lg:col-span-7 flex flex-col gap-6">
-            <h2 className="text-3xl font-heading font-bold opacity-90">
-              {t.greeting} <span className="opacity-100">{profile?.name || 'Daffa Rizky'}</span> 👋
+          {/* 2. Visi Pribadi */}
+          <section className="animate-in fade-in slide-in-from-bottom-8 duration-700">
+            <div className="bg-gradient-to-br from-[#00FF88]/5 to-[#0099FF]/5 border border-gray-200 dark:border-white/10 rounded-[40px] p-10 md:p-16 text-center relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--color-neon-green)] blur-[100px] opacity-10"></div>
+              <div className="absolute bottom-0 left-0 w-32 h-32 bg-[var(--color-neon-blue)] blur-[100px] opacity-10"></div>
+              <h2 className="text-3xl font-heading font-bold mb-8 text-gray-900 dark:text-white">
+                {t.visi}
+              </h2>
+              <p className="text-xl md:text-2xl font-medium text-gray-700 dark:text-gray-200 italic leading-relaxed max-w-3xl mx-auto">
+                "{vision}"
+              </p>
+            </div>
+          </section>
+
+          {/* 3. Fokus Pengembangan */}
+          <section className="animate-in fade-in slide-in-from-bottom-8 duration-700">
+            <h2 className="text-3xl font-heading font-bold mb-10 text-center text-gray-900 dark:text-white">
+              {t.fokus}
             </h2>
-            <div className="text-muted dark:text-gray-300 leading-relaxed space-y-4 font-medium">
-              {bio ? (
-                <p>{bio}</p>
-              ) : (
-                <>
-                  <p>{t.defaultBio1}</p>
-                  <p>{t.defaultBio2}</p>
-                </>
-              )}
-            </div>
-
-            <div className="mt-4">
-              <h3 className="font-bold text-xl mb-4 text-[var(--color-neon-blue)]">{t.whyMe}</h3>
-              <ul className="grid sm:grid-cols-2 gap-4">
-                {t.whyItems.map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 bg-gray-50 dark:bg-white/5 rounded-lg p-3 border border-gray-200 dark:border-white/10">
-                    <span className="text-[var(--color-neon-green)]">✦</span>
-                    <span className="text-sm font-bold opacity-90">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* Timeline Section */}
-        <div className="grid md:grid-cols-2 gap-16 mb-24">
-          {/* Education from DB */}
-          <div>
-            <div className="flex items-center gap-4 mb-8">
-              <div className="p-3 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-[var(--color-neon-green)] shadow-sm">
-                <FaGraduationCap size={24} />
-              </div>
-              <h2 className="text-3xl font-heading font-bold">{t.education}</h2>
-            </div>
-            
-            <div className="space-y-6">
-              {education.length > 0 ? (
-                education.map((edu) => (
-                  <div
-                    key={edu.id}
-                    className="relative border-l border-gray-300 dark:border-white/10 pl-8 pb-4"
-                  >
-                    <div className={`absolute w-4 h-4 rounded-full -left-[8px] top-1 ${edu.is_current ? 'bg-[var(--color-neon-green)] shadow-[0_0_10px_rgba(0,255,136,0.8)]' : 'bg-gray-400 dark:bg-gray-600'}`}></div>
-                    {edu.is_current && <span className="text-[var(--color-neon-green)] text-sm font-bold tracking-wider">{t.inProgress}</span>}
-                    
-                    <div className="flex gap-4 items-start mt-1 mb-1">
-                      {edu.logo_url && (
-                        <div className="w-12 h-12 bg-white rounded-lg p-1.5 flex items-center justify-center flex-shrink-0 shadow-sm border border-gray-200 dark:border-white/10">
-                          <Image src={edu.logo_url} alt={edu.institution} width={40} height={40} className="object-contain" />
-                        </div>
-                      )}
-                      <div>
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-white">{edu.institution}</h3>
-                        <p className="text-sm text-gray-900/60 dark:text-gray-400 mb-1 font-semibold">{language === 'id' ? edu.degree_id : edu.degree_en} • {edu.start_year} - {edu.is_current ? (language === 'id' ? 'Sekarang' : 'Present') : edu.end_year}</p>
-                        <p className="text-muted dark:text-gray-400 text-sm">{language === 'id' ? edu.description_id : edu.description_en}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="relative border-l border-gray-300 dark:border-white/10 pl-8 pb-8">
-                  <div className="absolute w-4 h-4 rounded-full bg-[var(--color-neon-green)] -left-[8px] top-1 shadow-[0_0_10px_rgba(0,255,136,0.8)]"></div>
-                  <span className="text-[var(--color-neon-green)] text-sm font-bold tracking-wider">{t.inProgress}</span>
-                  <h3 className="text-xl font-bold mt-2 mb-1 text-gray-900 dark:text-white">{language === 'id' ? 'Sekolah Menengah Kejuruan (SMK)' : 'Vocational High School (SMK)'}</h3>
-                  <p className="text-gray-500 dark:text-gray-400">{language === 'id' ? 'Jurusan Bisnis Digital. Fokus pada Pemasaran Online, E-Commerce, dan Administrasi Bisnis.' : 'Digital Business Major. Focused on Online Marketing, E-Commerce, and Business Administration.'}</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+              {focusItems.map((item, i) => (
+                <div key={i} className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 p-6 rounded-2xl flex flex-col items-center gap-4 hover:border-[var(--color-neon-green)]/50 transition-all hover:-translate-y-1 group">
+                  <span className="text-4xl group-hover:scale-110 transition-transform">{item.icon}</span>
+                  <span className="font-bold text-gray-700 dark:text-gray-300 text-center">{item.title}</span>
                 </div>
-              )}
+              ))}
             </div>
-          </div>
+          </section>
 
-          {/* Learning Journey */}
-          <div>
-            <div className="flex items-center gap-4 mb-8">
-              <div className="p-3 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-[var(--color-neon-blue)] shadow-sm">
-                <FaBriefcase size={24} />
-              </div>
-              <h2 className="text-3xl font-heading font-bold text-gray-900 dark:text-white">{t.learning}</h2>
-            </div>
-            
-            <div className="space-y-8">
-              {learningJourneyData.length > 0 ? (
-                learningJourneyData.map((item) => (
-                  <div key={item.id} className="relative border-l border-gray-300 dark:border-white/10 pl-8">
-                    <div className="absolute w-3 h-3 rounded-full bg-[var(--color-neon-blue)] -left-[6px] top-1.5"></div>
-                    <span className="text-[var(--color-neon-blue)] text-sm font-bold">{item.year}</span>
-                    <h3 className="text-lg font-bold mt-1">
-                      {language === 'id' ? item.title_id : item.title_en}
-                    </h3>
-                    <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-                      {language === 'id' ? item.description_id : item.description_en}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                learningJourney.map((item, i) => (
-                  <div key={i} className="relative border-l border-gray-300 dark:border-white/10 pl-8">
-                    <div className="absolute w-3 h-3 rounded-full bg-[var(--color-neon-blue)] -left-[6px] top-1.5"></div>
-                    <span className="text-[var(--color-neon-blue)] text-sm font-bold">{item.year}</span>
-                    <h3 className="text-lg font-bold mt-1 text-gray-900 dark:text-white">{item.title}</h3>
-                    <p className="text-muted dark:text-gray-400 text-sm mt-1">{item.desc}</p>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Certificates */}
-        <div className="mb-24">
-          <h2 className="text-3xl md:text-5xl font-heading font-bold mb-12 text-center text-gray-900 dark:text-white">{t.certs} <span className="text-gradient">{t.certsGrad}</span></h2>
-          
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {displayCerts.map((cert) => (
-              <div key={cert.id} className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 p-6 rounded-2xl flex flex-col items-center text-center group hover:border-[var(--color-neon-green)]/50 transition-colors shadow-sm">
-                <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-4 text-[var(--color-neon-green)] group-hover:scale-110 transition-transform">
-                  <FaFileDownload size={24} />
+          {/* 4. Nilai yang Saya Pegang */}
+          <section className="animate-in fade-in slide-in-from-bottom-8 duration-700">
+            <h2 className="text-3xl font-heading font-bold mb-10 text-gray-900 dark:text-white border-b border-gray-200 dark:border-white/10 pb-4">
+              {t.nilai}
+            </h2>
+            <div className="space-y-4">
+              {valueItems.map((item, i) => (
+                <div key={i} className="flex items-center gap-6 p-6 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl hover:bg-white dark:hover:bg-white/10 transition-all">
+                  <span className="text-3xl">{item.icon}</span>
+                  <span className="text-lg font-bold text-gray-700 dark:text-gray-200">{item.title}</span>
                 </div>
-                <h3 className="font-bold mb-1 text-gray-900 dark:text-white">{language === 'id' ? cert.title_id : cert.title_en}</h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">{cert.issuer} • {cert.date_issued}</p>
-                <a 
-                  href={cert.file_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-auto text-sm text-[var(--color-neon-blue)] hover:text-gray-900 dark:hover:text-white transition-colors"
-                >
-                  {t.viewPdf}
-                </a>
-              </div>
-            ))}
-          </div>
-        </div>
+              ))}
+            </div>
+          </section>
 
-        {/* CTA */}
-        <div className="text-center bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 p-12 rounded-3xl shadow-sm">
-          <h2 className="text-3xl font-heading font-bold mb-4 text-gray-900 dark:text-white">{t.ctaTitle}</h2>
-          <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-xl mx-auto">
-            {t.ctaDesc}
-          </p>
-          <Link href="/kontak" className="inline-block bg-gradient-neon text-[#0A0A0F] px-8 py-3 rounded-full font-bold shadow-[0_0_20px_rgba(0,153,255,0.3)] hover:scale-105 transition-transform">
-            {t.ctaButton}
-          </Link>
+          {/* 5. Perjalanan Belajar */}
+          <section className="animate-in fade-in slide-in-from-bottom-8 duration-700">
+            <h2 className="text-3xl font-heading font-bold mb-10 text-gray-900 dark:text-white border-b border-gray-200 dark:border-white/10 pb-4">
+              {t.perjalanan}
+            </h2>
+            <div className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed bg-white/50 dark:bg-white/5 border border-gray-200 dark:border-white/10 p-8 md:p-12 rounded-3xl font-medium">
+              {language === 'id' 
+                ? "Perjalanan saya di dunia teknologi dimulai dari rasa ingin tahu terhadap cara kerja website dan aplikasi. Seiring waktu, saya mulai mempelajari pemrograman, pengembangan web, IoT, dan berbagai teknologi modern lainnya melalui proyek nyata, pembelajaran mandiri, komunitas, serta berbagai program pelatihan dan sertifikasi."
+                : "My journey in the tech world started with a curiosity about how websites and applications work. Over time, I began learning programming, web development, IoT, and various other modern technologies through real projects, self-learning, communities, and various training and certification programs."
+              }
+            </div>
+          </section>
+
+          {/* 6. Quote Islami */}
+          <section className="animate-in fade-in slide-in-from-bottom-8 duration-700 text-center pb-20">
+            <div className="max-w-2xl mx-auto space-y-6">
+              <div className="text-5xl text-[var(--color-neon-green)] opacity-50 font-serif">"</div>
+              <p className="text-2xl md:text-3xl font-heading font-bold text-gray-900 dark:text-white leading-tight">
+                {quote.text}
+              </p>
+              <div className="flex items-center justify-center gap-4">
+                <div className="h-[1px] w-12 bg-gray-300 dark:bg-white/20"></div>
+                <span className="text-[var(--color-neon-blue)] font-bold tracking-widest uppercase text-sm">{quote.ref}</span>
+                <div className="h-[1px] w-12 bg-gray-300 dark:bg-white/20"></div>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
-
     </div>
   );
 }

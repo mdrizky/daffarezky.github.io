@@ -13,7 +13,7 @@ export default function PortfolioClient({ initialProjects }: { initialProjects: 
   const { language } = useLanguage();
 
   const allLabel = language === 'id' ? 'Semua' : 'All';
-  const categories = [allLabel, "Website", "Branding", "Analytics", "Mobile"];
+  const categories = [allLabel, "Website", "Aplikasi Mobile", "Project IoT", "UI/UX"];
 
   const filteredProjects = filter === allLabel 
     ? initialProjects 
