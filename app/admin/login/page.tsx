@@ -80,6 +80,7 @@ export default function AdminLogin() {
         localStorage.removeItem('admin_pin_attempts')
         localStorage.removeItem('admin_pin_lockout')
         localStorage.setItem('admin_pin_auth', 'true')
+        console.log('Login successful, auth set to true')
       } catch (error) {
         console.error('localStorage error:', error)
       }

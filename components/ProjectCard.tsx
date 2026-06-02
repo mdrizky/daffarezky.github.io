@@ -47,7 +47,7 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
         <h3 className="text-xl font-heading font-bold mb-2 group-hover:text-[var(--color-neon-green)] transition-colors text-gray-900 dark:text-white">
           {title}
         </h3>
-        <p className="text-gray-500 dark:text-gray-400 text-sm mb-4 line-clamp-3 flex-grow">
+        <p className="text-gray-500 dark:text-gray-400 text-sm mb-4 line-clamp-none flex-grow leading-relaxed">
           {description}
         </p>
 

@@ -18,12 +18,18 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
     }
 
     // A simple PIN auth check via localStorage
-    const isAuthenticated = localStorage.getItem('admin_pin_auth') === 'true'
-    
-    if (!isAuthenticated) {
+    try {
+      const isAuthenticated = localStorage.getItem('admin_pin_auth') === 'true'
+      console.log('AdminGuard: isAuthenticated =', isAuthenticated)
+      
+      if (!isAuthenticated) {
+        router.push('/admin/login')
+      } else {
+        setLoading(false)
+      }
+    } catch (error) {
+      console.error('AdminGuard localStorage error:', error)
       router.push('/admin/login')
-    } else {
-      setLoading(false)
     }
   }, [router, pathname, isLoginPage])
 

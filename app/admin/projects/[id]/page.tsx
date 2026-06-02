@@ -25,6 +25,13 @@ export default function ProjectForm() {
     github_url: '',
     category: 'Website',
     featured: false,
+    progress: 0,
+    start_date: '',
+    completion_date: '',
+    is_current: false,
+    estimated_hours: '',
+    actual_hours: '',
+    difficulty: 'Medium',
   })
 
   useEffect(() => {
@@ -54,6 +61,13 @@ export default function ProjectForm() {
           github_url: data.github_url || '',
           category: data.category || 'Website',
           featured: data.featured || false,
+          progress: data.progress || 0,
+          start_date: data.start_date || '',
+          completion_date: data.completion_date || '',
+          is_current: data.is_current || false,
+          estimated_hours: data.estimated_hours || '',
+          actual_hours: data.actual_hours || '',
+          difficulty: data.difficulty || 'Medium',
         })
       }
     } catch (error) {
@@ -122,6 +136,13 @@ export default function ProjectForm() {
         github_url: formData.github_url,
         category: formData.category,
         featured: formData.featured,
+        progress: Number(formData.progress),
+        start_date: formData.start_date,
+        completion_date: formData.completion_date,
+        is_current: formData.is_current,
+        estimated_hours: formData.estimated_hours,
+        actual_hours: formData.actual_hours,
+        difficulty: formData.difficulty,
       }
 
       if (isNew) {
@@ -281,6 +302,102 @@ export default function ProjectForm() {
                 className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white text-sm transition-all"
                 placeholder="Atau paste URL gambar di sini"
               />
+            </div>
+          </div>
+
+          {/* Progres & Detail Proyek */}
+          <div className="space-y-6 pt-4 border-t border-gray-200 dark:border-white/10">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white">Progres & Detail Proyek</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Progres (%)</label>
+                <input
+                  type="number"
+                  name="progress"
+                  min="0"
+                  max="100"
+                  value={formData.progress}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Kesulitan</label>
+                <select
+                  name="difficulty"
+                  value={formData.difficulty}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all [&>option]:bg-white dark:[&>option]:bg-[#0A0A0F]"
+                >
+                  <option value="Easy">Easy</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Hard">Hard</option>
+                </select>
+              </div>
+              <div className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl self-end">
+                <input
+                  type="checkbox"
+                  id="is_current"
+                  name="is_current"
+                  checked={formData.is_current}
+                  onChange={handleChange}
+                  className="w-5 h-5 rounded border-gray-300 dark:border-white/10 text-blue-500 focus:ring-blue-500 focus:ring-offset-0 bg-white dark:bg-black/20 cursor-pointer transition-all"
+                />
+                <label htmlFor="is_current" className="text-sm font-semibold text-gray-700 dark:text-gray-300 cursor-pointer">
+                  Project Sedang Berjalan
+                </label>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Tanggal Mulai</label>
+                <input
+                  type="text"
+                  name="start_date"
+                  value={formData.start_date}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
+                  placeholder="Contoh: Jan 2024"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Tanggal Selesai</label>
+                <input
+                  type="text"
+                  name="completion_date"
+                  value={formData.completion_date}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
+                  placeholder="Contoh: Mar 2024 (Kosongkan jika masih berjalan)"
+                  disabled={formData.is_current}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Estimasi Jam Kerja</label>
+                <input
+                  type="text"
+                  name="estimated_hours"
+                  value={formData.estimated_hours}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
+                  placeholder="Contoh: 40 Jam"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Jam Kerja Aktual</label>
+                <input
+                  type="text"
+                  name="actual_hours"
+                  value={formData.actual_hours}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
+                  placeholder="Contoh: 35 Jam"
+                />
+              </div>
             </div>
           </div>
 

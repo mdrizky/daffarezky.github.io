@@ -7,6 +7,7 @@ import FloatingWA from "@/components/FloatingWA";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import RootLayoutClient from "@/components/RootLayoutClient";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 
 const syne = Syne({ 
   subsets: ["latin"],
@@ -67,6 +68,15 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: siteUrl,
+  },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Daffa Rizky",
+  },
+  formatDetection: {
+    telephone: false,
   },
   openGraph: {
     title: "Daffa Rizky | Freelance Web & Mobile Developer",
@@ -142,10 +152,14 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="apple-touch-icon" href="/logo.png" />
+        <meta name="theme-color" content="#00FF88" />
       </head>
       <body
         className={`${syne.variable} ${dmSans.variable} font-body antialiased min-h-screen flex flex-col`}
       >
+        <ServiceWorkerRegister />
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <LanguageProvider>
             <RootLayoutClient>

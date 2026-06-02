@@ -19,20 +19,27 @@ export default function Home() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [servicesData, setServicesData] = useState<Service[]>([]);
+  const [stats, setStats] = useState({ projects: 0, skills: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [profileRes, projectsRes, servicesRes] = await Promise.all([
+        const [profileRes, projectsRes, servicesRes, skillsCountRes, projectsCountRes] = await Promise.all([
           supabase.from("profile").select("*").limit(1),
           supabase.from("projects").select("*").eq("featured", true).limit(3),
           supabase.from("services").select("*").order("price", { ascending: true }).limit(3),
+          supabase.from("skills").select("*", { count: 'exact', head: true }),
+          supabase.from("projects").select("*", { count: 'exact', head: true }),
         ]);
 
         if (profileRes.data && profileRes.data.length > 0) setProfile(profileRes.data[0]);
         if (projectsRes.data) setProjects(projectsRes.data);
         if (servicesRes.data) setServicesData(servicesRes.data);
+        setStats({
+          projects: projectsCountRes.count || 0,
+          skills: skillsCountRes.count || 0
+        });
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -163,7 +170,7 @@ export default function Home() {
                 {t.heroTitle2}
               </span>
             </h1>
-            <p className="text-muted dark:text-gray-400 text-lg md:text-xl max-w-lg">
+            <p className="text-muted dark:text-gray-400 text-lg md:text-xl max-w-2xl leading-relaxed">
               {bio}
             </p>
             
@@ -187,19 +194,19 @@ export default function Home() {
             <div className="grid grid-cols-3 gap-6 mt-8 pt-8 border-t border-gray-200 dark:border-white/10">
               <div>
                 <div className="text-3xl font-heading font-bold text-gray-900 dark:text-white">
-                  {profile?.stats_projects || '4'}+
+                  {stats.projects}
                 </div>
                 <div className="text-sm text-gray-500 dark:text-gray-400">{t.projects}</div>
               </div>
               <div>
                 <div className="text-3xl font-heading font-bold text-gray-900 dark:text-white">
-                  {profile?.stats_tools || '10'}+
+                  {stats.skills}
                 </div>
                 <div className="text-sm text-gray-500 dark:text-gray-400">{t.tools}</div>
               </div>
               <div>
                 <div className="text-3xl font-heading font-bold text-gray-900 dark:text-white">
-                  {yearsOfLearning}+
+                  {yearsOfLearning}
                 </div>
                 <div className="text-sm text-gray-500 dark:text-gray-400">{t.experience}</div>
               </div>
