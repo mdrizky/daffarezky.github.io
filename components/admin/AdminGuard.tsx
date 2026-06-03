@@ -8,24 +8,20 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
   const router = useRouter()
   const pathname = usePathname()
   const [loading, setLoading] = useState(true)
-  const isLoginPage = pathname?.includes('/admin/login')
+  const isLoginPage = pathname === '/admin/login' || pathname?.includes('/admin/login')
 
   useEffect(() => {
-    const checkAuth = () => {
-      // If we are on the login page, just stop loading and don't redirect
-      if (isLoginPage) {
-        setLoading(false)
-        return
-      }
+    // If we are on the login page, we don't need to check auth
+    if (isLoginPage) {
+      setLoading(false)
+      return
+    }
 
+    const checkAuth = () => {
       try {
-        const authStatus = localStorage.getItem('admin_pin_auth')
-        const isAuthenticated = authStatus === 'true'
-        
-        console.log('AdminGuard Check:', { pathname, isAuthenticated, authStatus })
+        const isAuthenticated = localStorage.getItem('admin_pin_auth') === 'true'
         
         if (!isAuthenticated) {
-          console.log('Not authenticated, redirecting to login...')
           router.replace('/admin/login')
         } else {
           setLoading(false)
@@ -36,21 +32,7 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
       }
     }
 
-    // Run check immediately
     checkAuth()
-    
-    // Also check on storage events (multi-tab support)
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'admin_pin_auth') checkAuth()
-    }
-    
-    window.addEventListener('storage', handleStorageChange)
-    window.addEventListener('focus', checkAuth)
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange)
-      window.removeEventListener('focus', checkAuth)
-    }
   }, [router, pathname, isLoginPage])
 
   // Don't show loading spinner on login page

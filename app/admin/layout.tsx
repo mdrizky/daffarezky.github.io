@@ -10,7 +10,7 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
-  const isLoginPage = pathname?.includes('/admin/login')
+  const isLoginPage = pathname === '/admin/login' || pathname?.includes('/admin/login')
 
   return (
     <AdminGuard>

@@ -91,10 +91,16 @@ export default function AdminLogin() {
         localStorage.removeItem('admin_pin_attempts')
         localStorage.removeItem('admin_pin_lockout')
         
-        // Show success state for 1 second before redirect
+        // Use a more robust redirect
         setTimeout(() => {
-          window.location.replace('/admin')
-        }, 1000)
+          router.push('/admin')
+          // Fallback to hard redirect if router.push fails to change page
+          setTimeout(() => {
+            if (window.location.pathname.includes('/login')) {
+              window.location.href = '/admin'
+            }
+          }, 800)
+        }, 1500)
       } catch (error) {
         console.error('Login error:', error)
         setError('Gagal menyimpan status login.')
