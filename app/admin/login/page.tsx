@@ -20,13 +20,23 @@ export default function AdminLogin() {
   // Auto-redirect if already logged in
   useEffect(() => {
     try {
-      if (localStorage.getItem('admin_pin_auth') === 'true') {
+      if (localStorage.getItem('admin_pin_auth') === 'true' && !isSuccess) {
         router.push('/admin')
       }
     } catch (e) {
       console.error(e)
     }
-  }, [router])
+  }, [router, isSuccess])
+
+  // Handle redirect after success animation
+  useEffect(() => {
+    if (isSuccess) {
+      const timer = setTimeout(() => {
+        window.location.href = '/admin'
+      }, 1500)
+      return () => clearTimeout(timer)
+    }
+  }, [isSuccess])
 
   // Load attempts from localStorage on mount
   useEffect(() => {
@@ -91,17 +101,6 @@ export default function AdminLogin() {
         localStorage.setItem('admin_pin_auth', 'true')
         localStorage.removeItem('admin_pin_attempts')
         localStorage.removeItem('admin_pin_lockout')
-        
-        // Use a more robust redirect
-        setTimeout(() => {
-          router.push('/admin')
-          // Fallback to hard redirect if router.push fails to change page
-          setTimeout(() => {
-            if (window.location.pathname.includes('/login')) {
-              window.location.href = '/admin'
-            }
-          }, 800)
-        }, 1500)
       } catch (error) {
         console.error('Login error:', error)
         setError('Gagal menyimpan status login.')
