@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { supabase } from "../../../lib/supabase"
 
 type Contact = {
   id: string
@@ -28,14 +29,14 @@ export default function AdminMessagesPage() {
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages' },
-        (payload) => {
+        (payload: any) => {
           setContacts((prev) => [payload.new as Contact, ...prev])
         }
       )
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'messages' },
-        (payload) => {
+        (payload: any) => {
           setContacts((prev) => 
             prev.map(c => c.id === payload.new.id ? { ...c, is_read: payload.new.is_read } : c)
           )
