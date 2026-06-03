@@ -62,6 +62,7 @@ CREATE TABLE IF NOT EXISTS messages (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   name TEXT NOT NULL,
   email TEXT NOT NULL,
+  whatsapp TEXT, -- Kolom baru untuk nomor WhatsApp
   message TEXT NOT NULL,
   is_read BOOLEAN DEFAULT false
 );
@@ -143,37 +144,6 @@ ALTER TABLE certificates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE education ENABLE ROW LEVEL SECURITY;
 ALTER TABLE learning_journey ENABLE ROW LEVEL SECURITY;
 
--- POLICIES: Publik bisa baca (SELECT), Admin bisa semua (ALL)
--- Catatan: 'authenticated' merujuk pada user yang login lewat Supabase Auth.
--- Karena Anda menggunakan PIN, kita beri akses ALL untuk sementara atau gunakan service role.
--- Di sini kita asumsikan Anda ingin bisa edit dari panel admin.
-
-CREATE POLICY "Allow public read" ON profile FOR SELECT USING (true);
-CREATE POLICY "Allow public read" ON projects FOR SELECT USING (true);
-CREATE POLICY "Allow public read" ON skills FOR SELECT USING (true);
-CREATE POLICY "Allow public read" ON messages FOR INSERT WITH CHECK (true); -- Publik bisa kirim pesan
-CREATE POLICY "Allow public read" ON blog_posts FOR SELECT USING (true);
-CREATE POLICY "Allow public read" ON services FOR SELECT USING (true);
-CREATE POLICY "Allow public read" ON certificates FOR SELECT USING (true);
-CREATE POLICY "Allow public read" ON education FOR SELECT USING (true);
-CREATE POLICY "Allow public read" ON learning_journey FOR SELECT USING (true);
-
--- Polisi untuk Admin (Bisa edit/hapus)
--- JIKA ANDA LOGIN SUPABASE:
-CREATE POLICY "Allow all for auth" ON profile FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Allow all for auth" ON projects FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Allow all for auth" ON skills FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Allow all for auth" ON messages FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Allow all for auth" ON blog_posts FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Allow all for auth" ON services FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Allow all for auth" ON certificates FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Allow all for auth" ON education FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Allow all for auth" ON learning_journey FOR ALL USING (auth.role() = 'authenticated');
-
--- JIKA TIDAK LOGIN SUPABASE (Hanya PIN):
--- Anda mungkin perlu mematikan RLS atau menggunakan API Key service_role di client (TIDAK DISARANKAN).
--- Sebaiknya aktifkan login admin Supabase agar RLS 'authenticated' berfungsi.
-
 -- 10. Tabel Partners / Clients
 CREATE TABLE IF NOT EXISTS partners (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -185,6 +155,71 @@ CREATE TABLE IF NOT EXISTS partners (
 );
 
 ALTER TABLE partners ENABLE ROW LEVEL SECURITY;
+
+-- POLICIES: Publik bisa baca (SELECT), Admin bisa semua (ALL)
+-- DROP EXISTING POLICIES TO AVOID ERRORS ON RERUN
+DO $$ 
+BEGIN
+    -- Profile
+    DROP POLICY IF EXISTS "Allow public read" ON profile;
+    DROP POLICY IF EXISTS "Allow all for auth" ON profile;
+    -- Projects
+    DROP POLICY IF EXISTS "Allow public read" ON projects;
+    DROP POLICY IF EXISTS "Allow all for auth" ON projects;
+    -- Skills
+    DROP POLICY IF EXISTS "Allow public read" ON skills;
+    DROP POLICY IF EXISTS "Allow all for auth" ON skills;
+    -- Messages
+    DROP POLICY IF EXISTS "Allow public read" ON messages;
+    DROP POLICY IF EXISTS "Allow all for auth" ON messages;
+    -- Blog Posts
+    DROP POLICY IF EXISTS "Allow public read" ON blog_posts;
+    DROP POLICY IF EXISTS "Allow all for auth" ON blog_posts;
+    -- Services
+    DROP POLICY IF EXISTS "Allow public read" ON services;
+    DROP POLICY IF EXISTS "Allow all for auth" ON services;
+    -- Certificates
+    DROP POLICY IF EXISTS "Allow public read" ON certificates;
+    DROP POLICY IF EXISTS "Allow all for auth" ON certificates;
+    -- Education
+    DROP POLICY IF EXISTS "Allow public read" ON education;
+    DROP POLICY IF EXISTS "Allow all for auth" ON education;
+    -- Learning Journey
+    DROP POLICY IF EXISTS "Allow public read" ON learning_journey;
+    DROP POLICY IF EXISTS "Allow all for auth" ON learning_journey;
+    -- Partners
+    DROP POLICY IF EXISTS "Allow public read" ON partners;
+    DROP POLICY IF EXISTS "Allow all for auth" ON partners;
+END $$;
+
+-- RECREATE POLICIES
+CREATE POLICY "Allow public read" ON profile FOR SELECT USING (true);
+CREATE POLICY "Allow all for auth" ON profile FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Allow public read" ON projects FOR SELECT USING (true);
+CREATE POLICY "Allow all for auth" ON projects FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Allow public read" ON skills FOR SELECT USING (true);
+CREATE POLICY "Allow all for auth" ON skills FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Allow public read" ON messages FOR INSERT WITH CHECK (true); 
+CREATE POLICY "Allow all for auth" ON messages FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Allow public read" ON blog_posts FOR SELECT USING (true);
+CREATE POLICY "Allow all for auth" ON blog_posts FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Allow public read" ON services FOR SELECT USING (true);
+CREATE POLICY "Allow all for auth" ON services FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Allow public read" ON certificates FOR SELECT USING (true);
+CREATE POLICY "Allow all for auth" ON certificates FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Allow public read" ON education FOR SELECT USING (true);
+CREATE POLICY "Allow all for auth" ON education FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Allow public read" ON learning_journey FOR SELECT USING (true);
+CREATE POLICY "Allow all for auth" ON learning_journey FOR ALL USING (auth.role() = 'authenticated');
+
 CREATE POLICY "Allow public read" ON partners FOR SELECT USING (true);
 CREATE POLICY "Allow all for auth" ON partners FOR ALL USING (auth.role() = 'authenticated');
 

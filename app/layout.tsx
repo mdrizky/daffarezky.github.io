@@ -24,25 +24,31 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://portofolio-daffarez
 
 export async function generateMetadata(): Promise<Metadata> {
   const supabase = await createClient();
+  
+  // Ambil data Profile
   const { data: profile } = await supabase
     .from('profile')
     .select('*')
     .single();
 
-  const siteTitle = profile?.name ? `${profile.name} | Web & Mobile Developer` : "Muhammad Daffa Rizky Adyra | Web & Mobile Developer";
-  const siteDesc = profile?.bio_id || "Muhammad Daffa Rizky Adyra, Seorang Web & Mobile Developer muslim yang berfokus pada pengembangan website, aplikasi, dan solusi digital modern yang responsif, efisien, serta bermanfaat bagi pengguna.";
+  // Ambil data Settings (SEO)
+  const { data: settings } = await supabase
+    .from('settings')
+    .select('*')
+    .single();
+
+  const siteTitle = settings?.site_title || (profile?.name ? `${profile.name} | Web & Mobile Developer` : "Muhammad Daffa Rizky Adyra | Web & Mobile Developer");
+  const siteDesc = settings?.site_description || (profile?.bio_id || "Muhammad Daffa Rizky Adyra, Seorang Web & Mobile Developer muslim...");
   const siteLogo = profile?.logo_url || "/logo.png";
+  const siteUrl = "https://portofolio-daffarezky.vercel.app";
 
   return {
-    metadataBase: new URL(siteUrl),
     title: {
       default: siteTitle,
       template: `%s | ${profile?.name || 'Daffa Rizky'}`,
     },
     description: siteDesc,
-    verification: {
-      google: "uXSaWSLWd1NJfDFox7Y1hYIhEwlhMxQVNuAD2AAJ_qM",
-    },
+    metadataBase: new URL(siteUrl),
     keywords: ["Daffa Rizky", "Web Developer", "Mobile Developer", "Next.js", "React Native", "Indonesia", "Muslim Developer"],
     authors: [{ name: profile?.name || "Daffa Rizky", url: siteUrl }],
     creator: profile?.name || "Daffa Rizky",
