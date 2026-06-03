@@ -10,13 +10,15 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
-  const isLoginPage = pathname === '/admin/login'
+  const isLoginPage = pathname?.includes('/admin/login')
 
   return (
     <AdminGuard>
       <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-[#0A0A0F] dark:text-white transition-colors duration-300">
         {isLoginPage ? (
-          children
+          <div className="min-h-screen">
+            {children}
+          </div>
         ) : (
           <div className="flex h-screen overflow-hidden">
             <Sidebar />

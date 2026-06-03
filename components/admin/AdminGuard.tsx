@@ -11,34 +11,46 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
   const isLoginPage = pathname?.includes('/admin/login')
 
   useEffect(() => {
-    // Skip auth check for login page
-    if (isLoginPage) {
-      setLoading(false)
-      return
-    }
-
-    // A simple PIN auth check via localStorage
     const checkAuth = () => {
+      // If we are on the login page, just stop loading and don't redirect
+      if (isLoginPage) {
+        setLoading(false)
+        return
+      }
+
       try {
-        const isAuthenticated = localStorage.getItem('admin_pin_auth') === 'true'
-        console.log('AdminGuard: isAuthenticated =', isAuthenticated)
+        const authStatus = localStorage.getItem('admin_pin_auth')
+        const isAuthenticated = authStatus === 'true'
+        
+        console.log('AdminGuard Check:', { pathname, isAuthenticated, authStatus })
         
         if (!isAuthenticated) {
-          router.push('/admin/login')
+          console.log('Not authenticated, redirecting to login...')
+          router.replace('/admin/login')
         } else {
           setLoading(false)
         }
       } catch (error) {
-        console.error('AdminGuard localStorage error:', error)
-        router.push('/admin/login')
+        console.error('AdminGuard error:', error)
+        router.replace('/admin/login')
       }
     }
 
+    // Run check immediately
     checkAuth()
     
-    // Optional: Check again on focus to handle multi-tab login
+    // Also check on storage events (multi-tab support)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'admin_pin_auth') checkAuth()
+    }
+    
+    window.addEventListener('storage', handleStorageChange)
     window.addEventListener('focus', checkAuth)
-    return () => window.removeEventListener('focus', checkAuth)
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+      window.removeEventListener('focus', checkAuth)
+    }
   }, [router, pathname, isLoginPage])
 
   // Don't show loading spinner on login page
