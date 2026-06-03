@@ -158,7 +158,12 @@ export default function AdminMessagesPage() {
                       <div className={`text-sm truncate mb-0.5 ${!c.is_read ? 'font-bold text-gray-900 dark:text-white' : 'font-medium text-gray-700 dark:text-gray-300'}`}>
                         {c.name}
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400 truncate mb-2">{c.email}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 truncate mb-1">{c.email}</div>
+                      {c.subject && (
+                        <div className="text-[10px] font-bold text-blue-500 dark:text-[var(--color-neon-blue)] uppercase tracking-wider mb-2">
+                          {c.subject}
+                        </div>
+                      )}
                       <div className={`text-xs truncate ${!c.is_read ? 'text-gray-700 dark:text-gray-300 font-medium' : 'text-gray-500 dark:text-gray-500'}`}>
                         {c.message}
                       </div>
@@ -179,6 +184,11 @@ export default function AdminMessagesPage() {
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
                   <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{selected.name}</h2>
+                  {selected.subject && (
+                    <p className="text-sm font-bold text-blue-500 dark:text-[var(--color-neon-blue)] uppercase tracking-[0.2em] mb-4">
+                      {selected.subject}
+                    </p>
+                  )}
                   <div className="flex flex-wrap items-center gap-4">
                     <a 
                       href={`mailto:${selected.email}`} 

@@ -63,6 +63,7 @@ CREATE TABLE IF NOT EXISTS messages (
   name TEXT NOT NULL,
   email TEXT NOT NULL,
   whatsapp TEXT, -- Kolom baru untuk nomor WhatsApp
+  subject TEXT, -- Kolom baru untuk subjek pesan
   message TEXT NOT NULL,
   is_read BOOLEAN DEFAULT false
 );
@@ -156,6 +157,35 @@ CREATE TABLE IF NOT EXISTS partners (
 
 ALTER TABLE partners ENABLE ROW LEVEL SECURITY;
 
+-- 11. Tabel Settings (SEO & Keamanan)
+CREATE TABLE IF NOT EXISTS settings (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  site_title TEXT,
+  site_description TEXT,
+  admin_pin TEXT DEFAULT '240708'
+);
+
+ALTER TABLE settings ENABLE ROW LEVEL SECURITY;
+
+-- 12. Storage Setup (Bucket & Policies)
+-- Perintah ini akan mencoba membuat bucket jika belum ada
+INSERT INTO storage.buckets (id, name, public)
+SELECT 'portfolio-images', 'portfolio-images', true
+WHERE NOT EXISTS (
+    SELECT 1 FROM storage.buckets WHERE id = 'portfolio-images'
+);
+
+-- Kebijakan Storage agar bisa upload dan baca
+DO $$ 
+BEGIN
+    DROP POLICY IF EXISTS "Public Access" ON storage.objects;
+    DROP POLICY IF EXISTS "Admin Upload" ON storage.objects;
+END $$;
+
+CREATE POLICY "Public Access" ON storage.objects FOR SELECT USING (bucket_id = 'portfolio-images');
+CREATE POLICY "Admin Upload" ON storage.objects FOR ALL USING (bucket_id = 'portfolio-images');
+
 -- POLICIES: Publik bisa baca (SELECT), Admin bisa semua (ALL)
 -- DROP EXISTING POLICIES TO AVOID ERRORS ON RERUN
 DO $$ 
@@ -190,6 +220,9 @@ BEGIN
     -- Partners
     DROP POLICY IF EXISTS "Allow public read" ON partners;
     DROP POLICY IF EXISTS "Allow all for auth" ON partners;
+    -- Settings
+    DROP POLICY IF EXISTS "Allow public read" ON settings;
+    DROP POLICY IF EXISTS "Allow all for auth" ON settings;
 END $$;
 
 -- RECREATE POLICIES
@@ -222,4 +255,12 @@ CREATE POLICY "Allow all for auth" ON learning_journey FOR ALL USING (auth.role(
 
 CREATE POLICY "Allow public read" ON partners FOR SELECT USING (true);
 CREATE POLICY "Allow all for auth" ON partners FOR ALL USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Allow public read" ON settings FOR SELECT USING (true);
+CREATE POLICY "Allow all for auth" ON settings FOR ALL USING (auth.role() = 'authenticated');
+
+-- INSERT DATA AWAL SETTINGS (Jika Kosong)
+INSERT INTO settings (site_title, site_description, admin_pin)
+SELECT 'Daffa Rizky | Web & Mobile Developer', 'Freelance Developer Indonesia...', '240708'
+WHERE NOT EXISTS (SELECT 1 FROM settings);
 

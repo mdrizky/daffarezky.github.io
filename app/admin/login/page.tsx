@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { FaLock, FaEye, FaEyeSlash } from 'react-icons/fa'
+import { supabase } from '@/lib/supabase'
 
 export default function AdminLogin() {
   const [pin, setPin] = useState('')
@@ -92,41 +93,47 @@ export default function AdminLogin() {
     setLoading(true)
     setError('')
 
-    const validPin = '240708'
     const enteredPin = pin.replace(/\s/g, '').trim()
 
-    if (enteredPin === validPin) {
-      setIsSuccess(true)
-      try {
+    try {
+      // Fetch valid PIN from database
+      const { data: settings } = await supabase
+        .from('settings')
+        .select('admin_pin')
+        .single()
+
+      const validPin = settings?.admin_pin || '240708'
+
+      if (enteredPin === validPin) {
+        setIsSuccess(true)
         localStorage.setItem('admin_pin_auth', 'true')
         localStorage.removeItem('admin_pin_attempts')
         localStorage.removeItem('admin_pin_lockout')
-      } catch (error) {
-        console.error('Login error:', error)
-        setError('Gagal menyimpan status login.')
-        setIsSuccess(false)
-      }
-    } else {
-      // Increment attempts
-      const newAttempts = attempts + 1
-      setAttempts(newAttempts)
-      try {
+      } else {
+        // Increment attempts
+        const newAttempts = attempts + 1
+        setAttempts(newAttempts)
         localStorage.setItem('admin_pin_attempts', newAttempts.toString())
 
-        // Lockout after 5 failed attempts (30 seconds)
         if (newAttempts >= 5) {
           const lockoutEnd = Date.now() + 30000
           setLockoutTime(lockoutEnd)
           localStorage.setItem('admin_pin_lockout', lockoutEnd.toString())
-          setError('Terlalu banyak percobaan salah. Tunggu 30 detik sebelum mencoba lagi.')
+          setError('Terlalu banyak percobaan salah. Tunggu 30 detik.')
         } else {
           setError(`PIN salah. Percobaan tersisa: ${5 - newAttempts}`)
         }
-      } catch (error) {
-        console.error('localStorage error:', error)
-        setError('PIN salah.')
+        setPin('')
       }
-      setPin('')
+    } catch (error) {
+      console.error('Login error:', error)
+      // Fallback for emergency
+      if (enteredPin === '240708') {
+        setIsSuccess(true)
+        localStorage.setItem('admin_pin_auth', 'true')
+      } else {
+        setError('PIN salah atau terjadi gangguan koneksi.')
+      }
     }
     
     setLoading(false)

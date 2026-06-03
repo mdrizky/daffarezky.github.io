@@ -233,6 +233,8 @@ export async function POST(request: NextRequest) {
       {
         name: name.trim(),
         email: email.trim().toLowerCase(),
+        whatsapp: whatsapp?.trim() || null,
+        subject: subject?.trim() || null,
         message: message.trim(),
         is_read: false,
       },
