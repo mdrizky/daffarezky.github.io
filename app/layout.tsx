@@ -24,38 +24,29 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://portofolio-daffarez
 
 export async function generateMetadata(): Promise<Metadata> {
   const supabase = await createClient();
-  const { data: settings } = await supabase
-    .from('settings')
+  const { data: profile } = await supabase
+    .from('profile')
     .select('*')
-    .limit(1)
     .single();
 
-  const siteTitle = settings?.site_title || "Daffa Rizky | Freelance Web & Mobile Developer";
-  const siteDesc = settings?.site_description || "Freelance Developer Indonesia - Daffa Rizky. Spesialis Next.js, React, TypeScript, dan Mobile Development. Bantu bangun website modern, aplikasi mobile, dan solusi teknologi kustom untuk bisnis dan startup.";
-  const keywords = settings?.seo_keywords?.split(',') || [
-    "Freelance Developer Indonesia",
-    "Web Developer Freelance",
-    "Mobile Developer Freelance",
-    "Next.js Developer",
-    "React Developer",
-    "TypeScript Developer",
-    "Full Stack Developer"
-  ];
+  const siteTitle = profile?.name ? `${profile.name} | Web & Mobile Developer` : "Muhammad Daffa Rizky Adyra | Web & Mobile Developer";
+  const siteDesc = profile?.bio_id || "Muhammad Daffa Rizky Adyra, Seorang Web & Mobile Developer muslim yang berfokus pada pengembangan website, aplikasi, dan solusi digital modern yang responsif, efisien, serta bermanfaat bagi pengguna.";
+  const siteLogo = profile?.logo_url || "/logo.png";
 
   return {
     metadataBase: new URL(siteUrl),
     title: {
       default: siteTitle,
-      template: `%s | ${siteTitle.split('|')[0].trim()}`,
+      template: `%s | ${profile?.name || 'Daffa Rizky'}`,
     },
     description: siteDesc,
     verification: {
       google: "uXSaWSLWd1NJfDFox7Y1hYIhEwlhMxQVNuAD2AAJ_qM",
     },
-    keywords: keywords,
-    authors: [{ name: "Daffa Rizky", url: siteUrl }],
-    creator: "Daffa Rizky",
-    publisher: "Daffa Rizky",
+    keywords: ["Daffa Rizky", "Web Developer", "Mobile Developer", "Next.js", "React Native", "Indonesia", "Muslim Developer"],
+    authors: [{ name: profile?.name || "Daffa Rizky", url: siteUrl }],
+    creator: profile?.name || "Daffa Rizky",
+    publisher: profile?.name || "Daffa Rizky",
     robots: {
       index: true,
       follow: true,
@@ -86,7 +77,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: siteTitle,
       images: [
         {
-          url: "/og-image.jpg",
+          url: siteLogo,
           width: 1200,
           height: 630,
           alt: siteTitle,
@@ -99,17 +90,17 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: siteTitle,
       description: siteDesc,
-      images: ["/og-image.jpg"],
+      images: [siteLogo],
       creator: "@daffarizky",
     },
     icons: {
       icon: [
-        { url: "/favicon.svg", type: "image/svg+xml" },
+        { url: "/logo.png" },
         { url: "/favicon.ico" },
-        { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-        { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+        { url: "/logo.png", sizes: "16x16", type: "image/png" },
+        { url: "/logo.png", sizes: "32x32", type: "image/png" },
       ],
-      apple: [{ url: "/apple-touch-icon.png" }],
+      apple: [{ url: "/logo.png" }],
     },
   };
 }

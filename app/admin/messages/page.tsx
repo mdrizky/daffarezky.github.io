@@ -55,11 +55,15 @@ export default function AdminMessagesPage() {
   async function loadMessages() {
     setLoading(true)
     try {
-      const res = await fetch("/api/admin/contacts")
-      const { data } = await res.json()
+      const { data, error } = await supabase
+        .from("messages")
+        .select("*")
+        .order("created_at", { ascending: false })
+
+      if (error) throw error
       setContacts(data || [])
     } catch (err) {
-      console.error("Failed to load contacts:", err)
+      console.error("Failed to load messages:", err)
     } finally {
       setLoading(false)
     }
@@ -68,8 +72,8 @@ export default function AdminMessagesPage() {
   async function deleteMessage(id: string) {
     if (!confirm("Yakin hapus pesan ini?")) return
     try {
-      const res = await fetch(`/api/admin/contacts?id=${id}`, { method: "DELETE" })
-      if (res.ok) {
+      const { error } = await supabase.from("messages").delete().eq("id", id)
+      if (!error) {
         setContacts(contacts.filter((c) => c.id !== id))
         if (selected?.id === id) setSelected(null)
       }
@@ -81,12 +85,12 @@ export default function AdminMessagesPage() {
   async function toggleStatus(id: string, is_read: boolean) {
     const newStatus = !is_read
     try {
-      const res = await fetch("/api/admin/contacts", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, is_read: newStatus }),
-      })
-      if (res.ok) {
+      const { error } = await supabase
+        .from("messages")
+        .update({ is_read: newStatus })
+        .eq("id", id)
+
+      if (!error) {
         setContacts(contacts.map((c) => (c.id === id ? { ...c, is_read: newStatus } : c)))
         if (selected?.id === id) setSelected({ ...selected, is_read: newStatus })
       }
