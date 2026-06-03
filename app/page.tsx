@@ -69,8 +69,8 @@ export default function Home() {
   }, []);
 
   const bio = language === 'id' 
-    ? "Assalamualaikum......, saya Muhammad Daffa Rezky Adyra, Seorang Web & Mobile Developer muslim yang berfokus pada pengembangan website, aplikasi, dan solusi digital modern yang responsif, efisien, serta bermanfaat bagi pengguna. Saya memiliki ketertarikan yang besar terhadap teknologi, Internet of Things (IoT), dan inovasi yang mampu memberikan dampak nyata bagi masyarakat. Sebagai seorang muslim, saya meyakini bahwa teknologi bukan hanya alat untuk menciptakan kemajuan, tetapi juga sarana untuk menghadirkan manfaat, menebarkan kebaikan, dan menjadi bagian dari kontribusi positif bagi umat, bangsa, dan lingkungan sekitar. Oleh karena itu, saya terus berkomitmen untuk belajar, berkembang, dan berkarya dengan penuh integritas serta tanggung jawab."
-    : "Greetings, I am Muhammad Daffa Rezky Adyra, a Muslim Web & Mobile Developer focused on developing modern, responsive, efficient, and useful digital solutions. I have a great interest in technology, Internet of Things (IoT), and innovations that can provide a real impact on society. As a Muslim, I believe that technology is not just a tool for progress, but also a means to bring benefits, spread goodness, and be part of a positive contribution to the ummah, nation, and environment. Therefore, I am committed to continuous learning, growing, and creating with full integrity and responsibility.";
+    ? (profile?.bio_id || "Assalamualaikum......, saya Muhammad Daffa Rezky Adyra, Seorang Web & Mobile Developer muslim yang berfokus pada pengembangan website, aplikasi, dan solusi digital modern yang responsif, efisien, serta bermanfaat bagi pengguna. Saya memiliki ketertarikan yang besar terhadap teknologi, Internet of Things (IoT), dan inovasi yang mampu memberikan dampak nyata bagi masyarakat. Sebagai seorang muslim, saya meyakini bahwa teknologi bukan hanya alat untuk menciptakan kemajuan, tetapi juga sarana untuk menghadirkan manfaat, menebarkan kebaikan, dan menjadi bagian dari kontribusi positif bagi umat, bangsa, dan lingkungan sekitar. Oleh karena itu, saya terus berkomitmen untuk belajar, berkembang, dan berkarya dengan penuh integritas serta tanggung jawab.")
+    : (profile?.bio_en || "Greetings, I am Muhammad Daffa Rezky Adyra, a Muslim Web & Mobile Developer focused on developing modern, responsive, efficient, and useful digital solutions. I have a great interest in technology, Internet of Things (IoT), and innovations that can provide a real impact on society. As a Muslim, I believe that technology is not just a tool for progress, but also a means to bring benefits, spread goodness, and be part of a positive contribution to the ummah, nation, and environment. Therefore, I am committed to continuous learning, growing, and creating with full integrity and responsibility.");
 
   const t = {
     greeting: language === 'id' ? 'Freelance Web & Mobile Developer' : 'Freelance Web & Mobile Developer',
@@ -164,13 +164,13 @@ export default function Home() {
             <span className="text-[var(--color-neon-green)] font-bold tracking-widest uppercase text-sm mb-4 block animate-in fade-in slide-in-from-left-4 duration-500">
               {t.greeting}
             </span>
-            <h1 className="text-5xl md:text-7xl font-heading font-bold leading-tight">
+            <h1 className="text-5xl md:text-7xl font-heading font-bold leading-tight text-gray-900 dark:text-white">
               {t.heroTitle} <br />
               <span className="text-gradient">
                 {t.heroTitle2}
               </span>
             </h1>
-            <p className="text-muted dark:text-gray-400 text-lg md:text-xl max-w-2xl leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-400 text-lg md:text-xl max-w-4xl leading-relaxed">
               {bio}
             </p>
             
@@ -187,7 +187,7 @@ export default function Home() {
             </div>
 
             <div className="mt-8">
-              <p className="text-sm text-gray-500 mb-4 uppercase tracking-widest font-bold">{t.connect}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-500 mb-4 uppercase tracking-widest font-bold">{t.connect}</p>
               <SocialLinks />
             </div>
 
@@ -196,19 +196,19 @@ export default function Home() {
                 <div className="text-3xl font-heading font-bold text-gray-900 dark:text-white">
                   {stats.projects}
                 </div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">{t.projects}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">{t.projects}</div>
               </div>
               <div>
                 <div className="text-3xl font-heading font-bold text-gray-900 dark:text-white">
                   {stats.skills}
                 </div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">{t.tools}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">{t.tools}</div>
               </div>
               <div>
                 <div className="text-3xl font-heading font-bold text-gray-900 dark:text-white">
                   {yearsOfLearning}
                 </div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">{t.experience}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">{t.experience}</div>
               </div>
             </div>
           </div>{/* end left column */}

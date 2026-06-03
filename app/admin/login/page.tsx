@@ -73,8 +73,9 @@ export default function AdminLogin() {
     setError('')
 
     const validPin = '240708'
+    console.log('Comparing:', pin, 'with:', validPin)
 
-    if (pin === validPin) {
+    if (pin.trim() === validPin) {
       // Reset attempts on success
       try {
         localStorage.removeItem('admin_pin_attempts')

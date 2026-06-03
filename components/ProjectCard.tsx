@@ -47,19 +47,19 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
         <h3 className="text-xl font-heading font-bold mb-2 group-hover:text-[var(--color-neon-green)] transition-colors text-gray-900 dark:text-white">
           {title}
         </h3>
-        <p className="text-gray-500 dark:text-gray-400 text-sm mb-4 line-clamp-none flex-grow leading-relaxed">
+        <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-none flex-grow leading-relaxed">
           {description}
         </p>
 
         {/* Tech Stack */}
         <div className="flex flex-wrap gap-2 mb-6">
           {project.tech_stack?.slice(0, 4).map((tech, i) => (
-            <span key={i} className="px-2 py-1 text-xs rounded-md bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300">
+            <span key={i} className="px-2 py-1 text-xs rounded-md bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300">
               {tech}
             </span>
           ))}
           {project.tech_stack?.length > 4 && (
-            <span className="px-2 py-1 text-xs rounded-md bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300">
+            <span key="more" className="px-2 py-1 text-xs rounded-md bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300">
               +{project.tech_stack.length - 4}
             </span>
           )}
@@ -72,7 +72,7 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
               href={project.demo_url} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-[var(--color-neon-green)] transition-colors"
+              className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-300 hover:text-[var(--color-neon-green)] transition-colors"
               onClick={(e) => e.stopPropagation()}
             >
               <FaExternalLinkAlt /> {demoLabel}
@@ -83,7 +83,7 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
               href={project.github_url} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+              className="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
               onClick={(e) => e.stopPropagation()}
             >
               <FaGithub /> GitHub

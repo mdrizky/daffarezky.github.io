@@ -36,7 +36,7 @@ export default function BlogCard({ post }: { post: BlogPost }) {
 
         {/* Content */}
         <div className="p-6 flex flex-col flex-grow">
-          <div className="flex items-center gap-2 text-gray-400 text-xs mb-3">
+          <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-xs mb-3">
             <FaCalendarAlt />
             <span>{date}</span>
           </div>
@@ -45,7 +45,7 @@ export default function BlogCard({ post }: { post: BlogPost }) {
             {title}
           </h3>
           
-          <p className="text-gray-500 dark:text-gray-400 text-sm mb-6 line-clamp-3 flex-grow">
+          <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 line-clamp-3 flex-grow">
             {excerpt}
           </p>
 

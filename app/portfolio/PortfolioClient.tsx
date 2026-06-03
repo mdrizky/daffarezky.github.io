@@ -35,10 +35,10 @@ export default function PortfolioClient({ initialProjects }: { initialProjects: 
           <button
             key={cat}
             onClick={() => setFilter(cat)}
-            className={`px-6 py-2 rounded-full font-medium transition-all ${
+            className={`px-6 py-2 rounded-full font-bold transition-all ${
               filter === cat 
                 ? "bg-gradient-neon text-[#0A0A0F] shadow-[0_0_15px_rgba(0,255,136,0.3)]" 
-                : "bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/10"
+                : "bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/10 shadow-sm"
             }`}
           >
             {cat}

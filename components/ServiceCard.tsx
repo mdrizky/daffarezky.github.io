@@ -30,14 +30,14 @@ export default function ServiceCard({ service }: { service: Service }) {
       <div className="text-3xl font-bold text-[var(--color-neon-green)] mb-4">
         {service.price}
       </div>
-      <p className="text-gray-500 dark:text-gray-400 text-sm mb-8">
+      <p className="text-gray-600 dark:text-gray-400 text-sm mb-8">
         {description}
       </p>
 
       <div className="flex-grow">
         <ul className="flex flex-col gap-3 mb-8">
           {features?.map((feature, idx) => (
-            <li key={idx} className="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-300">
+            <li key={idx} className="flex items-start gap-3 text-sm font-medium text-gray-700 dark:text-gray-300">
               <FaCheckCircle className="text-[var(--color-neon-blue)] mt-0.5 shrink-0" />
               <span>{feature}</span>
             </li>
