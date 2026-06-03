@@ -21,13 +21,13 @@ export async function PUT(req: Request) {
 
   try {
     const body = await req.json()
-    const { id, status } = body
+    const { id, is_read } = body
 
-    if (!id || !status) {
-      return NextResponse.json({ error: "id and status required" }, { status: 400 })
+    if (!id || is_read === undefined) {
+      return NextResponse.json({ error: "id and is_read required" }, { status: 400 })
     }
 
-    const { data, error } = await supabase.from("messages").update({ status }).eq("id", id).select()
+    const { data, error } = await supabase.from("messages").update({ is_read }).eq("id", id).select()
 
     if (error) throw error
 

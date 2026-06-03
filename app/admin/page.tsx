@@ -21,6 +21,52 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchDashboardData()
+
+    // Setup Supabase Realtime for Messages
+    const channel = supabase
+      .channel('public:messages')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'messages' },
+        (payload) => {
+          // Update stats count
+          setStats(prev => ({
+            ...prev,
+            messages: prev.messages + 1
+          }))
+          // Update recent messages
+          setRecentMessages(prev => {
+            const newArray = [payload.new, ...prev]
+            return newArray.slice(0, 5) // keep only 5
+          })
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'messages' },
+        (payload) => {
+          // If a message was marked as read/unread, update the count accordingly.
+          // Note: The stats count currently tracks total UNREAD messages.
+          // Wait, actually the fetchDashboardData counts unread messages: .eq('is_read', false)
+          const wasUnread = payload.old?.is_read === false
+          const isNowUnread = payload.new.is_read === false
+
+          if (wasUnread && !isNowUnread) {
+            setStats(prev => ({ ...prev, messages: Math.max(0, prev.messages - 1) }))
+          } else if (!wasUnread && isNowUnread) {
+            setStats(prev => ({ ...prev, messages: prev.messages + 1 }))
+          }
+
+          setRecentMessages(prev => 
+            prev.map(msg => msg.id === payload.new.id ? { ...msg, is_read: payload.new.is_read } : msg)
+          )
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [])
 
   const fetchDashboardData = async () => {
