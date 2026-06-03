@@ -174,10 +174,17 @@ CREATE POLICY "Allow all for auth" ON learning_journey FOR ALL USING (auth.role(
 -- Anda mungkin perlu mematikan RLS atau menggunakan API Key service_role di client (TIDAK DISARANKAN).
 -- Sebaiknya aktifkan login admin Supabase agar RLS 'authenticated' berfungsi.
 
--- INSERT DATA AWAL PROFILE (Jika Kosong)
-INSERT INTO profile (name, title_id, title_en, bio_id, bio_en, wa, email)
-SELECT 'Muhammad Daffa Rezky Adyra', 'Web & Mobile Developer', 'Web & Mobile Developer', 
-'Assalamualaikum......, saya Muhammad Daffa Rezky Adyra, Seorang Web & Mobile Developer muslim...', 
-'Greetings, I am Muhammad Daffa Rezky Adyra, a Muslim Web & Mobile Developer...',
-'081374936621', 'dfrzkyy@gmail.com'
-WHERE NOT EXISTS (SELECT 1 FROM profile);
+-- 10. Tabel Partners / Clients
+CREATE TABLE IF NOT EXISTS partners (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  name TEXT NOT NULL,
+  logo_url TEXT,
+  website_url TEXT,
+  order_index INTEGER DEFAULT 0
+);
+
+ALTER TABLE partners ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read" ON partners FOR SELECT USING (true);
+CREATE POLICY "Allow all for auth" ON partners FOR ALL USING (auth.role() = 'authenticated');
+

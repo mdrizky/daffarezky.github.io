@@ -116,13 +116,21 @@ export default function AdminSettings() {
 
     try {
       const ext = file.name.split('.').pop()
-      const filePath = `logo/site-logo-${Date.now()}.${ext}`
+      const fileName = `logo-${Date.now()}.${ext}`
+      const filePath = `profile/${fileName}`
 
+      // Perbaikan: Pastikan bucket 'portfolio-images' sudah ada dan RLS-nya benar di Supabase
       const { error: uploadError } = await supabase.storage
         .from('portfolio-images')
-        .upload(filePath, file, { upsert: true })
+        .upload(filePath, file, { 
+          upsert: true,
+          cacheControl: '3600'
+        })
 
-      if (uploadError) throw uploadError
+      if (uploadError) {
+        console.error('Storage Upload Error:', uploadError)
+        throw new Error(`Gagal upload ke storage: ${uploadError.message}. Pastikan bucket 'portfolio-images' sudah ada.`)
+      }
 
       const { data: urlData } = supabase.storage
         .from('portfolio-images')
@@ -131,7 +139,7 @@ export default function AdminSettings() {
       await saveLogo(urlData.publicUrl)
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err)
-      setLogoError(msg || 'Gagal mengupload logo.')
+      setLogoError(msg)
     } finally {
       setLogoSaving(false)
     }

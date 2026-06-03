@@ -6,7 +6,7 @@ import { createClient } from "@supabase/supabase-js";
 import { 
   FaHome, FaProjectDiagram, FaBlog, 
   FaCogs, FaEnvelope, FaUserEdit, FaSignOutAlt,
-  FaGraduationCap, FaTools, FaBriefcase, FaCertificate
+  FaGraduationCap, FaTools, FaBriefcase, FaCertificate, FaHandshake
 } from "react-icons/fa";
 import SiteLogo from "@/components/SiteLogo";
 
@@ -27,8 +27,9 @@ export default function Sidebar() {
     { name: "Pengalaman", path: "/admin/experience", icon: <FaBriefcase /> },
     { name: "Layanan", path: "/admin/services", icon: <FaCogs /> },
     { name: "Blog", path: "/admin/blog", icon: <FaBlog /> },
-    { name: "Pesan", path: "/admin/messages", icon: <FaEnvelope /> },
-    { name: "Testimonials", path: "/admin/testimonials", icon: <FaEnvelope /> },
+    {name: "Pesan", path: "/admin/messages", icon: <FaEnvelope /> },
+    {name: "Partner", path: "/admin/partners", icon: <FaHandshake /> },
+    {name: "Testimonials", path: "/admin/testimonials", icon: <FaEnvelope /> },
     { name: "Settings", path: "/admin/settings", icon: <FaCogs /> },
   ];
 

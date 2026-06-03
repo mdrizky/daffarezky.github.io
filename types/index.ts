@@ -163,6 +163,15 @@ export type Concept = {
   created_at: string
 }
 
+export type Partner = {
+  id: string
+  name: string
+  logo_url?: string
+  website_url?: string
+  order_index: number
+  created_at: string
+}
+
 export type Islamic = {
   id: string
   title_id: string
@@ -177,3 +186,5 @@ export type Islamic = {
   order_index: number
   created_at: string
 }
+
+
