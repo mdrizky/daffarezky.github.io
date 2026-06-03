@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { FaLock, FaEye, FaEyeSlash, FaShieldAlt } from 'react-icons/fa'
+import Image from 'next/image'
+import { FaLock, FaEye, FaEyeSlash } from 'react-icons/fa'
 
 export default function AdminLogin() {
   const [pin, setPin] = useState('')
@@ -152,8 +153,14 @@ export default function AdminLogin() {
             <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/5 to-transparent pointer-events-none"></div>
 
             <div className="text-center mb-12 relative z-10">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-[#00FF88] to-[#0099FF] rounded-3xl mb-8 shadow-[0_20px_40px_rgba(0,255,136,0.3)] rotate-3 hover:rotate-0 transition-transform duration-500">
-                <FaShieldAlt className="text-3xl text-[#0A0A0F]" />
+              <div className="inline-flex items-center justify-center w-24 h-24 mb-8 rotate-3 hover:rotate-0 transition-transform duration-500 relative rounded-3xl overflow-hidden shadow-[0_20px_40px_rgba(0,255,136,0.2)] bg-white/5 backdrop-blur-sm p-3 border border-white/10">
+                <Image 
+                  src="/logo.png" 
+                  alt="Logo" 
+                  width={80} 
+                  height={80} 
+                  className="object-contain w-full h-full drop-shadow-[0_0_15px_rgba(0,255,136,0.5)]"
+                />
               </div>
               <h1 className="text-4xl font-black tracking-tight text-white mb-3 font-heading">
                 Admin <span className="text-gradient">Access</span>
