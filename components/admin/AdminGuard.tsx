@@ -8,7 +8,7 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
   const router = useRouter()
   const pathname = usePathname()
   const [loading, setLoading] = useState(true)
-  const isLoginPage = pathname === '/admin/login'
+  const isLoginPage = pathname?.includes('/admin/login')
 
   useEffect(() => {
     // Skip auth check for login page
@@ -18,19 +18,27 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
     }
 
     // A simple PIN auth check via localStorage
-    try {
-      const isAuthenticated = localStorage.getItem('admin_pin_auth') === 'true'
-      console.log('AdminGuard: isAuthenticated =', isAuthenticated)
-      
-      if (!isAuthenticated) {
+    const checkAuth = () => {
+      try {
+        const isAuthenticated = localStorage.getItem('admin_pin_auth') === 'true'
+        console.log('AdminGuard: isAuthenticated =', isAuthenticated)
+        
+        if (!isAuthenticated) {
+          router.push('/admin/login')
+        } else {
+          setLoading(false)
+        }
+      } catch (error) {
+        console.error('AdminGuard localStorage error:', error)
         router.push('/admin/login')
-      } else {
-        setLoading(false)
       }
-    } catch (error) {
-      console.error('AdminGuard localStorage error:', error)
-      router.push('/admin/login')
     }
+
+    checkAuth()
+    
+    // Optional: Check again on focus to handle multi-tab login
+    window.addEventListener('focus', checkAuth)
+    return () => window.removeEventListener('focus', checkAuth)
   }, [router, pathname, isLoginPage])
 
   // Don't show loading spinner on login page

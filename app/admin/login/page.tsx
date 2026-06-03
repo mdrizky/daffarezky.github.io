@@ -15,6 +15,17 @@ export default function AdminLogin() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
 
+  // Auto-redirect if already logged in
+  useEffect(() => {
+    try {
+      if (localStorage.getItem('admin_pin_auth') === 'true') {
+        router.push('/admin')
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }, [router])
+
   // Load attempts from localStorage on mount
   useEffect(() => {
     try {
@@ -73,19 +84,23 @@ export default function AdminLogin() {
     setError('')
 
     const validPin = '240708'
-    console.log('Comparing:', pin, 'with:', validPin)
+    const enteredPin = pin.replace(/\s/g, '').trim()
+    console.log('Comparing entered:', enteredPin, 'with:', validPin)
 
-    if (pin.trim() === validPin) {
+    if (enteredPin === validPin) {
       // Reset attempts on success
       try {
         localStorage.removeItem('admin_pin_attempts')
         localStorage.removeItem('admin_pin_lockout')
         localStorage.setItem('admin_pin_auth', 'true')
         console.log('Login successful, auth set to true')
+        
+        // Use hard redirect to ensure Guard picks up the localStorage change
+        window.location.href = '/admin'
       } catch (error) {
         console.error('localStorage error:', error)
+        router.push('/admin')
       }
-      router.push('/admin')
     } else {
       // Increment attempts
       const newAttempts = attempts + 1
@@ -162,7 +177,7 @@ export default function AdminLogin() {
                   onChange={(e) => setPin(e.target.value)}
                   className={`w-full pl-12 pr-12 py-5 text-center tracking-[0.6em] text-3xl sm:text-4xl font-extrabold bg-white/6 border border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#00FF88] text-white placeholder-gray-500 transition-all duration-300 ${isSubmitting ? 'scale-95' : 'scale-100'}`}
                   placeholder="••••••"
-                  maxLength={6}
+                  maxLength={12}
                   required
                   autoFocus
                   disabled={isLocked}
