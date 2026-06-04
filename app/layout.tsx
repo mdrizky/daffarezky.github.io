@@ -37,19 +37,21 @@ export async function generateMetadata(): Promise<Metadata> {
     .select('*')
     .single();
 
-  const siteTitle = settings?.site_title || (profile?.name ? `${profile.name} | TKJ Developer & IoT Enthusiast` : "Muhammad Daffa Rezky Adyra | TKJ Developer & IoT Enthusiast");
-  const siteDesc = settings?.site_description || (profile?.bio_id || "Portfolio Muhammad Daffa Rezky Adyra. Siswa TKJ yang fokus pada Web Development, IoT, Networking, AI, dan Cyber Security.");
-  const siteLogo = profile?.logo_url || "/logo.png";
+  // Paksa identitas baru untuk menghindari data lama dari database
+  const siteTitle = "Muhammad Daffa Rezky Adyra | Developer & Technology Enthusiast";
+  const siteDesc = "Portfolio resmi Muhammad Daffa Rezky Adyra. Menampilkan proyek unggulan, teknologi yang dikuasai, serta pengalaman membangun aplikasi dan solusi digital yang berdampak.";
+  const siteLogo = "/logo.png"; // Icon/Favicon tetap menggunakan logo baru
+  const ogImage = profile?.photo_url || "/logo.png"; // Gambar untuk Search/Sosmed menggunakan Foto Profile
   const siteUrl = "https://portofolio-daffarezky.vercel.app";
 
   return {
     title: {
       default: siteTitle,
-      template: `%s | ${profile?.name || 'Daffa Rizky'}`,
+      template: `%s | ${profile?.name || 'Daffa Rezky'}`,
     },
     description: siteDesc,
     metadataBase: new URL(siteUrl),
-    keywords: ["Muhammad Daffa Rezky Adyra", "Daffa Rizky", "TKJ Developer", "IoT Enthusiast", "Web Developer", "Mobile Developer", "Next.js", "Indonesia", "Siaga+"],
+    keywords: ["Muhammad Daffa Rezky Adyra", "Daffa Rizky", "Developer", "Technology Enthusiast", "Web Developer", "Mobile Developer", "Next.js", "Indonesia"],
     authors: [{ name: profile?.name || "Muhammad Daffa Rezky Adyra", url: siteUrl }],
     creator: profile?.name || "Muhammad Daffa Rezky Adyra",
     publisher: profile?.name || "Muhammad Daffa Rezky Adyra",
@@ -86,7 +88,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: siteTitle,
       images: [
         {
-          url: siteLogo,
+          url: ogImage,
           width: 1200,
           height: 630,
           alt: siteTitle,
@@ -99,17 +101,17 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: siteTitle,
       description: siteDesc,
-      images: [siteLogo],
+      images: [ogImage],
       creator: "@daffarizky",
     },
     icons: {
       icon: [
-        { url: "/logo.png" },
+        { url: siteLogo },
         { url: "/favicon.ico" },
-        { url: "/logo.png", sizes: "16x16", type: "image/png" },
-        { url: "/logo.png", sizes: "32x32", type: "image/png" },
+        { url: siteLogo, sizes: "16x16", type: "image/png" },
+        { url: siteLogo, sizes: "32x32", type: "image/png" },
       ],
-      apple: [{ url: "/logo.png" }],
+      apple: [{ url: siteLogo }],
     },
   };
 }
@@ -122,8 +124,8 @@ export default async function RootLayout({
   const supabase = await createClient();
   const { data: settings } = await supabase.from('settings').select('*').limit(1).single();
 
-  const siteTitle = settings?.site_title || "Muhammad Daffa Rezky Adyra";
-  const siteDesc = settings?.site_description || "Siswa TKJ, Web Developer, IoT Enthusiast, dan Founder Project Siaga+.";
+  const siteTitle = "Muhammad Daffa Rezky Adyra | Developer & Technology Enthusiast";
+  const siteDesc = "Portfolio resmi Muhammad Daffa Rezky Adyra. Menampilkan proyek unggulan, teknologi yang dikuasai, serta pengalaman membangun aplikasi dan solusi digital yang berdampak.";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -131,7 +133,7 @@ export default async function RootLayout({
     name: "Muhammad Daffa Rezky Adyra",
     url: siteUrl,
     image: `${siteUrl}/logo.png`,
-    jobTitle: "Student & Developer",
+    jobTitle: "Developer & Technology Enthusiast",
     description: siteDesc,
     sameAs: [
       "https://github.com/daffarizky",

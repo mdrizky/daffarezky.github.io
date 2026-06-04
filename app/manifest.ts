@@ -2,10 +2,10 @@ import { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Muhammad Daffa Rezky Adyra | TKJ Developer & IoT Enthusiast",
-    short_name: "Daffa Rizky",
+    name: "Muhammad Daffa Rezky Adyra | Developer & Technology Enthusiast",
+    short_name: "Daffa Rezky",
     description:
-      "Siswa TKJ, Web Developer, IoT Enthusiast, dan Founder Project Siaga+.",
+      "Portfolio resmi Muhammad Daffa Rezky Adyra. Menampilkan proyek unggulan, teknologi yang dikuasai, serta pengalaman membangun aplikasi dan solusi digital yang berdampak.",
     start_url: "/",
     display: "standalone",
     background_color: "#0A0A0F",

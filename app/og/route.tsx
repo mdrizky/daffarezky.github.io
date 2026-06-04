@@ -10,8 +10,8 @@ const HEIGHT = 630;
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
 
-  const title = searchParams.get("title") ?? "Daffa Rizky";
-  const description = searchParams.get("description") ?? "Web & Mobile Developer";
+  const title = searchParams.get("title") ?? "Muhammad Daffa Rezky Adyra";
+  const description = searchParams.get("description") ?? "TKJ Developer & IoT Enthusiast";
   const category = searchParams.get("category") ?? "";
   const type = searchParams.get("type") ?? "blog"; // "blog" | "page"
 
