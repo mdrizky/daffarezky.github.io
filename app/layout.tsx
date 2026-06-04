@@ -37,8 +37,8 @@ export async function generateMetadata(): Promise<Metadata> {
     .select('*')
     .single();
 
-  const siteTitle = settings?.site_title || (profile?.name ? `${profile.name} | Web & Mobile Developer` : "Muhammad Daffa Rizky Adyra | Web & Mobile Developer");
-  const siteDesc = settings?.site_description || (profile?.bio_id || "Muhammad Daffa Rizky Adyra, Seorang Web & Mobile Developer muslim...");
+  const siteTitle = settings?.site_title || (profile?.name ? `${profile.name} | TKJ Developer & IoT Enthusiast` : "Muhammad Daffa Rezky Adyra | TKJ Developer & IoT Enthusiast");
+  const siteDesc = settings?.site_description || (profile?.bio_id || "Portfolio Muhammad Daffa Rezky Adyra. Siswa TKJ yang fokus pada Web Development, IoT, Networking, AI, dan Cyber Security.");
   const siteLogo = profile?.logo_url || "/logo.png";
   const siteUrl = "https://portofolio-daffarezky.vercel.app";
 
@@ -49,10 +49,10 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description: siteDesc,
     metadataBase: new URL(siteUrl),
-    keywords: ["Daffa Rizky", "Web Developer", "Mobile Developer", "Next.js", "React Native", "Indonesia", "Muslim Developer"],
-    authors: [{ name: profile?.name || "Daffa Rizky", url: siteUrl }],
-    creator: profile?.name || "Daffa Rizky",
-    publisher: profile?.name || "Daffa Rizky",
+    keywords: ["Muhammad Daffa Rezky Adyra", "Daffa Rizky", "TKJ Developer", "IoT Enthusiast", "Web Developer", "Mobile Developer", "Next.js", "Indonesia", "Siaga+"],
+    authors: [{ name: profile?.name || "Muhammad Daffa Rezky Adyra", url: siteUrl }],
+    creator: profile?.name || "Muhammad Daffa Rezky Adyra",
+    publisher: profile?.name || "Muhammad Daffa Rezky Adyra",
     robots: {
       index: true,
       follow: true,
@@ -66,6 +66,9 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     alternates: {
       canonical: siteUrl,
+    },
+    verification: {
+      google: "googlead59726551d000c1",
     },
     manifest: "/manifest.json",
     appleWebApp: {
@@ -119,16 +122,16 @@ export default async function RootLayout({
   const supabase = await createClient();
   const { data: settings } = await supabase.from('settings').select('*').limit(1).single();
 
-  const siteTitle = settings?.site_title || "Daffa Rizky";
-  const siteDesc = settings?.site_description || "Freelance Developer Indonesia - Spesialis Next.js, React, TypeScript, dan Mobile Development.";
+  const siteTitle = settings?.site_title || "Muhammad Daffa Rezky Adyra";
+  const siteDesc = settings?.site_description || "Siswa TKJ, Web Developer, IoT Enthusiast, dan Founder Project Siaga+.";
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: "Daffa Rizky",
+    name: "Muhammad Daffa Rezky Adyra",
     url: siteUrl,
-    image: `${siteUrl}/og-image.jpg`,
-    jobTitle: "Freelance Web & Mobile Developer",
+    image: `${siteUrl}/logo.png`,
+    jobTitle: "Student & Developer",
     description: siteDesc,
     sameAs: [
       "https://github.com/daffarizky",
@@ -144,6 +147,9 @@ export default async function RootLayout({
       "Full Stack Development",
       "Frontend Development",
       "Backend Development",
+      "IoT",
+      "Networking",
+      "Cyber Security"
     ],
   };
 
