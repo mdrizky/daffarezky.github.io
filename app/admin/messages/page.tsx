@@ -236,23 +236,27 @@ export default function AdminMessagesPage() {
               {/* Quick Actions */}
               <div className="flex flex-wrap gap-4 mt-auto pt-6 border-t border-gray-200 dark:border-white/5">
                 <a
-                  href={`mailto:${selected.email}?subject=Re: ${selected.subject || 'Portfolio Inquiry'}&body=Halo ${selected.name},%0D%0A%0D%0ATerima kasih telah menghubungi saya melalui portfolio. Saya telah menerima pesan Anda dan akan segera merespons.%0D%0A%0D%0ASalam,%0D%0ADaffa Rizky`}
+                  href={`mailto:${selected.email}?subject=${encodeURIComponent(`Re: ${selected.subject || 'Portfolio Inquiry'}`)}&body=${encodeURIComponent(`Halo ${selected.name},\n\nTerima kasih telah menghubungi saya melalui portfolio. Saya telah menerima pesan Anda dan akan segera merespons.\n\nSalam,\nDaffa Rizky\n\n---\nOriginal Message:\n${selected.message}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 min-w-[200px] flex items-center justify-center gap-3 py-4 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white font-bold rounded-2xl transition-all border border-red-500/20"
                 >
                   <FaEnvelope /> Balas via Email
                 </a>
-                {selected.whatsapp && (
-                  <a
-                    href={`https://wa.me/${selected.whatsapp.replace(/\D/g, '')}?text=Halo ${encodeURIComponent(selected.name)},%0D%0A%0D%0ATerima kasih telah menghubungi saya melalui portfolio. Saya telah menerima pesan Anda dan akan segera merespons.%0D%0A%0D%0ASalam,%0D%0ADaffa Rizky`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 min-w-[200px] flex items-center justify-center gap-3 py-4 bg-green-500/10 text-green-500 hover:bg-green-500 hover:text-white font-bold rounded-2xl transition-all border border-green-500/20"
-                  >
-                    <FaWhatsapp /> Hubungi via WhatsApp
-                  </a>
-                )}
+                <a
+                  href={`https://wa.me/${selected.whatsapp ? selected.whatsapp.replace(/\D/g, '') : ''}?text=${encodeURIComponent(`Halo ${selected.name},\n\nTerima kasih telah menghubungi saya melalui portfolio. Saya telah menerima pesan Anda dan akan segera merespons.\n\nSalam,\nDaffa Rizky`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`flex-1 min-w-[200px] flex items-center justify-center gap-3 py-4 ${selected.whatsapp ? 'bg-green-500/10 text-green-500 hover:bg-green-500 hover:text-white' : 'bg-gray-100 dark:bg-white/5 text-gray-400 cursor-not-allowed'} font-bold rounded-2xl transition-all border ${selected.whatsapp ? 'border-green-500/20' : 'border-gray-200 dark:border-white/10'}`}
+                  onClick={(e) => {
+                    if (!selected.whatsapp) {
+                      e.preventDefault()
+                      alert('User tidak menyertakan nomor WhatsApp')
+                    }
+                  }}
+                >
+                  <FaWhatsapp /> Hubungi via WhatsApp
+                </a>
                 <button
                   onClick={() => deleteMessage(selected.id)}
                   className="px-6 py-4 bg-gray-100 dark:bg-white/5 text-gray-500 hover:bg-red-600 hover:text-white font-bold rounded-2xl transition-all"
