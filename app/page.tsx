@@ -22,20 +22,27 @@ export default function Home() {
   const [stats, setStats] = useState({ projects: 0, skills: 0 });
   const [loading, setLoading] = useState(true);
 
+  const [reasons, setReasons] = useState<ReasonsToHire[]>([]);
+  const [milestones, setMilestones] = useState<JourneyMilestone[]>([]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [profileRes, projectsRes, servicesRes, skillsCountRes, projectsCountRes] = await Promise.all([
+        const [profileRes, projectsRes, servicesRes, skillsCountRes, projectsCountRes, reasonsRes, milestonesRes] = await Promise.all([
           supabase.from("profile").select("*").limit(1),
           supabase.from("projects").select("*").eq("featured", true).limit(3),
           supabase.from("services").select("*").order("price", { ascending: true }).limit(3),
           supabase.from("skills").select("*", { count: 'exact', head: true }),
           supabase.from("projects").select("*", { count: 'exact', head: true }),
+          supabase.from("reasons_to_hire").select("*").order("sort_order", { ascending: true }),
+          supabase.from("journey_milestones").select("*").order("sort_order", { ascending: true }),
         ]);
 
         if (profileRes.data && profileRes.data.length > 0) setProfile(profileRes.data[0]);
         if (projectsRes.data) setProjects(projectsRes.data);
         if (servicesRes.data) setServicesData(servicesRes.data);
+        if (reasonsRes.data) setReasons(reasonsRes.data);
+        if (milestonesRes.data) setMilestones(milestonesRes.data);
         setStats({
           projects: projectsCountRes.count || 0,
           skills: skillsCountRes.count || 0
@@ -230,7 +237,42 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Journey Milestones Section */}
+      {milestones.length > 0 && (
+        <section className="container mx-auto px-6 md:px-12">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4 text-gray-900 dark:text-white">
+              {language === 'id' ? 'Milestone Perjalanan' : 'Learning Journey'}
+            </h2>
+            <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+              {language === 'id' ? 'Langkah demi langkah perjalanan saya di dunia teknologi.' : 'Step by step my journey in the technology world.'}
+            </p>
+          </div>
+          <div className="relative border-l-2 border-gray-200 dark:border-white/10 ml-4 md:ml-0 md:max-w-4xl md:mx-auto pl-8 space-y-12">
+            {milestones.map((item, i) => (
+              <div key={item.id} className="relative animate-in fade-in slide-in-from-left-4 duration-500" style={{ transitionDelay: `${i * 100}ms` }}>
+                <div className="absolute -left-[41px] top-0 w-5 h-5 bg-white dark:bg-[#0A0A0F] border-4 border-blue-500 rounded-full z-10 shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
+                <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-8">
+                  <span className="text-2xl font-black text-blue-500 dark:text-[var(--color-neon-blue)] md:w-20 shrink-0">
+                    {item.year}
+                  </span>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                      {language === 'id' ? item.title_id : item.title_en}
+                    </h3>
+                    <p className="text-gray-500 dark:text-gray-400 mt-1">
+                      {language === 'id' ? item.description_id : item.description_en}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* 2. About Snapshot */}
+
       <section className="container mx-auto px-6 md:px-12">
         <div className="bg-white/80 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-3xl p-8 md:p-16 flex flex-col md:flex-row gap-12 items-center relative overflow-hidden shadow-sm">
           <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-neon opacity-10 blur-3xl rounded-full"></div>
@@ -249,27 +291,37 @@ export default function Home() {
       </section>
 
       {/* 3. Value Proposition */}
-      <section className="container mx-auto px-6 md:px-12">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4 text-gray-900 dark:text-white">
-            {t.valueTitle}
-          </h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[
-            { text: t.value1, icon: "✅" },
-            { text: t.value2, icon: "✅" },
-            { text: t.value3, icon: "✅" },
-            { text: t.value4, icon: "✅" },
-            { text: t.value5, icon: "✅" },
-          ].map((item, i) => (
-            <div key={i} className="flex items-center gap-4 p-6 bg-white/50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl hover:border-[var(--color-neon-green)]/50 transition-all group">
-              <span className="text-2xl group-hover:scale-125 transition-transform">{item.icon}</span>
-              <span className="font-bold text-gray-700 dark:text-gray-300">{item.text}</span>
-            </div>
-          ))}
-        </div>
-      </section>
+      {reasons.length > 0 && (
+        <section className="container mx-auto px-6 md:px-12">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4 text-gray-900 dark:text-white">
+              {t.valueTitle}
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {reasons.map((item) => (
+              <div key={item.id} className="flex flex-col gap-4 p-8 bg-white/50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-3xl hover:border-[var(--color-neon-green)]/50 transition-all group shadow-sm">
+                <div className="w-12 h-12 bg-gray-100 dark:bg-white/5 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform text-blue-500">
+                  {item.icon === 'rocket' && '🚀'}
+                  {item.icon === 'code' && '💻'}
+                  {item.icon === 'lightbulb' && '💡'}
+                  {item.icon === 'hands' && '🤝'}
+                  {!['rocket', 'code', 'lightbulb', 'hands'].includes(item.icon) && '✨'}
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                    {language === 'id' ? item.title_id : item.title_en}
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                    {language === 'id' ? item.description_id : item.description_en}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
 
       {/* Current Projects Section */}
       {currentProjects.length > 0 && (

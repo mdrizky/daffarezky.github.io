@@ -237,6 +237,7 @@ export async function POST(request: NextRequest) {
         subject: subject?.trim() || null,
         message: message.trim(),
         is_read: false,
+        status: 'new',
       },
     ]);
 

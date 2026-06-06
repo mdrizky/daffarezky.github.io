@@ -73,7 +73,7 @@ export default function AdminMessagesPage() {
   async function deleteMessage(id: string) {
     if (!confirm("Yakin hapus pesan ini?")) return
     try {
-      const { error } = await supabase.from("messages").delete().eq("id", id)
+      const { error } = await db.messages.delete(id)
       if (!error) {
         setContacts(contacts.filter((c) => c.id !== id))
         if (selected?.id === id) setSelected(null)
@@ -86,10 +86,9 @@ export default function AdminMessagesPage() {
   async function toggleStatus(id: string, is_read: boolean) {
     const newStatus = !is_read
     try {
-      const { error } = await supabase
-        .from("messages")
-        .update({ is_read: newStatus })
-        .eq("id", id)
+      const { error } = newStatus 
+        ? await db.messages.markAsRead(id)
+        : await db.messages.markAsUnread(id)
 
       if (!error) {
         setContacts(contacts.map((c) => (c.id === id ? { ...c, is_read: newStatus } : c)))
@@ -241,14 +240,16 @@ export default function AdminMessagesPage() {
               {/* Quick Actions */}
               <div className="flex flex-wrap gap-4 mt-auto pt-6 border-t border-gray-200 dark:border-white/5">
                 <a
-                  href={`mailto:${selected.email}?subject=Re: ${selected.subject || 'Portfolio Inquiry'}`}
+                  href={`mailto:${selected.email}?subject=Re: ${selected.subject || 'Portfolio Inquiry'}&body=Halo ${selected.name},%0D%0A%0D%0ATerima kasih telah menghubungi saya melalui portfolio. Saya telah menerima pesan Anda dan akan segera merespons.%0D%0A%0D%0ASalam,%0D%0ADaffa Rizky`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex-1 min-w-[200px] flex items-center justify-center gap-3 py-4 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white font-bold rounded-2xl transition-all border border-red-500/20"
                 >
                   <FaEnvelope /> Balas via Email
                 </a>
                 {selected.whatsapp && (
                   <a
-                    href={`https://wa.me/${selected.whatsapp.replace(/\D/g, '')}?text=Halo ${selected.name}, saya Daffa Rizky...`}
+                    href={`https://wa.me/${selected.whatsapp.replace(/\D/g, '')}?text=Halo ${encodeURIComponent(selected.name)},%0D%0A%0D%0ATerima kasih telah menghubungi saya melalui portfolio. Saya telah menerima pesan Anda dan akan segera merespons.%0D%0A%0D%0ASalam,%0D%0ADaffa Rizky`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-1 min-w-[200px] flex items-center justify-center gap-3 py-4 bg-green-500/10 text-green-500 hover:bg-green-500 hover:text-white font-bold rounded-2xl transition-all border border-green-500/20"

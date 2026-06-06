@@ -42,10 +42,7 @@ export default function AdminTestimonials() {
 
   const fetchItems = async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from("testimonials")
-      .select("*")
-      .order("created_at", { ascending: false });
+    const { data } = await db.testimonials.getAll();
     setItems(data || []);
     setLoading(false);
   };
@@ -149,10 +146,7 @@ export default function AdminTestimonials() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Yakin hapus testimoni ini?")) return;
-    const { error } = await supabase
-      .from("testimonials")
-      .delete()
-      .eq("id", id);
+    const { error } = await db.testimonials.delete(id);
     if (!error) {
       showToast("Testimoni dihapus.");
       fetchItems();

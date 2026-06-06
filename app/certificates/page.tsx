@@ -71,7 +71,14 @@ export default function CertificatesPage() {
               >
                 {/* Certificate Preview Image */}
                 <div className="relative aspect-[4/3] w-full bg-gray-100 dark:bg-white/5 flex items-center justify-center overflow-hidden">
-                  {cert.file_url && isImage(cert.file_url) ? (
+                  {cert.image_url ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img 
+                      src={cert.image_url} 
+                      alt={language === 'id' ? cert.title_id : cert.title_en}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                  ) : cert.file_url && isImage(cert.file_url) ? (
                     /* eslint-disable-next-line @next/next/no-img-element */
                     <img 
                       src={cert.file_url} 

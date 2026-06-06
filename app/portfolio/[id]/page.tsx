@@ -215,9 +215,41 @@ export default function ProjectDetailPage() {
 
         {/* Currently Working Badge */}
         {project.is_current && (
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-neon-green)]/10 border border-[var(--color-neon-green)] rounded-full">
-            <span className="w-2 h-2 bg-[var(--color-neon-green)] rounded-full animate-pulse"></span>
-            <span className="text-sm font-bold text-[var(--color-neon-green)]">{t.currentlyWorking}</span>
+          <div className="mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-neon-green)]/10 border border-[var(--color-neon-green)] rounded-full mb-6">
+              <span className="w-2 h-2 bg-[var(--color-neon-green)] rounded-full animate-pulse"></span>
+              <span className="text-sm font-bold text-[var(--color-neon-green)]">{t.currentlyWorking}</span>
+            </div>
+            
+            {(project.current_features_id || project.current_features_en) && (
+              <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 p-8 rounded-3xl">
+                <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
+                  {language === 'id' ? 'Fitur yang sedang dikembangkan:' : 'Features currently being developed:'}
+                </h3>
+                <div className="text-gray-600 dark:text-gray-400 whitespace-pre-line leading-relaxed">
+                  {language === 'id' ? project.current_features_id : project.current_features_en}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Bottom Flyer / CTA */}
+        {(project.bottom_flyer_id || project.bottom_flyer_en) && (
+          <div className="mt-20 relative rounded-[40px] overflow-hidden bg-gradient-to-r from-[var(--color-neon-blue)]/20 to-[var(--color-neon-green)]/20 border border-white/10 p-12 text-center">
+            <div className="absolute top-0 left-0 w-32 h-32 bg-[var(--color-neon-blue)] blur-[100px] opacity-30"></div>
+            <div className="absolute bottom-0 right-0 w-32 h-32 bg-[var(--color-neon-green)] blur-[100px] opacity-30"></div>
+            
+            <p className="text-xl md:text-2xl font-heading font-bold text-gray-900 dark:text-white mb-8 relative z-10">
+              {language === 'id' ? project.bottom_flyer_id : project.bottom_flyer_en}
+            </p>
+            
+            <Link 
+              href="/kontak"
+              className="inline-flex items-center gap-2 bg-gradient-neon text-[#0A0A0F] px-8 py-4 rounded-xl font-bold shadow-[0_0_20px_rgba(0,255,136,0.3)] hover:scale-105 transition-transform relative z-10"
+            >
+              {language === 'id' ? 'Tertarik dengan project ini?' : 'Interested in this project?'} <span>→</span>
+            </Link>
           </div>
         )}
       </div>

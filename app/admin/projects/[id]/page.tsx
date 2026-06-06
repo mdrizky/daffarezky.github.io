@@ -32,6 +32,14 @@ export default function ProjectForm() {
     estimated_hours: '',
     actual_hours: '',
     difficulty: 'Medium',
+    slug: '',
+    duration: '',
+    year: new Date().getFullYear(),
+    status: 'Completed',
+    bottom_flyer_id: '',
+    bottom_flyer_en: '',
+    current_features_id: '',
+    current_features_en: '',
   })
 
   useEffect(() => {
@@ -68,6 +76,14 @@ export default function ProjectForm() {
           estimated_hours: data.estimated_hours || '',
           actual_hours: data.actual_hours || '',
           difficulty: data.difficulty || 'Medium',
+          slug: data.slug || '',
+          duration: data.duration || '',
+          year: data.year || new Date().getFullYear(),
+          status: data.status || 'Completed',
+          bottom_flyer_id: data.bottom_flyer_id || '',
+          bottom_flyer_en: data.bottom_flyer_en || '',
+          current_features_id: data.current_features_id || '',
+          current_features_en: data.current_features_en || '',
         })
       }
     } catch (error) {
@@ -143,6 +159,14 @@ export default function ProjectForm() {
         estimated_hours: formData.estimated_hours,
         actual_hours: formData.actual_hours,
         difficulty: formData.difficulty,
+        slug: formData.slug,
+        duration: formData.duration,
+        year: Number(formData.year),
+        status: formData.status,
+        bottom_flyer_id: formData.bottom_flyer_id,
+        bottom_flyer_en: formData.bottom_flyer_en,
+        current_features_id: formData.current_features_id,
+        current_features_en: formData.current_features_en,
       }
 
       if (isNew) {
@@ -302,6 +326,84 @@ export default function ProjectForm() {
                 className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white text-sm transition-all"
                 placeholder="Atau paste URL gambar di sini"
               />
+            </div>
+          </div>
+
+          {/* Detail Tambahan & SEO */}
+          <div className="space-y-6 pt-4 border-t border-gray-200 dark:border-white/10">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white">Detail Tambahan & SEO</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Project Slug (URL)</label>
+                <input
+                  type="text"
+                  name="slug"
+                  value={formData.slug}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
+                  placeholder="contoh: e-commerce-nextjs"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Tahun</label>
+                <input
+                  type="number"
+                  name="year"
+                  value={formData.year}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
+                  placeholder="2024"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Durasi Pengerjaan</label>
+                <input
+                  type="text"
+                  name="duration"
+                  value={formData.duration}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
+                  placeholder="Contoh: 3 Minggu"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Status</label>
+                <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
+                >
+                  <option value="Completed">Completed</option>
+                  <option value="Ongoing">Ongoing</option>
+                  <option value="Archived">Archived</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Bottom Flyer Text (ID)</label>
+                <input
+                  type="text"
+                  name="bottom_flyer_id"
+                  value={formData.bottom_flyer_id}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
+                  placeholder="Teks singkat di bawah card"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Bottom Flyer Text (EN)</label>
+                <input
+                  type="text"
+                  name="bottom_flyer_en"
+                  value={formData.bottom_flyer_en}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
+                  placeholder="Short text at bottom of card"
+                />
+              </div>
             </div>
           </div>
 

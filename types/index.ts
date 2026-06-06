@@ -18,6 +18,41 @@ export type Project = {
   estimated_hours?: string
   actual_hours?: string
   difficulty: string
+  bottom_flyer_id?: string
+  bottom_flyer_en?: string
+  current_features_id?: string
+  current_features_en?: string
+  slug?: string
+  duration?: string
+  year?: number
+  status?: 'Completed' | 'Ongoing' | 'Archived'
+}
+
+export type ProjectImage = {
+  id: string
+  project_id: string
+  image_url: string
+  caption_id?: string
+  caption_en?: string
+  sort_order: number
+}
+
+export type ProjectFeature = {
+  id: string
+  project_id: string
+  feature_id: string
+  feature_en: string
+  sort_order: number
+}
+
+export type ProjectChallenge = {
+  id: string
+  project_id: string
+  challenge_id: string
+  challenge_en: string
+  solution_id?: string
+  solution_en?: string
+  sort_order: number
 }
 
 export type BlogPost = {
@@ -50,8 +85,12 @@ export type Message = {
   id: string
   name: string
   email: string
+  whatsapp?: string
+  subject?: string
   message: string
   is_read: boolean
+  status: 'new' | 'read' | 'replied'
+  replied_at?: string
   created_at: string
 }
 
@@ -61,6 +100,8 @@ export type Skill = {
   icon: string
   category: string
   level: 'Beginner' | 'Intermediate' | 'Advanced'
+  show_on_home?: boolean
+  is_learning?: boolean
 }
 
 export type Profile = {
@@ -83,6 +124,96 @@ export type Profile = {
   stats_projects: string
   stats_tools: string
   stats_passion: string
+  birth_date?: string
+  birth_place?: string
+  vision_id?: string
+  vision_en?: string
+  motto_id?: string
+  motto_en?: string
+  focus_id?: string
+  focus_en?: string
+  values_id?: string
+  values_en?: string
+  availability_status_id?: string
+  availability_status_en?: string
+  work_hours?: string
+  current_city?: string
+}
+
+export type ReasonsToHire = {
+  id: string
+  icon: string
+  title_id: string
+  title_en: string
+  description_id?: string
+  description_en?: string
+  sort_order: number
+}
+
+export type JourneyMilestone = {
+  id: string
+  year: string
+  title_id: string
+  title_en: string
+  description_id?: string
+  description_en?: string
+  icon?: string
+  sort_order: number
+}
+
+export type FocusArea = {
+  id: string
+  title_id: string
+  title_en: string
+  description_id?: string
+  description_en?: string
+  icon?: string
+  sort_order: number
+}
+
+export type CoreValue = {
+  id: string
+  title_id: string
+  title_en: string
+  description_id?: string
+  description_en?: string
+  icon?: string
+  sort_order: number
+}
+
+export type Quote = {
+  id: string
+  text_id: string
+  text_en: string
+  author?: string
+  is_personal: boolean
+  sort_order: number
+}
+
+export type ActiveProject = {
+  id: string
+  name_id: string
+  name_en: string
+  description_id?: string
+  description_en?: string
+  status_id: string
+  status_en: string
+  progress_percent: number
+  estimated_completion?: string
+  features_id: string[]
+  features_en: string[]
+  sort_order: number
+}
+
+export type FutureConcept = {
+  id: string
+  title_id: string
+  title_en: string
+  description_id?: string
+  description_en?: string
+  category?: string
+  tags: string[]
+  sort_order: number
 }
 
 export type Testimonial = {
@@ -100,6 +231,7 @@ export type Certificate = {
   title_id: string
   title_en: string
   issuer: string
+  image_url?: string
   file_url: string
   date_issued: string
 }
@@ -186,5 +318,6 @@ export type Islamic = {
   order_index: number
   created_at: string
 }
+
 
 

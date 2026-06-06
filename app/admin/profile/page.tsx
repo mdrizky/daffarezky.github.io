@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import { FaSave, FaImage, FaInstagram, FaGithub, FaLinkedin, FaTiktok, FaYoutube, FaWhatsapp, FaEnvelope } from 'react-icons/fa'
+import { FaSave, FaImage, FaInstagram, FaGithub, FaLinkedin, FaTiktok, FaYoutube, FaWhatsapp, FaEnvelope, FaCalendar, FaMapMarkerAlt, FaLightbulb, FaQuoteLeft } from 'react-icons/fa'
 import { Profile } from '@/types'
 
 export default function AdminProfile() {
@@ -15,6 +15,7 @@ export default function AdminProfile() {
     bio_id: '',
     bio_en: '',
     photo_url: '',
+    about_photo_url: '',
     wa: '',
     email: '',
     instagram: '',
@@ -22,9 +23,23 @@ export default function AdminProfile() {
     linkedin: '',
     tiktok: '',
     youtube: '',
-    stats_projects: '4+',
-    stats_tools: '10+',
-    stats_passion: '∞'
+    stats_projects: '0',
+    stats_tools: '0',
+    stats_passion: '∞',
+    birth_date: '',
+    birth_place: '',
+    current_city: '',
+    vision_id: '',
+    vision_en: '',
+    motto_id: '',
+    motto_en: '',
+    focus_id: '',
+    focus_en: '',
+    values_id: '',
+    values_en: '',
+    availability_status_id: '',
+    availability_status_en: '',
+    work_hours: ''
   })
   const [profileId, setProfileId] = useState<string | null>(null)
 
@@ -40,7 +55,7 @@ export default function AdminProfile() {
         .limit(1)
         .single()
 
-      if (error && error.code !== 'PGRST116') throw error // Ignore no rows error
+      if (error && error.code !== 'PGRST116') throw error
       
       if (data) {
         setProfile(data)
@@ -58,14 +73,14 @@ export default function AdminProfile() {
     setProfile(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
     const file = e.target.files?.[0]
     if (!file) return
 
     try {
       setSaving(true)
       const fileExt = file.name.split('.').pop()
-      const fileName = `profile-${Math.random()}.${fileExt}`
+      const fileName = `${field}-${Math.random()}.${fileExt}`
       const filePath = `profile/${fileName}`
 
       const { error: uploadError } = await supabase.storage
@@ -78,39 +93,10 @@ export default function AdminProfile() {
         .from('portfolio-images')
         .getPublicUrl(filePath)
 
-      setProfile(prev => ({ ...prev, photo_url: data.publicUrl }))
+      setProfile(prev => ({ ...prev, [field]: data.publicUrl }))
     } catch (error) {
       console.error('Error uploading image:', error)
-      alert('Gagal mengupload foto')
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    try {
-      setSaving(true)
-      const fileExt = file.name.split('.').pop()
-      const fileName = `logo-${Math.random()}.${fileExt}`
-      const filePath = `profile/${fileName}`
-
-      const { error: uploadError } = await supabase.storage
-        .from('portfolio-images')
-        .upload(filePath, file)
-
-      if (uploadError) throw uploadError
-
-      const { data } = supabase.storage
-        .from('portfolio-images')
-        .getPublicUrl(filePath)
-
-      setProfile(prev => ({ ...prev, logo_url: data.publicUrl }))
-    } catch (error) {
-      console.error('Error uploading logo:', error)
-      alert('Gagal mengupload logo')
+      alert('Gagal mengupload gambar')
     } finally {
       setSaving(false)
     }
@@ -152,290 +138,175 @@ export default function AdminProfile() {
   }
 
   return (
-    <div className="max-w-4xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="max-w-5xl pb-20 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold font-syne text-gray-900 dark:text-white mb-2">Update Profile</h1>
-        <p className="text-gray-500 dark:text-gray-400">Kelola informasi pribadi, bio, dan tautan sosial media Anda.</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Full Admin Control - Profile</h1>
+        <p className="text-gray-500 dark:text-gray-400">Kelola semua informasi portfolio Anda dari satu tempat.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Personal Info */}
-        <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm transition-colors duration-300">
-          <h2 className="text-xl font-bold mb-6 border-b border-gray-200 dark:border-white/10 pb-4 text-gray-900 dark:text-white">Informasi Pribadi & Bio</h2>
-          
+        {/* Images Section */}
+        <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm">
+          <h2 className="text-xl font-bold mb-6 border-b border-gray-200 dark:border-white/10 pb-4 text-gray-900 dark:text-white">Media & Foto</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="md:col-span-1">
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Foto Profile</label>
-              <div className="border-2 border-dashed border-gray-300 dark:border-white/20 rounded-2xl p-4 text-center hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group mb-6">
+            {/* Profile Photo */}
+            <div className="text-center">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Foto Beranda</label>
+              <div className="relative aspect-square w-full max-w-[200px] mx-auto mb-4 rounded-full overflow-hidden border-4 border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-black/20">
                 {profile.photo_url ? (
-                  <div className="relative aspect-square w-full max-w-[150px] mx-auto mb-4 rounded-full overflow-hidden border-4 border-gray-100 dark:border-white/10 shadow-lg">
-                    <img src={profile.photo_url} alt="Profile" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  </div>
+                  <img src={profile.photo_url} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="flex flex-col items-center justify-center py-6 text-gray-400 dark:text-gray-500">
-                    <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-3">
-                      <FaImage className="text-xl" />
-                    </div>
-                    <p className="text-xs font-medium">Belum ada foto</p>
-                  </div>
+                  <div className="w-full h-full flex items-center justify-center text-gray-300"><FaImage size={40} /></div>
                 )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                  id="photo-upload"
-                />
-                <label
-                  htmlFor="photo-upload"
-                  className="cursor-pointer inline-block px-5 py-2 bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white font-medium hover:bg-gray-200 dark:hover:bg-white/20 rounded-xl text-xs transition-colors shadow-sm"
-                >
-                  Upload Foto
-                </label>
               </div>
-
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Logo Website</label>
-              <div className="border-2 border-dashed border-gray-300 dark:border-white/20 rounded-2xl p-4 text-center hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
-                {profile.logo_url ? (
-                  <div className="relative aspect-square w-full max-w-[150px] mx-auto mb-4 rounded-xl overflow-hidden border-4 border-gray-100 dark:border-white/10 shadow-lg bg-gray-900 flex items-center justify-center">
-                    <img src={profile.logo_url} alt="Logo" className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500" />
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-6 text-gray-400 dark:text-gray-500">
-                    <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-3">
-                      <FaImage className="text-xl" />
-                    </div>
-                    <p className="text-xs font-medium">Belum ada logo</p>
-                  </div>
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleLogoUpload}
-                  className="hidden"
-                  id="logo-upload"
-                />
-                <label
-                  htmlFor="logo-upload"
-                  className="cursor-pointer inline-block px-5 py-2 bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white font-medium hover:bg-gray-200 dark:hover:bg-white/20 rounded-xl text-xs transition-colors shadow-sm"
-                >
-                  Upload Logo
-                </label>
-              </div>
+              <input type="file" id="photo_url" className="hidden" onChange={(e) => handleFileUpload(e, 'photo_url')} />
+              <label htmlFor="photo_url" className="cursor-pointer inline-block px-4 py-2 bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white rounded-lg text-xs font-bold transition-colors">Ganti Foto Beranda</label>
             </div>
 
-            <div className="md:col-span-2 space-y-6">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Nama Lengkap *</label>
-                <input
-                  type="text"
-                  name="name"
-                  required
-                  value={profile.name || ''}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
-                />
+            {/* About Photo */}
+            <div className="text-center">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Foto Tentang</label>
+              <div className="relative aspect-square w-full max-w-[200px] mx-auto mb-4 rounded-2xl overflow-hidden border-4 border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-black/20">
+                {profile.about_photo_url ? (
+                  <img src={profile.about_photo_url} alt="About" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-300"><FaImage size={40} /></div>
+                )}
               </div>
+              <input type="file" id="about_photo_url" className="hidden" onChange={(e) => handleFileUpload(e, 'about_photo_url')} />
+              <label htmlFor="about_photo_url" className="cursor-pointer inline-block px-4 py-2 bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white rounded-lg text-xs font-bold transition-colors">Ganti Foto Tentang</label>
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Title / Profesi <span className="text-blue-500">(ID)</span></label>
-                  <input
-                    type="text"
-                    name="title_id"
-                    required
-                    value={profile.title_id || ''}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
-                    placeholder="Misal: Bisnis Strategis"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Title / Profession <span className="text-purple-500">(EN)</span></label>
-                  <input
-                    type="text"
-                    name="title_en"
-                    required
-                    value={profile.title_en || ''}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-gray-900 dark:text-white transition-all"
-                    placeholder="E.g: Digital Business Strategist"
-                  />
-                </div>
+            {/* Logo */}
+            <div className="text-center">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Logo Site</label>
+              <div className="relative aspect-square w-full max-w-[200px] mx-auto mb-4 rounded-2xl overflow-hidden border-4 border-gray-100 dark:border-white/10 bg-gray-900 flex items-center justify-center">
+                {profile.logo_url ? (
+                  <img src={profile.logo_url} alt="Logo" className="w-full h-full object-contain p-4" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-300"><FaImage size={40} /></div>
+                )}
               </div>
+              <input type="file" id="logo_url" className="hidden" onChange={(e) => handleFileUpload(e, 'logo_url')} />
+              <label htmlFor="logo_url" className="cursor-pointer inline-block px-4 py-2 bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white rounded-lg text-xs font-bold transition-colors">Ganti Logo</label>
+            </div>
+          </div>
+        </div>
 
+        {/* Basic Info */}
+        <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm">
+          <h2 className="text-xl font-bold mb-6 border-b border-gray-200 dark:border-white/10 pb-4 text-gray-900 dark:text-white">Identitas Utama</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="md:col-span-2">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Nama Lengkap</label>
+              <input type="text" name="name" value={profile.name} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Tempat Lahir</label>
+              <input type="text" name="birth_place" value={profile.birth_place} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Tanggal Lahir</label>
+              <input type="date" name="birth_date" value={profile.birth_date} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Kota Saat Ini</label>
+              <input type="text" name="current_city" value={profile.current_city} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Jam Kerja</label>
+              <input type="text" name="work_hours" value={profile.work_hours} onChange={handleChange} placeholder="Contoh: 08:00 - 17:00" className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Status (ID)</label>
+              <input type="text" name="availability_status_id" value={profile.availability_status_id} onChange={handleChange} placeholder="Contoh: Tersedia untuk Bekerja" className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Status (EN)</label>
+              <input type="text" name="availability_status_en" value={profile.availability_status_en} onChange={handleChange} placeholder="Contoh: Available for Work" className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+            </div>
+          </div>
+        </div>
+
+        {/* Bio & Vision */}
+        <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm">
+          <h2 className="text-xl font-bold mb-6 border-b border-gray-200 dark:border-white/10 pb-4 text-gray-900 dark:text-white">Bio, Visi & Kata-kata</h2>
+          <div className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Bio Singkat <span className="text-blue-500">(ID)</span></label>
-                <textarea
-                  name="bio_id"
-                  required
-                  value={profile.bio_id || ''}
-                  onChange={handleChange}
-                  rows={3}
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white text-sm transition-all"
-                  placeholder="Ceritakan singkat tentang diri Anda..."
-                />
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Bio (ID)</label>
+                <textarea name="bio_id" rows={4} value={profile.bio_id} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
               </div>
-
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Short Bio <span className="text-purple-500">(EN)</span></label>
-                <textarea
-                  name="bio_en"
-                  required
-                  value={profile.bio_en || ''}
-                  onChange={handleChange}
-                  rows={3}
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-gray-900 dark:text-white text-sm transition-all"
-                  placeholder="Tell briefly about yourself..."
-                />
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Bio (EN)</label>
+                <textarea name="bio_en" rows={4} value={profile.bio_en} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+              </div>
+            </div>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Visi (ID)</label>
+                <textarea name="vision_id" rows={3} value={profile.vision_id} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Visi (EN)</label>
+                <textarea name="vision_en" rows={3} value={profile.vision_en} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+              </div>
+            </div>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Motto / Quote (ID)</label>
+                <input type="text" name="motto_id" value={profile.motto_id} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Motto / Quote (EN)</label>
+                <input type="text" name="motto_en" value={profile.motto_en} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
               </div>
             </div>
           </div>
         </div>
 
-        {/* Home Page Stats */}
-        <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm transition-colors duration-300">
-          <h2 className="text-xl font-bold mb-6 border-b border-gray-200 dark:border-white/10 pb-4 text-gray-900 dark:text-white">Statistik Beranda</h2>
-          <p className="text-sm text-gray-500 mb-6 italic">Sesuaikan angka statistik yang muncul di halaman depan.</p>
-          
+        {/* Stats */}
+        <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm">
+          <h2 className="text-xl font-bold mb-6 border-b border-gray-200 dark:border-white/10 pb-4 text-gray-900 dark:text-white">Statistik</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Jumlah Proyek</label>
-              <input
-                type="text"
-                name="stats_projects"
-                value={profile.stats_projects || ''}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white"
-                placeholder="Misal: 4+"
-              />
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Project Count</label>
+              <input type="text" name="stats_projects" value={profile.stats_projects} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Jumlah Tools</label>
-              <input
-                type="text"
-                name="stats_tools"
-                value={profile.stats_tools || ''}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white"
-                placeholder="Misal: 10+"
-              />
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Tools Count</label>
+              <input type="text" name="stats_tools" value={profile.stats_tools} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Passion / Lainnya</label>
-              <input
-                type="text"
-                name="stats_passion"
-                value={profile.stats_passion || ''}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white"
-                placeholder="Misal: ∞"
-              />
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Passion Stat</label>
+              <input type="text" name="stats_passion" value={profile.stats_passion} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
             </div>
           </div>
         </div>
 
-        {/* Contact & Social Media */}
-        <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm transition-colors duration-300">
-          <h2 className="text-xl font-bold mb-6 border-b border-gray-200 dark:border-white/10 pb-4 text-gray-900 dark:text-white">Kontak & Sosial Media</h2>
-          
+        {/* Social & Contact */}
+        <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm">
+          <h2 className="text-xl font-bold mb-6 border-b border-gray-200 dark:border-white/10 pb-4 text-gray-900 dark:text-white">Kontak & Sosmed</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
-                <FaWhatsapp className="text-[#25D366] text-lg" /> WhatsApp
-              </label>
-              <input
-                type="text"
-                name="wa"
-                value={profile.wa || ''}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/50 text-gray-900 dark:text-white"
-                placeholder="628xxxxxxxxxx"
-              />
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2"><FaWhatsapp className="text-green-500" /> WhatsApp</label>
+              <input type="text" name="wa" value={profile.wa} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
-                <FaEnvelope className="text-gray-500 dark:text-gray-400 text-lg" /> Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={profile.email || ''}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-400/50 text-gray-900 dark:text-white"
-                placeholder="email@example.com"
-              />
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2"><FaEnvelope className="text-red-500" /> Email</label>
+              <input type="email" name="email" value={profile.email} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
-                <FaInstagram className="text-pink-500 text-lg" /> Instagram
-              </label>
-              <input
-                type="text"
-                name="instagram"
-                value={profile.instagram || ''}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500/50 text-gray-900 dark:text-white"
-                placeholder="Username IG atau URL"
-              />
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2"><FaInstagram className="text-pink-500" /> Instagram</label>
+              <input type="text" name="instagram" value={profile.instagram} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
-                <FaGithub className="text-gray-900 dark:text-white text-lg" /> GitHub
-              </label>
-              <input
-                type="url"
-                name="github"
-                value={profile.github || ''}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500/50 text-gray-900 dark:text-white"
-                placeholder="https://github.com/..."
-              />
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2"><FaGithub /> GitHub</label>
+              <input type="text" name="github" value={profile.github} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
-                <FaLinkedin className="text-[#0A66C2] text-lg" /> LinkedIn
-              </label>
-              <input
-                type="url"
-                name="linkedin"
-                value={profile.linkedin || ''}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white"
-                placeholder="https://linkedin.com/in/..."
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
-                <FaTiktok className="text-black dark:text-white text-lg" /> TikTok
-              </label>
-              <input
-                type="text"
-                name="tiktok"
-                value={profile.tiktok || ''}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500/50 text-gray-900 dark:text-white"
-                placeholder="Username TikTok atau URL"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
-                <FaYoutube className="text-[#FF0000] text-lg" /> YouTube
-              </label>
-              <input
-                type="url"
-                name="youtube"
-                value={profile.youtube || ''}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 text-gray-900 dark:text-white"
-                placeholder="https://youtube.com/..."
-              />
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2"><FaLinkedin className="text-blue-600" /> LinkedIn</label>
+              <input type="text" name="linkedin" value={profile.linkedin} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
             </div>
           </div>
         </div>
@@ -444,14 +315,10 @@ export default function AdminProfile() {
           <button
             type="submit"
             disabled={saving}
-            className="flex items-center gap-2 px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all disabled:opacity-50 disabled:hover:shadow-none"
+            className="flex items-center gap-3 px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-xl shadow-blue-500/30 transition-all disabled:opacity-50"
           >
-            {saving ? (
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            ) : (
-              <FaSave />
-            )}
-            Simpan Perubahan Profile
+            {saving ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : <FaSave />}
+            Simpan Semua Perubahan
           </button>
         </div>
       </form>

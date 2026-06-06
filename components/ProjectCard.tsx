@@ -37,7 +37,18 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
             Featured
           </div>
         )}
+
+        {/* Bottom Flyer Overlay */}
+        <div className="absolute bottom-0 left-0 right-0 z-30 bg-black/70 backdrop-blur-md p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+          <div className="text-[10px] font-black text-[var(--color-neon-green)] uppercase tracking-widest mb-1">
+            {project.year} · {project.duration || (language === 'id' ? 'Selesai' : 'Completed')}
+          </div>
+          <p className="text-white text-[11px] font-medium line-clamp-1">
+            {language === 'id' ? project.bottom_flyer_id : project.bottom_flyer_en}
+          </p>
+        </div>
       </div>
+
 
       {/* Content */}
       <div className="p-6 flex flex-col flex-grow">
