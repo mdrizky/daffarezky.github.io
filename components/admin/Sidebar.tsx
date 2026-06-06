@@ -6,7 +6,7 @@ import { createClient } from "@supabase/supabase-js";
 import { 
   FaHome, FaProjectDiagram, FaBlog, 
   FaCogs, FaEnvelope, FaUserEdit, FaSignOutAlt,
-  FaGraduationCap, FaTools, FaBriefcase, FaCertificate, FaHandshake
+  FaGraduationCap, FaTools, FaBriefcase, FaCertificate, FaHandshake, FaLightbulb
 } from "react-icons/fa";
 import SiteLogo from "@/components/SiteLogo";
 

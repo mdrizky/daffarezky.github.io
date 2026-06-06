@@ -9,7 +9,7 @@ import SocialLinks from "@/components/SocialLinks";
 import ProjectCard from "@/components/ProjectCard";
 import ServiceCard from "@/components/ServiceCard";
 import dynamic from 'next/dynamic'
-import type { Profile, Project, Service } from "@/types";
+import type { Profile, Project, Service, ReasonsToHire, JourneyMilestone } from "@/types";
 
 const TestimonialCarousel = dynamic(() => import('@/components/TestimonialCarousel'), { ssr: false })
 const PartnerSlider = dynamic(() => import('@/components/PartnerSlider'), { ssr: false })

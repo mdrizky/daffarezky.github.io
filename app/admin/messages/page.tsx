@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { supabase } from "../../../lib/supabase"
+import { db, supabase } from "@/lib/database"
 import { FaCalendarAlt, FaEnvelope, FaTrash, FaCheckCircle, FaChevronRight, FaReply, FaWhatsapp, FaExternalLinkAlt } from "react-icons/fa"
 
 type Contact = {
@@ -56,11 +56,7 @@ export default function AdminMessagesPage() {
   async function loadMessages() {
     setLoading(true)
     try {
-      const { data, error } = await supabase
-        .from("messages")
-        .select("*")
-        .order("created_at", { ascending: false })
-
+      const { data, error } = await db.messages.getAll()
       if (error) throw error
       setContacts(data || [])
     } catch (err) {
