@@ -1,8 +1,5 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { Resend } from 'resend';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
   try {
@@ -26,13 +23,22 @@ export async function POST(req: Request) {
     }
 
     // 2. Send Welcome Email via Resend (Optional - if API Key is set)
-    if (process.env.RESEND_API_KEY) {
-      await resend.emails.send({
-        from: 'Portfolio Newsletter <newsletter@daffarezky.app>',
-        to: email,
-        subject: 'Welcome to my Newsletter!',
-        html: `<p>Hi! Thank you for subscribing to my portfolio newsletter. You'll receive updates on my latest projects and articles.</p>`,
-      });
+    const resendApiKey = process.env.RESEND_API_KEY;
+    if (resendApiKey && resendApiKey !== 'placeholder') {
+      try {
+        const { Resend } = await import('resend');
+        const resend = new Resend(resendApiKey);
+
+        await resend.emails.send({
+          from: 'Portfolio Newsletter <newsletter@daffarezky.app>',
+          to: email,
+          subject: 'Welcome to my Newsletter!',
+          html: `<p>Hi! Thank you for subscribing to my portfolio newsletter. You'll receive updates on my latest projects and articles.</p>`,
+        });
+      } catch (emailError) {
+        console.error('Newsletter email error:', emailError);
+        // Don't fail the request if email sending fails, as it's already in DB
+      }
     }
 
     return NextResponse.json({ message: 'Subscribed successfully' }, { status: 200 });

@@ -7,6 +7,8 @@ import { useLanguage } from "@/components/LanguageProvider";
 import SocialLinks from "@/components/SocialLinks";
 import ProjectCard from "@/components/ProjectCard";
 import ServiceCard from "@/components/ServiceCard";
+import GitHubStats from "@/components/GitHubStats";
+import DailyIslamicQuote from "@/components/DailyIslamicQuote";
 import dynamic from 'next/dynamic'
 import type { Profile, Project, Service, ReasonsToHire, JourneyMilestone, Testimonial } from "@/types";
 
@@ -210,8 +212,6 @@ export default function HomeClient({
         </section>
       )}
 
-export default function HomeClient({
-...
       {/* 2. About Snapshot */}
       <section className="container mx-auto px-6 md:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
@@ -248,7 +248,7 @@ export default function HomeClient({
       </section>
 
       {/* 3. Value Proposition */}
-...      {reasons.length > 0 && (
+      {reasons.length > 0 && (
         <section className="container mx-auto px-6 md:px-12">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4 text-gray-900 dark:text-white">
@@ -430,16 +430,6 @@ export default function HomeClient({
             <Link 
               href="https://wa.me/628123456789"
               className="inline-flex items-center gap-3 rounded-full bg-gradient-neon px-10 py-5 text-lg font-bold text-[#0A0A0F] shadow-[0_0_30px_rgba(0,255,136,0.3)] hover:scale-105 transition-all"
-            >
-              {t.ctaButton}
-            </Link>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-}
- text-lg font-bold text-[#0A0A0F] shadow-[0_0_30px_rgba(0,255,136,0.3)] hover:scale-105 transition-all"
             >
               {t.ctaButton}
             </Link>
