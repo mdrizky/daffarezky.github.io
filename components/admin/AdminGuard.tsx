@@ -17,11 +17,11 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
       return
     }
 
-    const checkAuth = () => {
+    const checkAuth = async () => {
       try {
-        const isAuthenticated = localStorage.getItem('admin_pin_auth') === 'true'
+        const { data: { session } } = await supabase.auth.getSession()
         
-        if (!isAuthenticated) {
+        if (!session) {
           router.replace('/admin/login')
         } else {
           setLoading(false)
@@ -33,6 +33,16 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
     }
 
     checkAuth()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session && !isLoginPage) {
+        router.replace('/admin/login')
+      }
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [router, pathname, isLoginPage])
 
   // Don't show loading spinner on login page
@@ -46,3 +56,4 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
 
   return <>{children}</>
 }
+

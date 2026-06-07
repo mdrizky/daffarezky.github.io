@@ -40,6 +40,12 @@ export default function ProjectForm() {
     bottom_flyer_en: '',
     current_features_id: '',
     current_features_en: '',
+    problem_id: '',
+    problem_en: '',
+    solution_id: '',
+    solution_en: '',
+    result_id: '',
+    result_en: '',
   })
 
   useEffect(() => {
@@ -84,6 +90,12 @@ export default function ProjectForm() {
           bottom_flyer_en: data.bottom_flyer_en || '',
           current_features_id: data.current_features_id || '',
           current_features_en: data.current_features_en || '',
+          problem_id: data.problem_id || '',
+          problem_en: data.problem_en || '',
+          solution_id: data.solution_id || '',
+          solution_en: data.solution_en || '',
+          result_id: data.result_id || '',
+          result_en: data.result_en || '',
         })
       }
     } catch (error) {
@@ -167,6 +179,12 @@ export default function ProjectForm() {
         bottom_flyer_en: formData.bottom_flyer_en,
         current_features_id: formData.current_features_id,
         current_features_en: formData.current_features_en,
+        problem_id: formData.problem_id,
+        problem_en: formData.problem_en,
+        solution_id: formData.solution_id,
+        solution_en: formData.solution_en,
+        result_id: formData.result_id,
+        result_en: formData.result_en,
       }
 
       if (isNew) {
@@ -532,6 +550,86 @@ export default function ProjectForm() {
                 className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-gray-900 dark:text-white transition-all"
                 placeholder="Tell about this project in English..."
               />
+            </div>
+          </div>
+
+          {/* Case Study Details */}
+          <div className="space-y-6 pt-4 border-t border-gray-200 dark:border-white/10">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white">Case Study Details</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Problem (ID)</label>
+                <textarea
+                  name="problem_id"
+                  rows={3}
+                  value={formData.problem_id}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
+                  placeholder="Masalah yang ingin diselesaikan..."
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Problem (EN)</label>
+                <textarea
+                  name="problem_en"
+                  rows={3}
+                  value={formData.problem_en}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-gray-900 dark:text-white transition-all"
+                  placeholder="Problem to solve..."
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Solution (ID)</label>
+                <textarea
+                  name="solution_id"
+                  rows={3}
+                  value={formData.solution_id}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
+                  placeholder="Solusi yang diberikan..."
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Solution (EN)</label>
+                <textarea
+                  name="solution_en"
+                  rows={3}
+                  value={formData.solution_en}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-gray-900 dark:text-white transition-all"
+                  placeholder="Solution provided..."
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Result (ID)</label>
+                <textarea
+                  name="result_id"
+                  rows={3}
+                  value={formData.result_id}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
+                  placeholder="Hasil akhir atau dampak..."
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Result (EN)</label>
+                <textarea
+                  name="result_en"
+                  rows={3}
+                  value={formData.result_en}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-gray-900 dark:text-white transition-all"
+                  placeholder="Final result or impact..."
+                />
+              </div>
             </div>
           </div>
 

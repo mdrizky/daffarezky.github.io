@@ -1,146 +1,44 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { FaLock, FaEye, FaEyeSlash } from 'react-icons/fa'
+import { FaLock, FaEnvelope, FaEye, FaEyeSlash } from 'react-icons/fa'
 import { supabase } from '@/lib/supabase'
 
 export default function AdminLogin() {
-  const [pin, setPin] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [showPin, setShowPin] = useState(false)
-  const [attempts, setAttempts] = useState(0)
-  const [lockoutTime, setLockoutTime] = useState<number | null>(null)
-  const [remainingTime, setRemainingTime] = useState(0)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const router = useRouter()
 
-  // Auto-redirect if already logged in
-  useEffect(() => {
-    try {
-      if (localStorage.getItem('admin_pin_auth') === 'true' && !isSuccess) {
-        router.push('/admin')
-      }
-    } catch (e) {
-      console.error(e)
-    }
-  }, [router, isSuccess])
-
-  // Handle redirect after success animation
-  useEffect(() => {
-    if (isSuccess) {
-      const timer = setTimeout(() => {
-        window.location.href = '/admin'
-      }, 1500)
-      return () => clearTimeout(timer)
-    }
-  }, [isSuccess])
-
-  // Load attempts from localStorage on mount
-  useEffect(() => {
-    try {
-      const savedAttempts = localStorage.getItem('admin_pin_attempts')
-      const savedLockout = localStorage.getItem('admin_pin_lockout')
-      if (savedAttempts) setAttempts(parseInt(savedAttempts))
-      if (savedLockout) {
-        const lockoutEnd = parseInt(savedLockout)
-        if (lockoutEnd > Date.now()) {
-          setLockoutTime(lockoutEnd)
-        } else {
-          localStorage.removeItem('admin_pin_lockout')
-          localStorage.removeItem('admin_pin_attempts')
-        }
-      }
-    } catch (error) {
-      // Ignore localStorage errors (e.g., in private browsing)
-      console.error('localStorage access error:', error)
-    }
-  }, [])
-
-  // Countdown timer for lockout
-  useEffect(() => {
-    if (lockoutTime) {
-      const interval = setInterval(() => {
-        try {
-          const remaining = Math.ceil((lockoutTime - Date.now()) / 1000)
-          setRemainingTime(remaining)
-          if (remaining <= 0) {
-            clearInterval(interval)
-            setLockoutTime(null)
-            setAttempts(0)
-            localStorage.removeItem('admin_pin_lockout')
-            localStorage.removeItem('admin_pin_attempts')
-          }
-        } catch (error) {
-          console.error('Timer error:', error)
-          clearInterval(interval)
-        }
-      }, 1000)
-      return () => clearInterval(interval)
-    }
-  }, [lockoutTime])
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    // Check if locked out
-    if (lockoutTime && lockoutTime > Date.now()) return
-
-    setIsSubmitting(true)
     setLoading(true)
     setError('')
 
-    const enteredPin = pin.replace(/\s/g, '').trim()
-
     try {
-      // Fetch valid PIN from database
-      const { data: settings } = await supabase
-        .from('settings')
-        .select('admin_pin')
-        .single()
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
 
-      const validPin = settings?.admin_pin || '240708'
+      if (authError) throw authError
 
-      if (enteredPin === validPin) {
-        setIsSuccess(true)
-        localStorage.setItem('admin_pin_auth', 'true')
-        localStorage.removeItem('admin_pin_attempts')
-        localStorage.removeItem('admin_pin_lockout')
-      } else {
-        // Increment attempts
-        const newAttempts = attempts + 1
-        setAttempts(newAttempts)
-        localStorage.setItem('admin_pin_attempts', newAttempts.toString())
-
-        if (newAttempts >= 5) {
-          const lockoutEnd = Date.now() + 30000
-          setLockoutTime(lockoutEnd)
-          localStorage.setItem('admin_pin_lockout', lockoutEnd.toString())
-          setError('Terlalu banyak percobaan salah. Tunggu 30 detik.')
-        } else {
-          setError(`PIN salah. Percobaan tersisa: ${5 - newAttempts}`)
-        }
-        setPin('')
-      }
-    } catch (error) {
-      console.error('Login error:', error)
-      // Fallback for emergency
-      if (enteredPin === '240708') {
-        setIsSuccess(true)
-        localStorage.setItem('admin_pin_auth', 'true')
-      } else {
-        setError('PIN salah atau terjadi gangguan koneksi.')
-      }
+      setIsSuccess(true)
+      setTimeout(() => {
+        window.location.href = '/admin'
+      }, 1500)
+    } catch (err: any) {
+      console.error('Login error:', err)
+      setError(err.message || 'Login gagal. Periksa kembali email dan password Anda.')
+    } finally {
+      setLoading(false)
     }
-    
-    setLoading(false)
-    setIsSubmitting(false)
   }
-
-  const isLocked = Boolean(lockoutTime && lockoutTime > Date.now())
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-[#0A0A0F] relative overflow-hidden font-body">
@@ -172,7 +70,7 @@ export default function AdminLogin() {
                 Admin <span className="text-gradient">Access</span>
               </h1>
               <p className="text-gray-500 text-sm font-medium tracking-wide">
-                Masukkan kode akses untuk masuk ke panel kontrol.
+                Login ke panel kontrol untuk mengelola portfolio Anda.
               </p>
             </div>
 
@@ -182,46 +80,63 @@ export default function AdminLogin() {
               </div>
             )}
 
-            <form onSubmit={handleLogin} className="space-y-10 relative z-10" autoComplete="off">
-              <div className="space-y-6">
-                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.4em] text-center">
-                  Security Code
+            <form onSubmit={handleLogin} className="space-y-6 relative z-10">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.4em] ml-4">
+                  Email Address
                 </label>
                 <div className="relative group">
+                  <div className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500">
+                    <FaEnvelope />
+                  </div>
                   <input
-                    type={showPin ? 'text' : 'password'}
-                    value={pin}
-                    onChange={(e) => setPin(e.target.value)}
-                    autoComplete="new-password"
-                    className={`w-full py-8 bg-black/40 border-2 border-white/5 rounded-3xl text-center tracking-[0.8em] text-5xl font-black text-[var(--color-neon-green)] placeholder-white/5 focus:outline-none focus:border-[var(--color-neon-green)]/30 focus:ring-8 focus:ring-[var(--color-neon-green)]/5 transition-all duration-500 ${isSubmitting ? 'scale-95' : 'scale-100'}`}
-                    placeholder="••••••"
-                    maxLength={6}
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full py-5 pl-14 pr-6 bg-black/40 border-2 border-white/5 rounded-2xl text-white focus:outline-none focus:border-[var(--color-neon-green)]/30 transition-all duration-300"
+                    placeholder="admin@example.com"
                     required
-                    autoFocus
-                    disabled={isLocked || isSuccess}
+                    disabled={loading || isSuccess}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.4em] ml-4">
+                  Password
+                </label>
+                <div className="relative group">
+                  <div className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500">
+                    <FaLock />
+                  </div>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full py-5 pl-14 pr-14 bg-black/40 border-2 border-white/5 rounded-2xl text-white focus:outline-none focus:border-[var(--color-neon-green)]/30 transition-all duration-300"
+                    placeholder="••••••••"
+                    required
+                    disabled={loading || isSuccess}
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPin((s) => !s)}
-                    className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-600 hover:text-white transition-colors p-2"
-                    disabled={isLocked || isSuccess}
+                    onClick={() => setShowPassword((s) => !s)}
+                    className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-600 hover:text-white transition-colors"
                   >
-                    {showPin ? <FaEyeSlash size={22} /> : <FaEye size={22} />}
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
                 </div>
               </div>
 
               <button
                 type="submit"
-                disabled={loading || isLocked || isSuccess}
-                className="w-full py-6 bg-gradient-neon text-[#0A0A0F] font-black text-lg rounded-3xl shadow-[0_20px_40px_rgba(0,255,136,0.2)] hover:shadow-[0_25px_50px_rgba(0,255,136,0.4)] hover:scale-[1.02] active:scale-95 transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 uppercase tracking-[0.2em]"
+                disabled={loading || isSuccess}
+                className="w-full py-6 mt-4 bg-gradient-neon text-[#0A0A0F] font-black text-lg rounded-2xl shadow-[0_20px_40px_rgba(0,255,136,0.2)] hover:shadow-[0_25px_50px_rgba(0,255,136,0.4)] hover:scale-[1.02] active:scale-95 transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 uppercase tracking-[0.2em]"
               >
                 {loading && !isSuccess ? (
                   <div className="w-6 h-6 border-4 border-[#0A0A0F] border-t-transparent rounded-full animate-spin"></div>
-                ) : isLocked ? (
-                  `Locked (${remainingTime}s)`
                 ) : (
-                  'Authorize'
+                  'Sign In'
                 )}
               </button>
             </form>
@@ -246,19 +161,10 @@ export default function AdminLogin() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7"></path>
             </svg>
           </div>
-          <h2 className="text-3xl font-black text-white uppercase tracking-[0.5em] animate-pulse">Authorized</h2>
-        </div>
-
-        {/* Bottom Security Info */}
-        <div className="mt-12 flex flex-col items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-1000 delay-500">
-           <div className="flex items-center gap-3 px-4 py-2 bg-white/5 rounded-full border border-white/5 backdrop-blur-md">
-             <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
-             <p className="text-[9px] text-gray-500 font-black uppercase tracking-[0.3em]">
-               End-to-End Encrypted Session
-             </p>
-           </div>
+          <h2 className="text-3xl font-black text-white uppercase tracking-[0.5em] animate-pulse">Authenticated</h2>
         </div>
       </div>
     </div>
   )
 }
+

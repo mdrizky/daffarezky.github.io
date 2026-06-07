@@ -5,7 +5,6 @@ import Autoplay from "embla-carousel-autoplay";
 import { useCallback, useEffect, useState } from "react";
 import { FaStar, FaChevronLeft, FaChevronRight, FaQuoteLeft } from "react-icons/fa";
 import Image from "next/image";
-import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/components/LanguageProvider";
 import type { Testimonial } from "@/types";
 
@@ -72,10 +71,13 @@ function getInitials(name: string) {
     .toUpperCase();
 }
 
-export default function TestimonialCarousel() {
+interface TestimonialCarouselProps {
+  initialData?: Testimonial[];
+}
+
+export default function TestimonialCarousel({ initialData }: TestimonialCarouselProps) {
   const { language } = useLanguage();
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [testimonials] = useState<Testimonial[]>(initialData && initialData.length > 0 ? initialData : FALLBACK);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
@@ -107,36 +109,6 @@ export default function TestimonialCarousel() {
       emblaApi.off("select", onSelect);
     };
   }, [emblaApi, onSelect]);
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const { data } = await supabase
-          .from("testimonials")
-          .select("*")
-          .order("created_at", { ascending: false });
-        setTestimonials(data && data.length > 0 ? data : FALLBACK);
-      } catch {
-        setTestimonials(FALLBACK);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetch();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {[1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className="h-52 rounded-2xl bg-gray-100 dark:bg-white/5 animate-pulse"
-          />
-        ))}
-      </div>
-    );
-  }
 
   return (
     <div className="relative">

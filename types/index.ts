@@ -26,6 +26,48 @@ export type Project = {
   duration?: string
   year?: number
   status?: 'Completed' | 'Ongoing' | 'Archived'
+  problem_id?: string
+  problem_en?: string
+  solution_id?: string
+  solution_en?: string
+  result_id?: string
+  result_en?: string
+}
+
+export type GuestbookEntry = {
+  id: string
+  name: string
+  message: string
+  is_approved: boolean
+  created_at: string
+}
+
+export type NewsletterSubscriber = {
+  id: string
+  email: string
+  is_active: boolean
+  created_at: string
+}
+
+export type BlogComment = {
+  id: string
+  post_id: string
+  name: string
+  email: string
+  content: string
+  is_approved: boolean
+  created_at: string
+}
+
+export type UsesItem = {
+  id: string
+  category: string
+  name: string
+  description_id?: string
+  description_en?: string
+  link?: string
+  icon?: string
+  sort_order: number
 }
 
 export type ProjectImage = {

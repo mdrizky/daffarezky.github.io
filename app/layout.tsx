@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import RootLayoutClient from "@/components/RootLayoutClient";
+import Gamification from "@/components/Gamification";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import { createClient } from "@/lib/supabase-server";
 
@@ -39,9 +40,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
   // Paksa identitas baru untuk menghindari data lama dari database
   const siteTitle = "Muhammad Daffa Rezky Adyra | Developer & Technology Enthusiast";
-  const siteDesc = "Portfolio resmi Muhammad Daffa Rezky Adyra. Menampilkan proyek unggulan, teknologi yang dikuasai, serta pengalaman membangun aplikasi dan solusi digital yang berdampak.";
-  const siteLogo = "/logo.png"; // Icon/Favicon tetap menggunakan logo baru
-  const ogImage = profile?.photo_url || "/logo.png"; // Gambar untuk Search/Sosmed menggunakan Foto Profile
+  const siteDesc = "Butuh web yang cepat, responsif, dan siap pakai? Saya di sini untuk membantu Anda mengubah ide bisnis menjadi aplikasi web modern yang fungsional. Mari berkolaborasi untuk membangun solusi digital terbaik bagi bisnis Anda. Jelajahi proyek saya di bawah ini dan hubungi saya untuk mulai berdiskusi!";
+  const sitePhoto = profile?.photo_url || "/logo.png"; 
   const siteUrl = "https://portofolio-daffarezky.vercel.app";
 
   return {
@@ -88,7 +88,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: siteTitle,
       images: [
         {
-          url: ogImage,
+          url: sitePhoto,
           width: 1200,
           height: 630,
           alt: siteTitle,
@@ -101,17 +101,17 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: siteTitle,
       description: siteDesc,
-      images: [ogImage],
+      images: [sitePhoto],
       creator: "@daffarizky",
     },
     icons: {
       icon: [
-        { url: siteLogo },
+        { url: sitePhoto },
         { url: "/favicon.ico" },
-        { url: siteLogo, sizes: "16x16", type: "image/png" },
-        { url: siteLogo, sizes: "32x32", type: "image/png" },
+        { url: sitePhoto, sizes: "16x16", type: "image/png" },
+        { url: sitePhoto, sizes: "32x32", type: "image/png" },
       ],
-      apple: [{ url: siteLogo }],
+      apple: [{ url: sitePhoto }],
     },
   };
 }
@@ -122,17 +122,19 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const supabase = await createClient();
-  const { data: settings } = await supabase.from('settings').select('*').limit(1).single();
+  const { data: profile } = await supabase.from('profile').select('photo_url').limit(1).single();
 
   const siteTitle = "Muhammad Daffa Rezky Adyra | Developer & Technology Enthusiast";
-  const siteDesc = "Portfolio resmi Muhammad Daffa Rezky Adyra. Menampilkan proyek unggulan, teknologi yang dikuasai, serta pengalaman membangun aplikasi dan solusi digital yang berdampak.";
+  const siteDesc = "Butuh web yang cepat, responsif, dan siap pakai? Saya di sini untuk membantu Anda mengubah ide bisnis menjadi aplikasi web modern yang fungsional. Mari berkolaborasi untuk membangun solusi digital terbaik bagi bisnis Anda. Jelajahi proyek saya di bawah ini dan hubungi saya untuk mulai berdiskusi!";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://portofolio-daffarezky.vercel.app";
+  const sitePhoto = profile?.photo_url || "/logo.png";
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
     name: "Muhammad Daffa Rezky Adyra",
     url: siteUrl,
-    image: `${siteUrl}/logo.png`,
+    image: sitePhoto,
     jobTitle: "Developer & Technology Enthusiast",
     description: siteDesc,
     sameAs: [
@@ -163,7 +165,7 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/logo.png" />
+        <link rel="apple-touch-icon" href={sitePhoto} />
         <meta name="theme-color" content="#00FF88" />
       </head>
       <body

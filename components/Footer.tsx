@@ -7,6 +7,8 @@ import { useLanguage } from "@/components/LanguageProvider";
 import { supabase } from "@/lib/supabase";
 import SiteLogo from "@/components/SiteLogo";
 
+import NewsletterForm from "./NewsletterForm";
+
 export default function Footer() {
   const { language } = useLanguage();
   const [profileName, setProfileName] = useState<string>("Daffa Rizky");
@@ -25,6 +27,8 @@ export default function Footer() {
     { name: "Portfolio", path: "/portfolio" },
     { name: "Skills", path: "/skills" },
     { name: "Blog", path: "/blog" },
+    { name: "Buku Tamu", path: "/guestbook" },
+    { name: "Setup Saya", path: "/uses" },
   ];
 
   const quickLinksEn = [
@@ -33,6 +37,8 @@ export default function Footer() {
     { name: "Portfolio", path: "/portfolio" },
     { name: "Skills", path: "/skills" },
     { name: "Blog", path: "/blog" },
+    { name: "Guestbook", path: "/guestbook" },
+    { name: "My Setup", path: "/uses" },
   ];
 
   const quickLinks = language === 'id' ? quickLinksId : quickLinksEn;
@@ -40,6 +46,11 @@ export default function Footer() {
   return (
     <footer className="border-t border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-[#0A0A0F] pt-16 pb-8 transition-colors duration-300">
       <div className="container mx-auto px-6 md:px-12">
+        {/* Newsletter Section */}
+        <div className="mb-16">
+          <NewsletterForm />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
           {/* Brand */}
           <div className="flex flex-col gap-6">

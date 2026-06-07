@@ -198,6 +198,44 @@ export default function ProjectDetailPage() {
           </div>
         </div>
 
+        {/* Case Study Sections */}
+        {(project.problem_id || project.problem_en) && (
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
+            <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 p-8 rounded-3xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-10 text-4xl transform group-hover:scale-110 transition-transform">🎯</div>
+              <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
+                <span className="w-8 h-8 rounded-lg bg-red-500/10 text-red-500 flex items-center justify-center text-sm font-bold">01</span>
+                {language === 'id' ? 'Masalah' : 'The Problem'}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                {language === 'id' ? project.problem_id : project.problem_en}
+              </p>
+            </div>
+
+            <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 p-8 rounded-3xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-10 text-4xl transform group-hover:scale-110 transition-transform">💡</div>
+              <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
+                <span className="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center text-sm font-bold">02</span>
+                {language === 'id' ? 'Solusi' : 'The Solution'}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                {language === 'id' ? project.solution_id : project.solution_en}
+              </p>
+            </div>
+
+            <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 p-8 rounded-3xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-10 text-4xl transform group-hover:scale-110 transition-transform">✅</div>
+              <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
+                <span className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-sm font-bold">03</span>
+                {language === 'id' ? 'Hasil' : 'The Result'}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                {language === 'id' ? project.result_id : project.result_en}
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Tech Stack */}
         <div className="mb-12">
           <h2 className="text-2xl font-heading font-bold mb-6 text-gray-900 dark:text-white">{t.techStack}</h2>
