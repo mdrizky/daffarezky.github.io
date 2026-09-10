@@ -2,6 +2,22 @@ import { createClient } from "@/lib/supabase-server";
 import HomeClient from "./HomeClient";
 
 export default async function Home() {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return (
+      <HomeClient
+        profile={null}
+        projects={[]}
+        servicesData={[]}
+        stats={{ projects: 0, skills: 0 }}
+        reasons={[]}
+        milestones={[]}
+        currentProjects={[]}
+        testimonials={[]}
+        partners={[]}
+      />
+    )
+  }
+
   const supabase = await createClient();
 
   const [
@@ -14,18 +30,29 @@ export default async function Home() {
     milestonesRes,
     currentProjectsRes,
     testimonialsRes,
-    partnersRes
+    partnersRes,
   ] = await Promise.all([
     supabase.from("profile").select("*").limit(1).single(),
     supabase.from("projects").select("*").eq("featured", true).limit(3),
     supabase.from("services").select("*").order("price", { ascending: true }).limit(3),
-    supabase.from("skills").select("*", { count: 'exact', head: true }),
-    supabase.from("projects").select("*", { count: 'exact', head: true }),
+    supabase.from("skills").select("*", { count: "exact", head: true }),
+    supabase.from("projects").select("*", { count: "exact", head: true }),
     supabase.from("reasons_to_hire").select("*").order("sort_order", { ascending: true }),
     supabase.from("journey_milestones").select("*").order("sort_order", { ascending: true }),
     supabase.from("projects").select("*").eq("is_current", true).limit(3),
     supabase.from("testimonials").select("*").order("created_at", { ascending: false }).limit(6),
     supabase.from("partners").select("*").order("order_index", { ascending: true }),
+  ]).catch(() => [
+    { data: null, count: 0 },
+    { data: [] },
+    { data: [] },
+    { data: null, count: 0 },
+    { data: null, count: 0 },
+    { data: [] },
+    { data: [] },
+    { data: [] },
+    { data: [] },
+    { data: [] },
   ]);
 
   return (
