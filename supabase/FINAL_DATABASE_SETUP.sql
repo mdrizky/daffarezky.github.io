@@ -766,11 +766,12 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 ALTER TABLE public.settings ADD COLUMN IF NOT EXISTS admin_pin_hash TEXT;
 
-INSERT INTO public.profile (name, title_id, title_en, bio_id, bio_en, availability_status_id, availability_status_en)
+INSERT INTO public.profile (name, title_id, title_en, bio_id, bio_en, availability_status_id, availability_status_en, photo_url)
 SELECT 'Daffa Rizky', 'Web & Mobile Developer', 'Web & Mobile Developer',
        'Membangun website, aplikasi Android, sistem backend, dan integrasi AI.',
        'Building websites, Android apps, backend systems, and AI integrations.',
-       'Tersedia untuk proyek freelance terpilih', 'Available for selected freelance projects'
+       'Tersedia untuk proyek freelance terpilih', 'Available for selected freelance projects',
+       '/logo.png'
 WHERE NOT EXISTS (SELECT 1 FROM public.profile);
 
 INSERT INTO public.settings (site_title, site_description)
