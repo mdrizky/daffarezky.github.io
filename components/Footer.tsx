@@ -24,7 +24,7 @@ export default function Footer() {
   const quickLinksId = [
     { name: "Beranda", path: "/" },
     { name: "Tentang", path: "/tentang" },
-    { name: "Portfolio", path: "/portfolio" },
+    { name: "Portfolio", path: "/projects" },
     { name: "Skills", path: "/skills" },
     { name: "Blog", path: "/blog" },
     { name: "Buku Tamu", path: "/guestbook" },
@@ -34,7 +34,7 @@ export default function Footer() {
   const quickLinksEn = [
     { name: "Home", path: "/" },
     { name: "About", path: "/tentang" },
-    { name: "Portfolio", path: "/portfolio" },
+    { name: "Portfolio", path: "/projects" },
     { name: "Skills", path: "/skills" },
     { name: "Blog", path: "/blog" },
     { name: "Guestbook", path: "/guestbook" },

@@ -4,8 +4,15 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { FaTrash, FaEnvelope, FaUserCheck, FaUserSlash } from 'react-icons/fa'
 
+type NewsletterRow = {
+  id: string
+  created_at: string
+  email: string
+  is_active: boolean
+}
+
 export default function NewsletterAdmin() {
-  const [subscribers, setSubscribers] = useState<any[]>([])
+  const [subscribers, setSubscribers] = useState<NewsletterRow[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -21,9 +28,9 @@ export default function NewsletterAdmin() {
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      setSubscribers(data || [])
-    } catch (error: any) {
-      console.error('Error fetching subscribers:', error.message)
+      setSubscribers((data as NewsletterRow[]) || [])
+    } catch (error) {
+      console.error('Error fetching subscribers:', error)
       alert('Gagal mengambil data subscriber')
     } finally {
       setLoading(false)
@@ -43,7 +50,7 @@ export default function NewsletterAdmin() {
         sub.id === id ? { ...sub, is_active: !currentStatus } : sub
       ))
       alert(currentStatus ? 'Subscriber dinonaktifkan' : 'Subscriber diaktifkan')
-    } catch (error: any) {
+    } catch {
       alert('Gagal mengubah status subscriber')
     }
   }
@@ -61,7 +68,7 @@ export default function NewsletterAdmin() {
       
       setSubscribers(subscribers.filter(sub => sub.id !== id))
       alert('Subscriber dihapus')
-    } catch (error: any) {
+    } catch {
       alert('Gagal menghapus subscriber')
     }
   }

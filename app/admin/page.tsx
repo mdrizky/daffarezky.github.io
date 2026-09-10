@@ -3,7 +3,9 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
-import { FaProjectDiagram, FaBlog, FaEnvelope, FaCogs, FaGraduationCap, FaTools, FaUserEdit, FaArrowRight, FaBriefcase, FaCertificate } from 'react-icons/fa'
+import { FaProjectDiagram, FaBlog, FaEnvelope, FaCogs, FaGraduationCap, FaTools, FaUserEdit, FaArrowRight, FaBriefcase } from 'react-icons/fa'
+
+type RecentMessage = { id: string; name: string; email?: string; message: string; created_at: string; is_read: boolean }
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -16,7 +18,7 @@ export default function AdminDashboard() {
     learning: 0,
     certificates: 0,
   })
-  const [recentMessages, setRecentMessages] = useState<any[]>([])
+  const [recentMessages, setRecentMessages] = useState<RecentMessage[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -36,7 +38,7 @@ export default function AdminDashboard() {
           }))
           // Update recent messages
           setRecentMessages(prev => {
-            const newArray = [payload.new, ...prev]
+            const newArray = [payload.new as RecentMessage, ...prev]
             return newArray.slice(0, 5) // keep only 5
           })
         }

@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { db, supabase } from "@/lib/database"
-import { FaCalendarAlt, FaEnvelope, FaTrash, FaCheckCircle, FaChevronRight, FaReply, FaWhatsapp, FaExternalLinkAlt } from "react-icons/fa"
+import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js"
+import { FaEnvelope, FaTrash, FaReply, FaWhatsapp } from "react-icons/fa"
 
 type Contact = {
   id: string
@@ -30,19 +31,20 @@ export default function AdminMessagesPage() {
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages' },
-        (payload: any) => {
+        (payload: RealtimePostgresChangesPayload<Contact>) => {
           setContacts((prev) => [payload.new as Contact, ...prev])
         }
       )
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'messages' },
-        (payload: any) => {
+        (payload: RealtimePostgresChangesPayload<Contact>) => {
+          const updated = payload.new as Contact
           setContacts((prev) => 
-            prev.map(c => c.id === payload.new.id ? { ...c, is_read: payload.new.is_read } : c)
+            prev.map(c => c.id === updated.id ? { ...c, is_read: updated.is_read } : c)
           )
-          if (selected?.id === payload.new.id) {
-            setSelected(prev => prev ? { ...prev, is_read: payload.new.is_read } : null)
+          if (selected?.id === updated.id) {
+            setSelected(prev => prev ? { ...prev, is_read: updated.is_read } : null)
           }
         }
       )

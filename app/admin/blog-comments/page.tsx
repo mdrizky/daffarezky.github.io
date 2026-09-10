@@ -4,8 +4,18 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { FaTrash, FaCheck, FaTimes, FaComments } from 'react-icons/fa'
 
+type BlogCommentRow = {
+  id: string
+  created_at: string
+  name: string
+  email: string
+  content: string
+  is_approved: boolean
+  blog_posts?: { title_id: string } | null
+}
+
 export default function BlogCommentsAdmin() {
-  const [comments, setComments] = useState<any[]>([])
+  const [comments, setComments] = useState<BlogCommentRow[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -26,9 +36,9 @@ export default function BlogCommentsAdmin() {
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      setComments(data || [])
-    } catch (error: any) {
-      console.error('Error fetching comments:', error.message)
+      setComments((data as BlogCommentRow[]) || [])
+    } catch (error) {
+      console.error('Error fetching comments:', error)
       alert('Gagal mengambil data komentar')
     } finally {
       setLoading(false)
@@ -48,7 +58,7 @@ export default function BlogCommentsAdmin() {
         comment.id === id ? { ...comment, is_approved: !currentStatus } : comment
       ))
       alert(currentStatus ? 'Komentar disembunyikan' : 'Komentar disetujui')
-    } catch (error: any) {
+    } catch {
       alert('Gagal mengubah status approval')
     }
   }
@@ -66,7 +76,7 @@ export default function BlogCommentsAdmin() {
       
       setComments(comments.filter(comment => comment.id !== id))
       alert('Komentar dihapus')
-    } catch (error: any) {
+    } catch {
       alert('Gagal menghapus komentar')
     }
   }
@@ -115,7 +125,7 @@ export default function BlogCommentsAdmin() {
                       <div className="text-xs font-bold text-blue-600 dark:text-blue-400 mb-1">
                         Art: {comment.blog_posts?.title_id || 'Unknown Post'}
                       </div>
-                      <p className="line-clamp-2 text-sm italic">"{comment.content}"</p>
+                      <p className="line-clamp-2 text-sm italic">&quot;{comment.content}&quot;</p>
                       <span className="text-[10px] text-gray-400 block mt-1">
                         {new Date(comment.created_at).toLocaleString('id-ID')}
                       </span>

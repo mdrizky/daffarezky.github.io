@@ -9,44 +9,7 @@ import { useLanguage } from "@/components/LanguageProvider";
 import type { Testimonial } from "@/types";
 
 // Fallback data jika Supabase kosong
-const FALLBACK: Testimonial[] = [
-  {
-    id: "1",
-    name: "Ahmad Fauzi",
-    role: "Business Owner",
-    content_id: "Kerja sama dengan Daffa sangat memuaskan. Website jadi lebih cepat dan desainnya premium banget. Highly recommended!",
-    content_en: "Working with Daffa was very satisfying. The website became faster and the design is premium. Highly recommended!",
-    avatar_url: null,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "2",
-    name: "Siti Rahayu",
-    role: "Startup Founder",
-    content_id: "Strategi digital yang diberikan sangat on-point. Konversi naik 40% dalam sebulan. Sangat merekomendasikan jasa Daffa.",
-    content_en: "The digital strategy provided was spot on. Conversions increased 40% in a month. Highly recommend Daffa&apos;s services.",
-    avatar_url: null,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "3",
-    name: "Budi Santoso",
-    role: "Content Creator",
-    content_id: "Dashboard analytics yang dibuat sangat membantu saya memantau KPI. Tampilan modern dan mudah digunakan. Thanks Daffa!",
-    content_en: "The analytics dashboard created really helps me monitor KPIs. Modern look and easy to use. Thanks Daffa!",
-    avatar_url: null,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "4",
-    name: "Dewi Lestari",
-    role: "E-Commerce Owner",
-    content_id: "Website toko online saya jadi jauh lebih profesional. Penjualan meningkat signifikan setelah redesign. Terima kasih Daffa!",
-    content_en: "My online store website became much more professional. Sales increased significantly after the redesign. Thank you Daffa!",
-    avatar_url: null,
-    created_at: new Date().toISOString(),
-  },
-];
+const FALLBACK: Testimonial[] = [];
 
 function StarRating({ count = 5 }: { count?: number }) {
   return (
@@ -110,6 +73,8 @@ export default function TestimonialCarousel({ initialData }: TestimonialCarousel
     };
   }, [emblaApi, onSelect]);
 
+  if (!testimonials.length) return null;
+
   return (
     <div className="relative">
       {/* Carousel viewport */}
@@ -134,7 +99,7 @@ export default function TestimonialCarousel({ initialData }: TestimonialCarousel
 
                   {/* Content */}
                   <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed flex-grow italic">
-                    "{content}"
+                    &quot;{content}&quot;
                   </p>
 
                   {/* Author */}
@@ -155,8 +120,10 @@ export default function TestimonialCarousel({ initialData }: TestimonialCarousel
                       </div>
                     )}
                     <div>
-                      <p className="font-bold text-sm text-gray-900 dark:text-white">{t.name}</p>
-                      <p className="text-xs text-[var(--color-neon-green)]">{t.role}</p>
+                      <p className="text-sm font-bold text-gray-900 dark:text-white">{t.name}</p>
+                      {t.role && (
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{t.role}</p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -166,42 +133,40 @@ export default function TestimonialCarousel({ initialData }: TestimonialCarousel
         </div>
       </div>
 
-      {/* Controls */}
-      <div className="flex items-center justify-between mt-8">
-        {/* Dots */}
-        <div className="flex gap-2">
-          {testimonials.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => emblaApi?.scrollTo(i)}
-              className={`transition-all duration-300 rounded-full ${
-                i === selectedIndex
-                  ? "w-6 h-2 bg-gradient-to-r from-[#00FF88] to-[#0099FF]"
-                  : "w-2 h-2 bg-gray-300 dark:bg-white/20 hover:bg-gray-400 dark:hover:bg-white/40"
-              }`}
-              aria-label={`Go to slide ${i + 1}`}
-            />
-          ))}
-        </div>
-
-        {/* Arrows */}
-        <div className="flex gap-3">
+      {/* Navigation arrows */}
+      {testimonials.length > 1 && (
+        <>
           <button
             onClick={scrollPrev}
-            className="w-10 h-10 rounded-full bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/20 hover:text-[var(--color-neon-blue)] transition-all"
-            aria-label="Previous"
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 w-10 h-10 rounded-full bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/20 transition-all shadow-md z-10"
           >
             <FaChevronLeft size={14} />
           </button>
           <button
             onClick={scrollNext}
-            className="w-10 h-10 rounded-full bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/20 hover:text-[var(--color-neon-blue)] transition-all"
-            aria-label="Next"
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 w-10 h-10 rounded-full bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/20 transition-all shadow-md z-10"
           >
             <FaChevronRight size={14} />
           </button>
+        </>
+      )}
+
+      {/* Dots */}
+      {testimonials.length > 1 && (
+        <div className="flex justify-center gap-2 mt-6">
+          {testimonials.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => emblaApi?.scrollTo(i)}
+              className={`w-2 h-2 rounded-full transition-all ${
+                i === selectedIndex
+                  ? "bg-[var(--color-neon-blue)] w-6"
+                  : "bg-gray-300 dark:bg-gray-600"
+              }`}
+            />
+          ))}
         </div>
-      </div>
+      )}
     </div>
   );
 }

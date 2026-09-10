@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/components/LanguageProvider";
-import { FaBriefcase, FaUsers, FaAward, FaBook } from "react-icons/fa";
+import { FaBriefcase, FaUsers, FaAward } from "react-icons/fa";
 import type { Experience } from "@/types";
 
 export default function PengalamanPage() {
@@ -53,7 +53,7 @@ export default function PengalamanPage() {
     return acc;
   }, {} as Record<string, Experience[]>);
 
-  const categoryIcons: Record<string, any> = {
+  const categoryIcons: Record<string, React.ReactNode> = {
     'Organisasi': <FaUsers />,
     'Freelance': <FaBriefcase />,
     'Kompetisi': <FaAward />,

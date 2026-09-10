@@ -8,6 +8,9 @@ type FormState = {
   email: string;
   whatsapp: string;
   subject: string;
+  service: string;
+  budget: string;
+  timeline: string;
   message: string;
   honeypot: string;
 };
@@ -23,6 +26,9 @@ export default function ContactForm() {
     email: "",
     whatsapp: "",
     subject: "",
+    service: "",
+    budget: "",
+    timeline: "",
     message: "",
     honeypot: "",
   });
@@ -79,6 +85,9 @@ export default function ContactForm() {
         email: "",
         whatsapp: "",
         subject: "",
+        service: "",
+        budget: "",
+        timeline: "",
         message: "",
         honeypot: "",
       });
@@ -167,6 +176,41 @@ export default function ContactForm() {
               <option value="Konsultasi Digital">Konsultasi Digital</option>
               <option value="Kolaborasi Project">Kolaborasi Project</option>
               <option value="Lainnya">Lainnya</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="grid sm:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Layanan</label>
+            <select name="service" value={form.service} onChange={handleChange} className={inputClass}>
+              <option value="">Pilih layanan</option>
+              <option value="Website Development">Website Development</option>
+              <option value="Android Development">Android Development</option>
+              <option value="Backend/API">Backend/API</option>
+              <option value="AI Integration">AI Integration</option>
+              <option value="Dashboard">Dashboard</option>
+              <option value="Lainnya">Lainnya</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Budget</label>
+            <select name="budget" value={form.budget} onChange={handleChange} className={inputClass}>
+              <option value="">Estimasi</option>
+              <option value="< 2jt">&lt; 2jt</option>
+              <option value="2-5jt">2–5jt</option>
+              <option value="5-15jt">5–15jt</option>
+              <option value="> 15jt">&gt; 15jt</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Timeline</label>
+            <select name="timeline" value={form.timeline} onChange={handleChange} className={inputClass}>
+              <option value="">Estimasi</option>
+              <option value="ASAP">ASAP</option>
+              <option value="1-4 minggu">1–4 minggu</option>
+              <option value="1-3 bulan">1–3 bulan</option>
+              <option value="Fleksibel">Fleksibel</option>
             </select>
           </div>
         </div>

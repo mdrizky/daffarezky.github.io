@@ -2,11 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import { FaPlus, FaTrash, FaSave, FaHandshake, FaLink, FaImage } from 'react-icons/fa'
-import { Partner } from '@/types'
+import { FaPlus, FaTrash, FaHandshake, FaLink } from 'react-icons/fa'
 
 export default function AdminPartners() {
-  const [partners, setPartners] = useState<any[]>([])
+  const [partners, setPartners] = useState<Array<{id: string; name: string; logo_url: string; website_url?: string}>>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [showAddModal, setShowAddModal] = useState(false)

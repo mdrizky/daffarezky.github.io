@@ -4,8 +4,16 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { FaTrash, FaCheck, FaTimes, FaBook } from 'react-icons/fa'
 
+type GuestbookRow = {
+  id: string
+  created_at: string
+  name: string
+  message: string
+  is_approved: boolean
+}
+
 export default function GuestbookAdmin() {
-  const [entries, setEntries] = useState<any[]>([])
+  const [entries, setEntries] = useState<GuestbookRow[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -21,9 +29,9 @@ export default function GuestbookAdmin() {
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      setEntries(data || [])
-    } catch (error: any) {
-      console.error('Error fetching guestbook:', error.message)
+      setEntries((data as GuestbookRow[]) || [])
+    } catch (error) {
+      console.error('Error fetching guestbook:', error)
       alert('Gagal mengambil data guestbook')
     } finally {
       setLoading(false)
@@ -43,7 +51,7 @@ export default function GuestbookAdmin() {
         entry.id === id ? { ...entry, is_approved: !currentStatus } : entry
       ))
       alert(currentStatus ? 'Entry disembunyikan' : 'Entry disetujui')
-    } catch (error: any) {
+    } catch {
       alert('Gagal mengubah status approval')
     }
   }
@@ -61,7 +69,7 @@ export default function GuestbookAdmin() {
       
       setEntries(entries.filter(entry => entry.id !== id))
       alert('Entry dihapus')
-    } catch (error: any) {
+    } catch {
       alert('Gagal menghapus entry')
     }
   }

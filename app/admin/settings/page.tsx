@@ -3,12 +3,11 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import Image from 'next/image'
-import { FaShieldAlt, FaImage, FaTrash, FaSave, FaCheckCircle, FaExclamationTriangle, FaSearch } from 'react-icons/fa'
+import { FaImage, FaTrash, FaSave, FaCheckCircle, FaExclamationTriangle, FaSearch, FaKey } from 'react-icons/fa'
 
 export default function AdminSettings() {
   // ── Logo management ────────────────────────────────────────────
   const [logoUrl, setLogoUrl] = useState<string | null>(null)
-  const [logoUrlInput, setLogoUrlInput] = useState('')
   const [profileId, setProfileId] = useState<string | null>(null)
   const [logoLoading, setLogoLoading] = useState(true)
   const [logoSaving, setLogoSaving] = useState(false)
@@ -19,11 +18,17 @@ export default function AdminSettings() {
   const [settingsId, setSettingsId] = useState<string | null>(null)
   const [siteTitle, setSiteTitle] = useState('')
   const [siteDescription, setSiteDescription] = useState('')
-  const [adminPin, setAdminPin] = useState('')
   const [settingsLoading, setSettingsLoading] = useState(true)
   const [settingsSaving, setSettingsSaving] = useState(false)
   const [settingsSuccess, setSettingsSuccess] = useState(false)
   const [settingsError, setSettingsError] = useState('')
+
+  // ── Admin PIN ─────────────────────────────────────────────────
+  const [currentPin, setCurrentPin] = useState('')
+  const [newPin, setNewPin] = useState('')
+  const [pinSaving, setPinSaving] = useState(false)
+  const [pinSuccess, setPinSuccess] = useState('')
+  const [pinError, setPinError] = useState('')
 
   useEffect(() => {
     fetchLogo()
@@ -41,7 +46,6 @@ export default function AdminSettings() {
       if (data) {
         setProfileId(data.id)
         setLogoUrl(data.logo_url ?? null)
-        setLogoUrlInput(data.logo_url ?? '')
       }
     } catch {
       // no profile row yet
@@ -62,7 +66,6 @@ export default function AdminSettings() {
         setSettingsId(data.id)
         setSiteTitle(data.site_title || '')
         setSiteDescription(data.site_description || '')
-        setAdminPin(data.admin_pin || '')
       }
     } catch {
       // no settings row yet
@@ -93,7 +96,6 @@ export default function AdminSettings() {
     }
 
     setLogoUrl(newUrl)
-    setLogoUrlInput(newUrl || '')
     setLogoSuccess(true)
     setTimeout(() => setLogoSuccess(false), 3000)
   }
@@ -145,23 +147,6 @@ export default function AdminSettings() {
     }
   }
 
-  const handleLogoUrlSave = async () => {
-    if (!logoUrlInput.trim()) {
-      setLogoError('URL logo tidak boleh kosong.')
-      return
-    }
-    setLogoSaving(true)
-    setLogoError('')
-    try {
-      await saveLogo(logoUrlInput.trim())
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : String(err)
-      setLogoError(msg || 'Gagal menyimpan URL logo.')
-    } finally {
-      setLogoSaving(false)
-    }
-  }
-
   const handleRemoveLogo = async () => {
     setLogoSaving(true)
     setLogoError('')
@@ -182,14 +167,9 @@ export default function AdminSettings() {
     setSettingsSuccess(false)
 
     try {
-      if (adminPin.length !== 6 || isNaN(Number(adminPin))) {
-        throw new Error('PIN Admin harus terdiri dari 6 angka.')
-      }
-
       const payload = {
         site_title: siteTitle,
         site_description: siteDescription,
-        admin_pin: adminPin
       }
 
       if (settingsId) {
@@ -201,15 +181,41 @@ export default function AdminSettings() {
         if (data) setSettingsId(data.id)
       }
 
-      // Automatically update localStorage if PIN changes so admin isn't kicked out
-      localStorage.setItem('admin_pin_auth', 'true')
-      
       setSettingsSuccess(true)
       setTimeout(() => setSettingsSuccess(false), 3000)
-    } catch (err: any) {
-      setSettingsError(err.message || 'Gagal menyimpan pengaturan.')
+    } catch (err: unknown) {
+      setSettingsError((err instanceof Error ? err.message : null) || 'Gagal menyimpan pengaturan.')
     } finally {
       setSettingsSaving(false)
+    }
+  }
+
+  const handleChangePin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setPinSaving(true)
+    setPinError('')
+    setPinSuccess('')
+
+    try {
+      const res = await fetch('/api/admin/change-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ current_pin: currentPin, new_pin: newPin }),
+      })
+
+      const body = await res.json()
+
+      if (res.status === 403) throw new Error(body.error || 'PIN saat ini salah.')
+      if (!res.ok) throw new Error(body.error || 'Gagal mengubah PIN.')
+
+      setCurrentPin('')
+      setNewPin('')
+      setPinSuccess('PIN admin berhasil diubah!')
+      setTimeout(() => setPinSuccess(''), 3000)
+    } catch (err: unknown) {
+      setPinError((err instanceof Error ? err.message : null) || 'Gagal mengubah PIN.')
+    } finally {
+      setPinSaving(false)
     }
   }
 
@@ -217,7 +223,7 @@ export default function AdminSettings() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl">
       <div>
         <h1 className="text-3xl font-bold font-syne text-gray-900 dark:text-white">Pengaturan Sistem</h1>
-        <p className="text-gray-500 dark:text-gray-400 mt-2">Kelola logo website, SEO (Meta Tags), dan PIN akses admin.</p>
+        <p className="text-gray-500 dark:text-gray-400 mt-2">Kelola logo website, SEO, dan PIN admin. Akses admin dibatasi hanya untuk admin_users + PIN.</p>
       </div>
 
       {/* ── Logo ──────────────────────────────────────────────── */}
@@ -316,8 +322,7 @@ export default function AdminSettings() {
         ) : (
           <form onSubmit={handleSaveSettings} className="space-y-6">
             
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-2">
+            <div className="space-y-2">
                 <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">
                   Judul Website (Title Tag)
                 </label>
@@ -331,23 +336,6 @@ export default function AdminSettings() {
                 />
                 <p className="text-xs text-gray-500">Maks. 60 karakter untuk hasil optimal di Google.</p>
               </div>
-
-              <div className="space-y-2">
-                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">
-                  PIN Admin (6 Angka) <FaShieldAlt className="inline text-blue-500 ml-1" />
-                </label>
-                <input
-                  type="text"
-                  required
-                  maxLength={6}
-                  value={adminPin}
-                  onChange={(e) => setAdminPin(e.target.value.replace(/\D/g, ''))}
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all text-sm font-mono tracking-widest font-bold"
-                  placeholder="240708"
-                />
-                <p className="text-xs text-gray-500">Gunakan PIN ini untuk masuk ke halaman admin.</p>
-              </div>
-            </div>
 
             <div className="space-y-2">
               <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">
@@ -367,7 +355,7 @@ export default function AdminSettings() {
             {settingsSuccess && (
               <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 rounded-xl px-4 py-3 font-medium">
                 <FaCheckCircle className="flex-shrink-0" />
-                Pengaturan SEO dan PIN berhasil disimpan!
+                Pengaturan SEO berhasil disimpan!
               </div>
             )}
             
@@ -396,6 +384,84 @@ export default function AdminSettings() {
             </div>
           </form>
         )}
+      </div>
+
+      {/* ── Ganti PIN Admin ─────────────────────────────────────── */}
+      <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm transition-colors duration-300">
+        <div className="flex items-center gap-3 mb-6 border-b border-gray-200 dark:border-white/10 pb-4">
+          <div className="p-2 bg-red-50 dark:bg-red-500/10 rounded-lg text-red-500">
+            <FaKey className="text-xl" />
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Ganti PIN Admin</h2>
+        </div>
+
+        <form onSubmit={handleChangePin} className="space-y-6">
+          <div className="space-y-2">
+            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">
+              PIN Saat Ini
+            </label>
+            <input
+              type="password"
+              required
+              inputMode="numeric"
+              maxLength={8}
+              value={currentPin}
+              onChange={(e) => setCurrentPin(e.target.value)}
+              className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 text-gray-900 dark:text-white transition-all text-sm font-medium tracking-[0.4em]"
+              placeholder="••••••"
+            />
+            <p className="text-xs text-gray-500">PIN default: <code className="bg-gray-100 dark:bg-white/10 px-1.5 py-0.5 rounded">240708</code> (jika belum pernah diubah).</p>
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">
+              PIN Baru
+            </label>
+            <input
+              type="password"
+              required
+              inputMode="numeric"
+              minLength={4}
+              maxLength={8}
+              pattern="[0-9]{4,8}"
+              value={newPin}
+              onChange={(e) => setNewPin(e.target.value)}
+              className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 text-gray-900 dark:text-white transition-all text-sm font-medium tracking-[0.4em]"
+              placeholder="••••••"
+            />
+            <p className="text-xs text-gray-500">4-8 digit angka. PIN disimpan terenkripsi (bcrypt) di database.</p>
+          </div>
+
+          {pinSuccess && (
+            <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 rounded-xl px-4 py-3 font-medium">
+              <FaCheckCircle className="flex-shrink-0" />
+              {pinSuccess}
+            </div>
+          )}
+          {pinError && (
+            <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-xl px-4 py-3 font-medium">
+              <FaExclamationTriangle className="flex-shrink-0" />
+              {pinError}
+            </div>
+          )}
+
+          <div className="flex justify-end pt-4 border-t border-gray-100 dark:border-white/5">
+            <button
+              type="submit"
+              disabled={pinSaving}
+              className="flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold rounded-xl shadow-lg shadow-red-500/20 hover:shadow-red-500/40 transition-all disabled:opacity-50 disabled:hover:shadow-none"
+            >
+              {pinSaving ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <>
+                  <FaKey />
+                  Ubah PIN
+                </>
+              )}
+            </button>
+          </div>
+        </form>
       </div>
 
     </div>

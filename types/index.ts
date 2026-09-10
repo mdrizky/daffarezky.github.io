@@ -25,7 +25,14 @@ export type Project = {
   slug?: string
   duration?: string
   year?: number
-  status?: 'Completed' | 'Ongoing' | 'Archived'
+  status?: 'Completed' | 'Ongoing' | 'Archived' | 'Concept'
+  is_published?: boolean
+  role?: string
+  overview_id?: string
+  overview_en?: string
+  future_plans_id?: string
+  future_plans_en?: string
+  sort_order?: number
   problem_id?: string
   problem_en?: string
   solution_id?: string
@@ -266,6 +273,8 @@ export type Testimonial = {
   content_en: string
   avatar_url: string | null
   created_at: string
+  rating?: number
+  featured?: boolean
 }
 
 export type Certificate = {
@@ -304,6 +313,28 @@ export type LearningJourney = {
   description_id: string
   description_en: string
   created_at: string
+  technologies?: string[]
+  icon?: string
+  image_url?: string
+  sort_order?: number
+  is_published?: boolean
+}
+
+export type Achievement = {
+  id: string
+  title_id: string
+  title_en: string
+  organization?: string
+  category: string
+  achieved_on?: string
+  description_id?: string
+  description_en?: string
+  image_url?: string
+  certificate_url?: string
+  credential_url?: string
+  featured?: boolean
+  sort_order?: number
+  is_published?: boolean
 }
 
 export type Experience = {

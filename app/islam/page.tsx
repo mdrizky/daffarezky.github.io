@@ -46,7 +46,7 @@ export default function IslamPage() {
     return acc;
   }, {} as Record<string, Islamic[]>);
 
-  const categoryIcons: Record<string, any> = {
+  const categoryIcons: Record<string, React.ReactNode> = {
     'Quran': <FaBook />,
     'Hadith': <FaBook />,
     'Worship': <FaMosque />,

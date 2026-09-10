@@ -68,7 +68,7 @@ export default function AdminReasonsToHire() {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Alasan Bekerja Sama</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">Section "Mengapa Bekerja Sama dengan Saya?" di Beranda.</p>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">Section &quot;Mengapa Bekerja Sama dengan Saya?&quot; di Beranda.</p>
         </div>
         <button
           onClick={() => setEditingItem({ title_id: '', title_en: '', description_id: '', description_en: '', icon: 'rocket', sort_order: items.length + 1 })}

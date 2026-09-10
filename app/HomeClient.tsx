@@ -2,18 +2,21 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { useLanguage } from "@/components/LanguageProvider";
 import SocialLinks from "@/components/SocialLinks";
 import ProjectCard from "@/components/ProjectCard";
 import ServiceCard from "@/components/ServiceCard";
-import GitHubStats from "@/components/GitHubStats";
-import DailyIslamicQuote from "@/components/DailyIslamicQuote";
-import dynamic from 'next/dynamic'
-import type { Profile, Project, Service, ReasonsToHire, JourneyMilestone, Testimonial } from "@/types";
+import dynamic from "next/dynamic";
+import type { Profile, Project, Service, ReasonsToHire, LearningJourney, Testimonial, Skill, BlogPost } from "@/types";
+import { Button } from "@/components/ui/Button";
+import { Container } from "@/components/ui/Container";
+import { SectionHeader } from "@/components/ui/SectionHeader";
+import { Badge } from "@/components/ui/Badge";
+import { Card, CardBody } from "@/components/ui/Card";
+import { projectHref } from "@/lib/mappers";
 
-const TestimonialCarousel = dynamic(() => import('@/components/TestimonialCarousel'), { ssr: false })
-const PartnerSlider = dynamic(() => import('@/components/PartnerSlider'), { ssr: false })
+const TestimonialCarousel = dynamic(() => import("@/components/TestimonialCarousel"), { ssr: false });
+const PartnerSlider = dynamic(() => import("@/components/PartnerSlider"), { ssr: false });
 
 interface HomeClientProps {
   profile: Profile | null;
@@ -21,10 +24,12 @@ interface HomeClientProps {
   servicesData: Service[];
   stats: { projects: number; skills: number };
   reasons: ReasonsToHire[];
-  milestones: JourneyMilestone[];
+  milestones: LearningJourney[];
   currentProjects: Project[];
   testimonials: Testimonial[];
-  partners: any[];
+  partners: { id: string; name: string; logo_url?: string; website_url?: string }[];
+  skills: Skill[];
+  posts: BlogPost[];
 }
 
 export default function HomeClient({
@@ -36,405 +41,305 @@ export default function HomeClient({
   milestones,
   currentProjects,
   testimonials,
-  partners
+  partners,
+  skills,
+  posts,
 }: HomeClientProps) {
   const { language } = useLanguage();
+  const id = language === "id";
 
-  const bio = language === 'id' 
-    ? (profile?.bio_id || "Assalamualaikum......, saya Muhammad Daffa Rezky Adyra, Seorang Web & Mobile Developer muslim yang berfokus pada pengembangan website, aplikasi, dan solusi digital modern yang responsif, efisien, serta bermanfaat bagi pengguna. Saya memiliki ketertarikan yang besar terhadap teknologi, Internet of Things (IoT), dan inovasi yang mampu memberikan dampak nyata bagi masyarakat. Sebagai seorang muslim, saya meyakini bahwa teknologi bukan hanya alat untuk menciptakan kemajuan, tetapi juga sarana untuk menghadirkan manfaat, menebarkan kebaikan, dan menjadi bagian dari kontribusi positif bagi umat, bangsa, dan lingkungan sekitar. Oleh karena itu, saya terus berkomitmen untuk belajar, berkembang, dan berkarya dengan penuh integritas serta tanggung jawab.")
-    : (profile?.bio_en || "Greetings, I am Muhammad Daffa Rezky Adyra, a Muslim Web & Mobile Developer focused on developing modern, responsive, efficient, and useful digital solutions. I have a great interest in technology, Internet of Things (IoT), and innovations that can provide a real impact on society. As a Muslim, I believe that technology is not just a tool for progress, but also a means to bring benefits, spread goodness, and be part of a positive contribution to the ummah, nation, and environment. Therefore, I am committed to continuous learning, growing, and creating with full integrity and responsibility.");
-
-  const t = {
-    greeting: language === 'id' ? 'Freelance Web & Mobile Developer' : 'Freelance Web & Mobile Developer',
-    heroTitle: language === 'id' ? "Membangun Solusi Digital" : "Building Modern",
-    heroTitle2: language === 'id' ? "Modern dan Profesional" : "and Professional Digital Solutions",
-    viewPortfolio: language === 'id' ? 'Lihat Karya Saya' : 'View My Work',
-    downloadCv: language === 'id' ? 'Download CV' : 'Download CV',
-    connect: language === 'id' ? 'Terhubung Dengan Saya' : 'Connect With Me',
-    projects: language === 'id' ? 'Proyek' : 'Projects',
-    tools: language === 'id' ? 'Teknologi' : 'Technologies',
-    experience: language === 'id' ? 'Tahun Belajar' : 'Years Learning',
-    aboutTitle1: language === 'id' ? 'Mengembangkan teknologi yang memberikan ' : 'Developing technology that provides ',
-    aboutTitle2: language === 'id' ? 'manfaat bagi masyarakat dan umat.' : 'benefits for society and the ummah.',
-    aboutDesc: language === 'id'
-      ? 'Saya adalah Web & Mobile Developer yang berfokus pada pengembangan website, aplikasi, dan solusi digital modern. Saya senang membangun teknologi yang cepat, responsif, dan memberikan pengalaman terbaik bagi pengguna.'
-      : 'I am a Web & Mobile Developer focused on developing websites, applications, and modern digital solutions. I enjoy building fast, responsive technology that provides the best user experience.',
-    knowMore: language === 'id' ? 'Kenal Lebih Dekat' : 'Get to Know Me',
-    featured: language === 'id' ? 'Proyek' : 'Projects',
-    featuredTitle: language === 'id' ? 'Unggulan' : 'Featured',
-    featuredDesc: language === 'id' ? 'Karya terbaik yang pernah saya kerjakan.' : 'Best works I have ever created.',
-    viewAll: language === 'id' ? 'Lihat Semua' : 'View All',
-    servicesTitle: language === 'id' ? 'Pilihan' : 'Available',
-    servicesTitle2: language === 'id' ? 'Layanan' : 'Services',
-    servicesDesc: language === 'id'
-      ? 'Layanan development profesional untuk website, aplikasi mobile, dan solusi teknologi kustom dengan teknologi modern.'
-      : 'Professional development services for websites, mobile apps, and custom tech solutions with modern technology.',
-    servicesMore: language === 'id' ? 'Lihat detail layanan lengkap' : 'See full services details',
-    testiTitle: language === 'id' ? 'Apa Kata' : 'What They',
-    testiTitle2: language === 'id' ? 'Mereka' : 'Say',
-    ctaTitle1: language === 'id' ? 'Mari Bangun Solusi Digital ' : 'Let\'s Build Digital Solutions ',
-    ctaTitle2: language === 'id' ? 'yang Berdampak' : 'that Impact',
-    ctaDesc: language === 'id'
-      ? 'Mari diskusikan kebutuhan Anda dan bangun solusi digital yang modern, cepat, dan bermanfaat untuk mendukung pertumbuhan bisnis maupun organisasi Anda.'
-      : "Let's discuss your needs and build modern, fast, and beneficial digital solutions to support the growth of your business or organization.",
-    ctaButton: language === 'id' ? 'Mulai Konsultasi' : 'Start Consultation',
-    currentProjects: language === 'id' ? 'Sedang Dikerjakan' : 'Currently Working',
-    currentProjectsDesc: language === 'id' ? 'Project yang sedang saya kerjakan saat ini.' : 'Projects I am currently working on.',
-    viewDetails: language === 'id' ? 'Lihat Detail' : 'View Details',
-    progress: language === 'id' ? 'Progres' : 'Progress',
-    valueTitle: language === 'id' ? 'Mengapa Bekerja Sama Dengan Saya?' : 'Why Work With Me?',
-  };
-
-  const [yearsOfLearning, setYearsOfLearning] = useState(3);
-  useEffect(() => {
-    const baseYear = 2026;
-    const baseYears = 3;
-    const today = new Date();
-    const currentYear = today.getFullYear();
-    const currentMonth = today.getMonth(); 
-    
-    let years = baseYears + (currentYear - baseYear);
-    if (currentMonth < 5) { // Before June
-      years--;
-    }
-    setYearsOfLearning(Math.max(baseYears, years));
-  }, []);
+  const title = id
+    ? profile?.title_id || "Web & Mobile Developer"
+    : profile?.title_en || "Web & Mobile Developer";
+  const bio = id ? profile?.bio_id : profile?.bio_en;
+  const availability = id
+    ? profile?.availability_status_id
+    : profile?.availability_status_en;
+  const waNumber = (profile?.wa || "").replace(/[^\d]/g, "");
+  const waHref = waNumber ? `https://wa.me/${waNumber}` : "/kontak";
 
   return (
-    <div className="flex flex-col gap-32 pb-32">
-      {/* 1. Hero Section */}
-      <section className="relative pt-40 min-h-screen flex items-center">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--color-neon-green)]/20 rounded-full blur-[128px] -z-10"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[var(--color-neon-blue)]/20 rounded-full blur-[128px] -z-10"></div>
-
-        <div className="container mx-auto px-6 md:px-12 grid lg:grid-cols-2 gap-12 items-center">
-          <div className="flex flex-col gap-6 order-2 lg:order-1 animate-in fade-in slide-in-from-bottom-8 duration-700">
-            <span className="text-[var(--color-neon-green)] font-bold tracking-widest uppercase text-sm mb-4 block animate-in fade-in slide-in-from-left-4 duration-500">
-              {t.greeting}
-            </span>
-            <h1 className="text-5xl md:text-7xl font-heading font-bold leading-tight text-gray-900 dark:text-white">
-              {t.heroTitle} <br />
-              <span className="text-gradient">
-                {t.heroTitle2}
-              </span>
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 text-lg md:text-xl max-w-4xl leading-relaxed">
-              {bio}
+    <div className="flex flex-col gap-24 pb-28 md:gap-32">
+      <section className="relative flex min-h-[88vh] items-center pt-32">
+        <Container className="grid items-center gap-12 lg:grid-cols-2">
+          <div className="order-2 flex flex-col gap-6 lg:order-1">
+            {availability ? (
+              <Badge className="w-fit">{availability}</Badge>
+            ) : null}
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-gray-500">
+              {profile?.name || "Daffa"} — {title}
             </p>
-            
-            <div className="flex flex-wrap items-center gap-4 mt-4">
-              <Link href="/portfolio" className="rounded-full bg-gray-900 dark:bg-white text-white dark:text-black px-8 py-3 font-bold hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors">
-                {t.viewPortfolio}
-              </Link>
-              <Link href="https://wa.me/628123456789" className="rounded-full bg-gradient-neon text-[#0A0A0F] px-8 py-3 font-bold shadow-[0_0_20px_rgba(0,255,136,0.3)] hover:scale-105 transition-all">
-                Hubungi Saya
-              </Link>
-              <Link href="/cv" className="rounded-full border border-gray-300 dark:border-white/20 bg-white/50 dark:bg-transparent px-8 py-3 font-bold text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
-                {t.downloadCv}
-              </Link>
+            <h1 className="font-heading text-4xl font-bold leading-tight text-gray-900 dark:text-white md:text-6xl">
+              {id
+                ? "Website, aplikasi Android, backend, dan integrasi AI."
+                : "Websites, Android apps, backend systems, and AI integrations."}
+            </h1>
+            <p className="max-w-xl text-lg leading-relaxed text-gray-600 dark:text-gray-400">
+              {bio ||
+                (id
+                  ? "Saya membangun produk digital yang berguna dan menyelesaikan masalah nyata — untuk klien, tim, dan pengguna."
+                  : "I build useful digital products that solve real problems — for clients, teams, and users.")}
+            </p>
+            <div className="mt-2 flex flex-wrap gap-3">
+              <Button href="/projects">{id ? "Lihat proyek" : "View projects"}</Button>
+              <Button href="/kontak" variant="secondary">
+                Hire Me
+              </Button>
+              <Button href="/cv" variant="ghost">
+                CV
+              </Button>
             </div>
-
-            <div className="mt-8">
-              <p className="text-sm text-gray-600 dark:text-gray-500 mb-4 uppercase tracking-widest font-bold">{t.connect}</p>
+            <div className="mt-6">
               <SocialLinks />
             </div>
-
-            <div className="grid grid-cols-3 gap-6 mt-8 pt-8 border-t border-gray-200 dark:border-white/10">
+            <div className="mt-6 grid max-w-md grid-cols-3 gap-6 border-t border-gray-200 pt-6 dark:border-white/10">
               <div>
-                <div className="text-3xl font-heading font-bold text-gray-900 dark:text-white">
-                  {stats.projects}
-                </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">{t.projects}</div>
+                <p className="font-heading text-2xl font-bold">{stats.projects}</p>
+                <p className="text-sm text-gray-500">{id ? "Proyek" : "Projects"}</p>
               </div>
               <div>
-                <div className="text-3xl font-heading font-bold text-gray-900 dark:text-white">
-                  {stats.skills}
-                </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">{t.tools}</div>
+                <p className="font-heading text-2xl font-bold">{stats.skills}</p>
+                <p className="text-sm text-gray-500">Skills</p>
               </div>
               <div>
-                <div className="text-3xl font-heading font-bold text-gray-900 dark:text-white">
-                  {yearsOfLearning}
-                </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">{t.experience}</div>
+                <p className="font-heading text-2xl font-bold">{currentProjects.length}</p>
+                <p className="text-sm text-gray-500">{id ? "Berjalan" : "Ongoing"}</p>
               </div>
             </div>
           </div>
-
-          <div className="order-1 lg:order-2 flex justify-center lg:justify-end animate-in fade-in slide-in-from-right-8 duration-700">
-            <div className="relative w-[300px] h-[300px] md:w-[450px] md:h-[450px]">
-              <div className="absolute inset-0 rounded-full border-2 border-dashed border-[var(--color-neon-blue)]/30 animate-[spin_20s_linear_infinite]"></div>
-              <div className="absolute inset-4 rounded-full border-2 border-[var(--color-neon-green)]/30 animate-[spin_15s_linear_infinite_reverse]"></div>
-              <div className="absolute inset-8 rounded-full overflow-hidden bg-gray-200/50 dark:bg-black/50 backdrop-blur-md border border-gray-200 dark:border-white/10">
-                <Image
-                  src={profile?.photo_url || "/foto.jpg"}
-                  alt={profile?.name || "Daffa Rizky"}
-                  fill
-                  className="object-cover"
-                />
-              </div>
+          <div className="order-1 flex justify-center lg:order-2 lg:justify-end">
+            <div className="relative h-[280px] w-[280px] overflow-hidden rounded-3xl border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/5 md:h-[400px] md:w-[400px]">
+              <Image
+                src={profile?.photo_url || "/foto.jpg"}
+                alt={profile?.name || "Daffa"}
+                fill
+                className="object-cover"
+                priority
+              />
             </div>
           </div>
-        </div>
+        </Container>
       </section>
 
-      {/* Journey Milestones Section */}
-      {milestones.length > 0 && (
-        <section className="container mx-auto px-6 md:px-12">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4 text-gray-900 dark:text-white">
-              {language === 'id' ? 'Milestone Perjalanan' : 'Learning Journey'}
-            </h2>
-            <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
-              {language === 'id' ? 'Langkah demi langkah perjalanan saya di dunia teknologi.' : 'Step by step my journey in the technology world.'}
-            </p>
-          </div>
-          <div className="relative border-l-2 border-gray-200 dark:border-white/10 ml-4 md:ml-0 md:max-w-4xl md:mx-auto pl-8 space-y-12">
-            {milestones.map((item, i) => (
-              <div key={item.id} className="relative animate-in fade-in slide-in-from-left-4 duration-500" style={{ transitionDelay: `${i * 100}ms` }}>
-                <div className="absolute -left-[41px] top-0 w-5 h-5 bg-white dark:bg-[#0A0A0F] border-4 border-blue-500 rounded-full z-10 shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
-                <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-8">
-                  <span className="text-2xl font-black text-blue-500 dark:text-[var(--color-neon-blue)] md:w-20 shrink-0">
-                    {item.year}
-                  </span>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                      {language === 'id' ? item.title_id : item.title_en}
-                    </h3>
-                    <p className="text-gray-500 dark:text-gray-400 mt-1">
-                      {language === 'id' ? item.description_id : item.description_en}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* 2. About Snapshot */}
-      <section className="container mx-auto px-6 md:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
-          <DailyIslamicQuote />
-          <div className="bg-white/80 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-3xl p-8 flex flex-col justify-center relative overflow-hidden shadow-sm">
-            <h2 className="text-2xl font-heading font-bold mb-4 text-gray-900 dark:text-white">
-              {language === 'id' ? 'Visi Saya' : 'My Vision'}
-            </h2>
-            <p className="text-gray-500 dark:text-gray-400 leading-relaxed italic">
-              "{profile?.vision_id || 'Membangun teknologi yang bermanfaat untuk umat dan bangsa.'}"
-            </p>
-          </div>
-        </div>
-
-        <div className="bg-white/80 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-3xl p-8 md:p-16 flex flex-col md:flex-row gap-12 items-center relative overflow-hidden shadow-sm">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-neon opacity-10 blur-3xl rounded-full"></div>
-          <div className="flex-1">
-            <h2 className="text-3xl md:text-5xl font-heading font-bold mb-6 text-gray-900 dark:text-white leading-tight">
-              {t.aboutTitle1}<span className="text-gradient">{t.aboutTitle2}</span>
-            </h2>
-            <p className="text-gray-500 dark:text-gray-400 text-lg mb-8 leading-relaxed">
-              {t.aboutDesc}
-            </p>
-            <Link href="/tentang" className="text-[var(--color-neon-blue)] font-bold flex items-center gap-2 hover:gap-4 transition-all">
-              {t.knowMore} <span>→</span>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* GitHub Stats Section */}
-      <section className="container mx-auto px-6 md:px-12">
-        <GitHubStats username="daffarizky" />
-      </section>
-
-      {/* 3. Value Proposition */}
-      {reasons.length > 0 && (
-        <section className="container mx-auto px-6 md:px-12">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4 text-gray-900 dark:text-white">
-              {t.valueTitle}
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {reasons.map((item) => (
-              <div key={item.id} className="flex flex-col gap-4 p-8 bg-white/50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-3xl hover:border-[var(--color-neon-green)]/50 transition-all group shadow-sm">
-                <div className="w-12 h-12 bg-gray-100 dark:bg-white/5 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform text-blue-500">
-                  {item.icon === 'rocket' && '🚀'}
-                  {item.icon === 'code' && '💻'}
-                  {item.icon === 'lightbulb' && '💡'}
-                  {item.icon === 'hands' && '🤝'}
-                  {!['rocket', 'code', 'lightbulb', 'hands'].includes(item.icon) && '✨'}
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                    {language === 'id' ? item.title_id : item.title_en}
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                    {language === 'id' ? item.description_id : item.description_en}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-
-      {/* Current Projects Section */}
-      {currentProjects.length > 0 && (
-        <section className="container mx-auto px-6 md:px-12">
-          <div className="flex justify-between items-end mb-12">
-            <div>
-              <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4 text-gray-900 dark:text-white">
-                {t.currentProjects}
-              </h2>
-              <p className="text-gray-500 dark:text-gray-400">{t.currentProjectsDesc}</p>
+      {skills.length > 0 && (
+        <section>
+          <Container>
+            <SectionHeader
+              eyebrow={id ? "Teknologi" : "Stack"}
+              title={id ? "Alat yang saya pakai" : "Tools I work with"}
+            />
+            <div className="flex flex-wrap justify-center gap-2">
+              {skills.slice(0, 18).map((skill) => (
+                <Badge key={skill.id}>{skill.name}</Badge>
+              ))}
             </div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {currentProjects.map((project) => (
-              <div key={project.id} className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl overflow-hidden hover:border-[var(--color-neon-green)]/50 transition-colors shadow-sm">
-                <div className="relative aspect-video">
-                  <Image
-                    src={project.image_url}
-                    alt={language === 'id' ? project.title_id : project.title_en}
-                    fill
-                    className="object-cover"
-                  />
-                  {project.is_current && (
-                    <div className="absolute top-4 right-4 px-3 py-1 bg-[var(--color-neon-green)] text-black text-xs font-bold rounded-full flex items-center gap-1">
-                      <span className="w-2 h-2 bg-black rounded-full animate-pulse"></span>
-                      {t.currentProjects}
-                    </div>
-                  )}
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
-                    {language === 'id' ? project.title_id : project.title_en}
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 line-clamp-2">
-                    {language === 'id' ? project.description_id : project.description_en}
-                  </p>
-                  
-                  {/* Progress Bar */}
-                  <div className="mb-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{t.progress}</span>
-                      <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{project.progress}%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 dark:bg-white/10 rounded-full h-2">
-                      <div
-                        className={`h-2 rounded-full transition-all duration-500 ${
-                          project.progress === 100 ? 'bg-green-500' : 
-                          project.progress >= 50 ? 'bg-blue-500' : 'bg-yellow-500'
-                        }`}
-                        style={{ width: `${project.progress}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                  
-                  <Link
-                    href={`/portfolio/${project.id}`}
-                    className="inline-flex items-center gap-2 text-sm font-bold text-[var(--color-neon-blue)] hover:text-gray-900 dark:hover:text-white transition-colors"
-                  >
-                    {t.viewDetails} <span>→</span>
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
+          </Container>
         </section>
       )}
 
-      {/* 3. Featured Projects */}
       {projects.length > 0 && (
-        <section className="container mx-auto px-6 md:px-12">
-          <div className="flex justify-between items-end mb-12">
-            <div>
-              <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4 text-gray-900 dark:text-white">{t.featuredTitle} <span className="text-gradient">{t.featured}</span></h2>
-              <p className="text-gray-500 dark:text-gray-400">{t.featuredDesc}</p>
+        <section>
+          <Container>
+            <div className="mb-4 flex items-end justify-between gap-6">
+              <SectionHeader
+                align="left"
+                eyebrow={id ? "Karya" : "Work"}
+                title={id ? "Proyek unggulan" : "Featured projects"}
+              />
+              <Button href="/projects" variant="secondary" className="mb-12 hidden md:inline-flex">
+                {id ? "Semua proyek" : "All projects"}
+              </Button>
             </div>
-            <Link href="/portfolio" className="hidden md:flex border border-gray-200 dark:border-white/20 bg-white dark:bg-transparent px-6 py-2 rounded-full font-bold text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-white/10 transition-colors">
-              {t.viewAll}
-            </Link>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
-          </div>
-          <div className="mt-8 text-center md:hidden">
-            <Link href="/portfolio" className="border border-gray-200 dark:border-white/20 bg-white dark:bg-transparent px-6 py-3 rounded-full font-bold inline-block text-gray-700 dark:text-white">
-              {t.viewAll} {t.featured}
-            </Link>
-          </div>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {projects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
+            </div>
+          </Container>
         </section>
       )}
 
-      {/* 4. Services Preview */}
       {servicesData.length > 0 && (
-        <section className="container mx-auto px-6 md:px-12">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4 text-gray-900 dark:text-white">{t.servicesTitle} <span className="text-gradient">{t.servicesTitle2}</span></h2>
-            <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">{t.servicesDesc}</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {servicesData.map((service) => (
-              <ServiceCard key={service.id} service={service} />
-            ))}
-          </div>
-          <div className="mt-12 text-center">
-            <Link href="/services" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors underline underline-offset-4">
-              {t.servicesMore}
-            </Link>
-          </div>
+        <section>
+          <Container>
+            <SectionHeader title={id ? "Yang bisa saya bangun" : "What I build"} />
+            <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-3">
+              {servicesData.map((service) => (
+                <ServiceCard key={service.id} service={service} />
+              ))}
+            </div>
+          </Container>
         </section>
       )}
 
-      {/* 5. Testimonials */}
-      <section className="container mx-auto px-6 md:px-12">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4 text-gray-900 dark:text-white">
-            {t.testiTitle} <span className="text-gradient">{t.testiTitle2}</span>
-          </h2>
-          <p className="text-gray-500 dark:text-gray-400 max-w-xl mx-auto">
-            {language === 'id' ? 'Apa yang mereka katakan tentang pengalaman bekerja sama dengan saya.' : 'What they say about their experience working with me.'}
-          </p>
-        </div>
-        <TestimonialCarousel initialData={testimonials} />
+      <section>
+        <Container>
+          <Card>
+            <CardBody className="grid gap-8 p-8 md:grid-cols-2 md:p-12">
+              <div>
+                <SectionHeader
+                  align="left"
+                  title={id ? "Tentang" : "About"}
+                  description={
+                    id
+                      ? profile?.vision_id || "Fokus pada produk digital yang cepat, jelas, dan bermanfaat."
+                      : profile?.vision_en || "Focused on fast, clear, and useful digital products."
+                  }
+                />
+                <Button href="/tentang" variant="secondary">
+                  {id ? "Profil lengkap" : "Full profile"}
+                </Button>
+              </div>
+              <p className="leading-relaxed text-gray-600 dark:text-gray-400">
+                {id ? profile?.focus_id || bio : profile?.focus_en || bio}
+              </p>
+            </CardBody>
+          </Card>
+        </Container>
       </section>
 
-      {/* 6. Partner Slider */}
-      <section className="container mx-auto px-6 md:px-12">
-        <PartnerSlider language={language} initialData={partners} />
-      </section>
+      {milestones.length > 0 && (
+        <section>
+          <Container>
+            <SectionHeader title={id ? "Perjalanan belajar" : "Learning journey"} />
+            <div className="relative mx-auto max-w-3xl space-y-10 border-l border-gray-200 pl-8 dark:border-white/10">
+              {milestones.map((item) => (
+                <div key={item.id} className="relative">
+                  <div className="absolute -left-[37px] top-1 h-3 w-3 rounded-full bg-gray-900 dark:bg-white" />
+                  <p className="text-sm font-semibold text-gray-500">{item.year}</p>
+                  <h3 className="mt-1 text-xl font-bold text-gray-900 dark:text-white">
+                    {id ? item.title_id : item.title_en}
+                  </h3>
+                  <p className="mt-1 text-gray-600 dark:text-gray-400">
+                    {id ? item.description_id : item.description_en}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
 
-      {/* CTA Section */}
-      <section className="container mx-auto px-6 md:px-12">
-        <div className="relative rounded-[40px] overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-neon-blue)] to-[var(--color-neon-green)] opacity-10"></div>
-          <div className="absolute -top-24 -right-24 w-96 h-96 bg-[var(--color-neon-green)] rounded-full blur-[120px] opacity-20"></div>
-          <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[var(--color-neon-blue)] rounded-full blur-[120px] opacity-20"></div>
-          
-          <div className="relative backdrop-blur-3xl border border-white/10 p-12 md:p-24 text-center">
-            <h2 className="text-4xl md:text-6xl font-heading font-bold mb-8 text-gray-900 dark:text-white leading-tight">
-              {t.ctaTitle1}<br />
-              <span className="text-gradient">{t.ctaTitle2}</span>
-            </h2>
-            <p className="text-gray-500 dark:text-gray-400 text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
-              {t.ctaDesc}
-            </p>
-            <Link 
-              href="https://wa.me/628123456789"
-              className="inline-flex items-center gap-3 rounded-full bg-gradient-neon px-10 py-5 text-lg font-bold text-[#0A0A0F] shadow-[0_0_30px_rgba(0,255,136,0.3)] hover:scale-105 transition-all"
-            >
-              {t.ctaButton}
-            </Link>
-          </div>
-        </div>
+      {currentProjects.length > 0 && (
+        <section>
+          <Container>
+            <SectionHeader title={id ? "Sedang dikerjakan" : "In progress"} />
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+              {currentProjects.map((project) => (
+                <Card key={project.id}>
+                  <div className="relative aspect-video overflow-hidden rounded-t-2xl">
+                    <Image
+                      src={project.image_url || "/og-image.jpg"}
+                      alt={id ? project.title_id : project.title_en}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <CardBody>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                      {id ? project.title_id : project.title_en}
+                    </h3>
+                    <p className="mt-2 line-clamp-2 text-sm text-gray-500">
+                      {id ? project.description_id : project.description_en}
+                    </p>
+                    <Link href={projectHref(project)} className="mt-4 inline-block text-sm font-semibold">
+                      {id ? "Studi kasus" : "Case study"} →
+                    </Link>
+                  </CardBody>
+                </Card>
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
+
+      {reasons.length > 0 && (
+        <section>
+          <Container>
+            <SectionHeader title={id ? "Mengapa bekerja sama" : "Why hire me"} />
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              {reasons.map((item) => (
+                <Card key={item.id}>
+                  <CardBody>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                      {id ? item.title_id : item.title_en}
+                    </h3>
+                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                      {id ? item.description_id : item.description_en}
+                    </p>
+                  </CardBody>
+                </Card>
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
+
+      {testimonials.length > 0 && (
+        <section>
+          <Container>
+            <SectionHeader title={id ? "Testimoni" : "Testimonials"} />
+            <TestimonialCarousel initialData={testimonials} />
+          </Container>
+        </section>
+      )}
+
+      {posts.length > 0 && (
+        <section>
+          <Container>
+            <SectionHeader title={id ? "Tulisan terbaru" : "Latest writing"} />
+            <div className="grid gap-6 md:grid-cols-3">
+              {posts.map((post) => (
+                <Link key={post.id} href={`/blog/${post.slug}`}>
+                  <Card className="h-full transition hover:-translate-y-0.5">
+                    <CardBody>
+                      <p className="text-xs uppercase tracking-wide text-gray-500">{post.category}</p>
+                      <h3 className="mt-2 font-heading text-lg font-bold text-gray-900 dark:text-white">
+                        {id ? post.title_id : post.title_en}
+                      </h3>
+                      <p className="mt-2 line-clamp-3 text-sm text-gray-500">
+                        {id ? post.excerpt_id : post.excerpt_en}
+                      </p>
+                    </CardBody>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
+
+      {partners.length > 0 && (
+        <section>
+          <Container>
+            <PartnerSlider language={language} initialData={partners} />
+          </Container>
+        </section>
+      )}
+
+      <section>
+        <Container>
+          <Card>
+            <CardBody className="p-10 text-center md:p-16">
+              <h2 className="font-heading text-3xl font-bold text-gray-900 dark:text-white md:text-5xl">
+                {id ? "Punya proyek yang perlu dibangun?" : "Have a product that needs to be built?"}
+              </h2>
+              <p className="mx-auto mt-4 max-w-xl text-gray-600 dark:text-gray-400">
+                {id
+                  ? "Kirim brief singkat. Saya balas dengan ruang lingkup, estimasi, dan apakah saya bisa membantu."
+                  : "Send a short brief. I reply with scope, estimate, and whether I can help."}
+              </p>
+              <div className="mt-8 flex flex-wrap justify-center gap-3">
+                <Button href="/kontak">{id ? "Kirim brief" : "Send a brief"}</Button>
+                {waHref.startsWith("http") ? (
+                  <Button href={waHref} variant="secondary">
+                    WhatsApp
+                  </Button>
+                ) : null}
+              </div>
+            </CardBody>
+          </Card>
+        </Container>
       </section>
     </div>
   );

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/components/LanguageProvider";
-import type { Profile, Education, Skill, Concept, FocusArea, CoreValue, Quote, ActiveProject, FutureConcept } from "@/types";
+import type { Profile, Education, Skill, FocusArea, CoreValue, Project } from "@/types";
 import SkillBadge from "@/components/SkillBadge";
 import { FaHammer, FaCheckSquare } from "react-icons/fa";
 
@@ -15,23 +15,21 @@ export default function TentangPage() {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [focusAreas, setFocusAreas] = useState<FocusArea[]>([]);
   const [coreValues, setCoreValues] = useState<CoreValue[]>([]);
-  const [quotes, setQuotes] = useState<Quote[]>([]);
-  const [activeProjects, setActiveProjects] = useState<ActiveProject[]>([]);
-  const [futureConcepts, setFutureConcepts] = useState<FutureConcept[]>([]);
+  const [activeProjects, setActiveProjects] = useState<Project[]>([]);
+  const [futureConcepts, setFutureConcepts] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [profileRes, eduRes, skillRes, focusRes, valuesRes, quotesRes, activeRes, futureRes] = await Promise.all([
+        const [profileRes, eduRes, skillRes, focusRes, valuesRes, activeRes, futureRes] = await Promise.all([
           supabase.from("profile").select("*").limit(1),
           supabase.from("education").select("*").order("start_year", { ascending: false }),
           supabase.from("skills").select("*").order("name"),
           supabase.from("focus_areas").select("*").order("sort_order"),
           supabase.from("core_values").select("*").order("sort_order"),
-          supabase.from("quotes").select("*").order("sort_order"),
-          supabase.from("active_projects").select("*").order("sort_order"),
-          supabase.from("future_concepts").select("*").order("sort_order"),
+          supabase.from("projects").select("*").eq("status", "Ongoing").eq("is_published", true).order("sort_order"),
+          supabase.from("projects").select("*").eq("status", "Concept").eq("is_published", true).order("sort_order"),
         ]);
 
         if (profileRes.data && profileRes.data.length > 0) setProfile(profileRes.data[0]);
@@ -39,7 +37,6 @@ export default function TentangPage() {
         if (skillRes.data) setSkills(skillRes.data);
         if (focusRes.data) setFocusAreas(focusRes.data);
         if (valuesRes.data) setCoreValues(valuesRes.data);
-        if (quotesRes.data) setQuotes(quotesRes.data);
         if (activeRes.data) setActiveProjects(activeRes.data);
         if (futureRes.data) setFutureConcepts(futureRes.data);
       } catch (error) {
@@ -80,29 +77,6 @@ export default function TentangPage() {
   const vision = language === 'id'
     ? (profile?.vision_id || "Menjadi profesional di bidang teknologi yang tidak hanya unggul secara teknis, tetapi juga menjunjung tinggi nilai-nilai Islam, integritas, dan kebermanfaatan dalam setiap karya yang dibangun.")
     : (profile?.vision_en || "To be a professional in the field of technology who is not only technically excellent but also upholds Islamic values, integrity, and usefulness in every work built.");
-
-  const focusItems = [
-    { title: "Web Development", icon: "🌐" },
-    { title: "Mobile Development", icon: "📱" },
-    { title: "Artificial Intelligence", icon: "🤖" },
-    { title: "Internet of Things (IoT)", icon: "📡" },
-    { title: "UI/UX Design", icon: "🎨" },
-    { title: "Cloud Computing", icon: "☁️" },
-  ];
-
-  const valueItems = language === 'id' ? [
-    { title: "Islam sebagai landasan hidup", icon: "🕌" },
-    { title: "Belajar sepanjang hayat", icon: "💡" },
-    { title: "Kolaborasi dan komunikasi", icon: "🤝" },
-    { title: "Inovasi dan kebermanfaatan", icon: "🚀" },
-    { title: "Konsistensi dalam berkarya", icon: "🎯" },
-  ] : [
-    { title: "Islam as the foundation of life", icon: "🕌" },
-    { title: "Lifelong learning", icon: "💡" },
-    { title: "Collaboration and communication", icon: "🤝" },
-    { title: "Innovation and usefulness", icon: "🚀" },
-    { title: "Consistency in working", icon: "🎯" },
-  ];
 
   const quote = language === 'id'
     ? { text: "Sebaik-baik manusia adalah yang paling bermanfaat bagi manusia lainnya.", ref: "Hadits Riwayat Ahmad" }
@@ -179,7 +153,7 @@ export default function TentangPage() {
                     <span className="text-2xl">✨</span> {t.visi}
                   </h3>
                   <p className="text-lg text-gray-800 dark:text-gray-200 italic leading-relaxed">
-                    "{vision}"
+                    &quot;{vision}&quot;
                   </p>
                 </div>
               </div>
@@ -287,32 +261,30 @@ export default function TentangPage() {
                 {activeProjects.map((item) => (
                   <div key={item.id} className="p-8 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-[32px] relative overflow-hidden group shadow-sm">
                     <div className="absolute top-0 right-0 px-6 py-2 bg-[var(--color-neon-green)] text-black font-bold text-xs rounded-bl-2xl uppercase tracking-widest">
-                      {language === 'id' ? item.status_id : item.status_en}
+                      {item.status}
                     </div>
                     <div className="mb-6">
                       <h3 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-[var(--color-neon-green)] transition-colors">
-                        {language === 'id' ? item.name_id : item.name_en}
+                        {language === 'id' ? item.title_id : item.title_en}
                       </h3>
                       <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
                         {language === 'id' ? item.description_id : item.description_en}
                       </p>
 
-                      {/* Progress */}
                       <div className="mb-6">
                         <div className="flex justify-between text-[10px] font-black mb-2 tracking-tighter">
                           <span className="text-gray-400 uppercase">PROGRES PENGERJAAN</span>
-                          <span className="text-[var(--color-neon-green)]">{item.progress_percent}%</span>
+                          <span className="text-[var(--color-neon-green)]">{item.progress || 0}%</span>
                         </div>
                         <div className="w-full bg-gray-100 dark:bg-white/5 h-1.5 rounded-full overflow-hidden">
-                          <div className="bg-gradient-neon h-full transition-all duration-1000" style={{ width: `${item.progress_percent}%` }} />
+                          <div className="bg-gradient-neon h-full transition-all duration-1000" style={{ width: `${item.progress || 0}%` }} />
                         </div>
                       </div>
 
-                      {/* Features */}
                       <div className="space-y-3">
-                        <p className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-2"><FaHammer className="text-[var(--color-neon-green)]" /> Fitur / Features</p>
+                        <p className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-2"><FaHammer className="text-[var(--color-neon-green)]" /> Tech</p>
                         <ul className="grid grid-cols-1 gap-2">
-                          {(language === 'id' ? item.features_id : item.features_en)?.map((f, i) => (
+                          {item.tech_stack?.map((f, i) => (
                             <li key={i} className="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-400">
                               <FaCheckSquare className="mt-1 text-[var(--color-neon-blue)] shrink-0" />
                               <span>{f}</span>
@@ -321,11 +293,6 @@ export default function TentangPage() {
                         </ul>
                       </div>
                     </div>
-                    {item.estimated_completion && (
-                      <div className="pt-4 border-t border-gray-100 dark:border-white/5 text-[10px] font-bold text-gray-400">
-                        ESTIMASI SELESAI: {item.estimated_completion}
-                      </div>
-                    )}
                   </div>
                 ))}
               </div>
@@ -349,7 +316,7 @@ export default function TentangPage() {
                       {language === 'id' ? item.description_id : item.description_en}
                     </p>
                     <div className="mt-4 flex flex-wrap gap-1">
-                      {item.tags?.map((tag, i) => (
+                      {item.tech_stack?.map((tag, i) => (
                         <span key={i} className="text-[8px] px-2 py-0.5 bg-blue-500/5 text-blue-500 rounded-md font-bold">#{tag}</span>
                       ))}
                     </div>
@@ -376,7 +343,7 @@ export default function TentangPage() {
           {/* 8. Quote Islami */}
           <section className="animate-in fade-in slide-in-from-bottom-8 duration-700 text-left pb-20">
             <div className="max-w-4xl space-y-8">
-              <div className="text-7xl text-[var(--color-neon-green)] opacity-30 font-serif h-8">"</div>
+              <div className="text-7xl text-[var(--color-neon-green)] opacity-30 font-serif h-8">&quot;</div>
               <p className="text-3xl md:text-5xl font-heading font-bold text-gray-900 dark:text-white leading-tight">
                 {quote.text}
               </p>

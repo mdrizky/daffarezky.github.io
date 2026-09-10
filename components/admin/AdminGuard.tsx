@@ -11,28 +11,39 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
   const isLoginPage = pathname === '/admin/login' || pathname?.includes('/admin/login')
 
   useEffect(() => {
-    // If we are on the login page, we don't need to check auth
     if (isLoginPage) {
       setLoading(false)
       return
     }
 
-    const checkAuth = async () => {
+    const verify = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession()
-        
         if (!session) {
           router.replace('/admin/login')
-        } else {
-          setLoading(false)
+          return
         }
-      } catch (error) {
-        console.error('AdminGuard error:', error)
+
+        const { data: adminRow } = await supabase
+          .from('admin_users')
+          .select('id')
+          .eq('user_id', session.user.id)
+          .eq('is_active', true)
+          .maybeSingle()
+
+        if (!adminRow) {
+          await supabase.auth.signOut()
+          router.replace('/admin/login?error=not_admin')
+          return
+        }
+
+        setLoading(false)
+      } catch {
         router.replace('/admin/login')
       }
     }
 
-    checkAuth()
+    verify()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!session && !isLoginPage) {
@@ -45,15 +56,13 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
     }
   }, [router, pathname, isLoginPage])
 
-  // Don't show loading spinner on login page
   if (loading && !isLoginPage) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0F] flex items-center justify-center transition-colors duration-300">
-        <div className="w-10 h-10 border-4 border-[#00FF88] border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0F] flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-gray-900 dark:border-white border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
 
   return <>{children}</>
 }
-

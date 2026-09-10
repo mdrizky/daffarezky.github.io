@@ -64,21 +64,38 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Protect admin routes
-  if (request.nextUrl.pathname.startsWith('/admin')) {
-    if (!user && !request.nextUrl.pathname.startsWith('/admin/login')) {
+  const isAdminPath = request.nextUrl.pathname.startsWith('/admin')
+  const isLoginPath = request.nextUrl.pathname.startsWith('/admin/login')
+  const isAdminApi = request.nextUrl.pathname.startsWith('/api/admin')
+
+  let isAdmin = false
+  if (user && (isAdminPath || isAdminApi)) {
+    const { data: adminRow } = await supabase
+      .from('admin_users')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('is_active', true)
+      .maybeSingle()
+    isAdmin = Boolean(adminRow)
+  }
+
+  if (isAdminPath) {
+    if (!user && !isLoginPath) {
       return NextResponse.redirect(new URL('/admin/login', request.url))
     }
-    
-    // Redirect logged in users away from login page
-    if (user && request.nextUrl.pathname.startsWith('/admin/login')) {
+
+    if (user && !isAdmin && !isLoginPath) {
+      await supabase.auth.signOut()
+      return NextResponse.redirect(new URL('/admin/login?error=not_admin', request.url))
+    }
+
+    if (user && isAdmin && isLoginPath) {
       return NextResponse.redirect(new URL('/admin', request.url))
     }
   }
 
-  // Protect admin API routes
-  if (request.nextUrl.pathname.startsWith('/api/admin')) {
-    if (!user) {
+  if (isAdminApi) {
+    if (!user || !isAdmin) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
   }

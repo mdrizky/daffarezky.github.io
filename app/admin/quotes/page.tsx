@@ -96,8 +96,8 @@ export default function AdminQuotes() {
             </div>
             <FaQuoteLeft className="text-3xl text-blue-500/20 mb-4" />
             <div className="space-y-4">
-              <p className="text-xl font-medium italic text-gray-900 dark:text-white">"{item.text_id}"</p>
-              <p className="text-lg text-gray-500 dark:text-gray-400">"{item.text_en}"</p>
+              <p className="text-xl font-medium italic text-gray-900 dark:text-white">&quot;{item.text_id}&quot;</p>
+              <p className="text-lg text-gray-500 dark:text-gray-400">&quot;{item.text_en}&quot;</p>
               <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-white/5">
                 <span className="font-bold text-gray-700 dark:text-gray-300">— {item.author || 'Anonim'}</span>
                 {item.is_personal && <span className="text-xs bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300 px-2 py-1 rounded-full font-bold">Personal Quote</span>}

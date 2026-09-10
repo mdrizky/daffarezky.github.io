@@ -2,13 +2,23 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { FaTrash, FaPlus, FaEdit, FaTools, FaSave, FaTimes } from 'react-icons/fa'
+import { FaTrash, FaPlus, FaEdit, FaTools, FaSave } from 'react-icons/fa'
+
+type UsesItem = {
+  id?: string
+  category: string
+  name: string
+  description_id: string
+  description_en: string
+  link: string
+  sort_order: number
+}
 
 export default function UsesAdmin() {
-  const [items, setItems] = useState<any[]>([])
+  const [items, setItems] = useState<UsesItem[]>([])
   const [loading, setLoading] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
-  const [currentItem, setCurrentItem] = useState<any>({
+  const [currentItem, setCurrentItem] = useState<UsesItem>({
     category: '',
     name: '',
     description_id: '',
@@ -30,16 +40,16 @@ export default function UsesAdmin() {
         .order('sort_order', { ascending: true })
 
       if (error) throw error
-      setItems(data || [])
-    } catch (error: any) {
-      console.error('Error fetching uses items:', error.message)
+      setItems((data as UsesItem[]) || [])
+    } catch (error) {
+      console.error('Error fetching uses items:', error)
       alert('Gagal mengambil data uses items')
     } finally {
       setLoading(false)
     }
   }
 
-  const handleEdit = (item: any) => {
+  const handleEdit = (item: UsesItem) => {
     setCurrentItem(item)
     setIsEditing(true)
   }
@@ -75,8 +85,8 @@ export default function UsesAdmin() {
       }
       setIsEditing(false)
       fetchItems()
-    } catch (error: any) {
-      alert('Gagal menyimpan data: ' + error.message)
+    } catch (error) {
+      alert('Gagal menyimpan data: ' + String(error))
     }
   }
 
@@ -93,7 +103,7 @@ export default function UsesAdmin() {
       
       setItems(items.filter(item => item.id !== id))
       alert('Item dihapus')
-    } catch (error: any) {
+    } catch {
       alert('Gagal menghapus item')
     }
   }
@@ -256,7 +266,7 @@ export default function UsesAdmin() {
                           <FaEdit />
                         </button>
                         <button
-                          onClick={() => deleteItem(item.id)}
+                          onClick={() => item.id && deleteItem(item.id)}
                           className="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400 transition-colors"
                           title="Hapus"
                         >

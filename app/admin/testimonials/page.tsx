@@ -209,7 +209,7 @@ export default function AdminTestimonials() {
               </div>
 
               <p className="text-sm text-gray-600 dark:text-gray-300 italic line-clamp-3 flex-grow">
-                "{item.content_id}"
+                &quot;{item.content_id}&quot;
               </p>
 
               <div className="flex items-center gap-3 pt-3 border-t border-gray-100 dark:border-white/10">

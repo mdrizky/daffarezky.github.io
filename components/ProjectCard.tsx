@@ -1,9 +1,11 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
 import { useLanguage } from "@/components/LanguageProvider";
 import type { Project } from "@/types";
+import { projectHref } from "@/lib/mappers";
 
 type ProjectCardProps = {
   project: Project;
@@ -19,10 +21,8 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
   const demoLabel = isVideoDemo ? (language === 'id' ? 'Video Demo' : 'Video Demo') : (language === 'id' ? 'Demo' : 'Live Demo')
 
   return (
-    <div 
-      className="bg-white dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 hover:shadow-xl dark:hover:shadow-[0_0_20px_rgba(0,255,136,0.2)] hover:-translate-y-2 flex flex-col h-full"
-      onClick={onClick}
-    >
+    <article className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden group transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col h-full">
+      <Link href={projectHref(project)} onClick={onClick} className="block">
       {/* Image Container */}
       <div className="relative h-48 w-full overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-gray-100 dark:from-[#0A0A0F] to-transparent z-10 opacity-60"></div>
@@ -48,10 +48,11 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
           </p>
         </div>
       </div>
-
+      </Link>
 
       {/* Content */}
       <div className="p-6 flex flex-col flex-grow">
+        <Link href={projectHref(project)} onClick={onClick} className="block">
         <span className="text-[var(--color-neon-blue)] text-xs font-semibold tracking-wider uppercase mb-2">
           {project.category}
         </span>
@@ -61,6 +62,7 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
         <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-none flex-grow leading-relaxed">
           {description}
         </p>
+        </Link>
 
         {/* Tech Stack */}
         <div className="flex flex-wrap gap-2 mb-6">
@@ -102,6 +104,6 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
           )}
         </div>
       </div>
-    </div>
+    </article>
   );
 }

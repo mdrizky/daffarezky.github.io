@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server"
-import { createClient } from "../../../../lib/supabase-server"
+import { requireAdmin } from "@/lib/admin-auth"
 
 export async function GET() {
-  const supabase = await createClient()
+  const auth = await requireAdmin()
+  if (!auth) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const supabase = auth.supabase
 
   try {
     const { data, error } = await supabase.from("education").select("*").order("start_year", { ascending: false })
@@ -17,7 +19,9 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const supabase = await createClient()
+  const auth = await requireAdmin()
+  if (!auth) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const supabase = auth.supabase
 
   try {
     const body = await req.json()
@@ -42,7 +46,9 @@ export async function POST(req: Request) {
 }
 
 export async function PUT(req: Request) {
-  const supabase = await createClient()
+  const auth = await requireAdmin()
+  if (!auth) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const supabase = auth.supabase
 
   try {
     const body = await req.json()
@@ -68,7 +74,9 @@ export async function PUT(req: Request) {
 }
 
 export async function DELETE(req: Request) {
-  const supabase = await createClient()
+  const auth = await requireAdmin()
+  if (!auth) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const supabase = auth.supabase
 
   try {
     const { searchParams } = new URL(req.url)

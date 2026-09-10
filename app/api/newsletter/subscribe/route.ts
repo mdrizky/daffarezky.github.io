@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase-server';
 
 export async function POST(req: Request) {
   try {
@@ -10,6 +10,7 @@ export async function POST(req: Request) {
     }
 
     // 1. Save to Supabase
+    const supabase = await createClient();
     const { error: dbError } = await supabase
       .from('newsletter_subscribers')
       .insert([{ email, is_active: true }]);

@@ -4,7 +4,6 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import RootLayoutClient from "@/components/RootLayoutClient";
-import Gamification from "@/components/Gamification";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import { createClient } from "@/lib/supabase-server";
 
@@ -20,9 +19,6 @@ const dmSans = DM_Sans({
   weight: ["400", "500", "700"]
 });
 
-// Google Search Console verification
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://portofolio-daffarezky.vercel.app";
-
 export async function generateMetadata(): Promise<Metadata> {
   const supabase = await createClient();
   
@@ -32,17 +28,11 @@ export async function generateMetadata(): Promise<Metadata> {
     .select('*')
     .single();
 
-  // Ambil data Settings (SEO)
-  const { data: settings } = await supabase
-    .from('settings')
-    .select('*')
-    .single();
-
   // Paksa identitas baru untuk menghindari data lama dari database
   const siteTitle = "Muhammad Daffa Rezky Adyra | Developer & Technology Enthusiast";
   const siteDesc = "Butuh web yang cepat, responsif, dan siap pakai? Saya di sini untuk membantu Anda mengubah ide bisnis menjadi aplikasi web modern yang fungsional. Mari berkolaborasi untuk membangun solusi digital terbaik bagi bisnis Anda. Jelajahi proyek saya di bawah ini dan hubungi saya untuk mulai berdiskusi!";
-  const sitePhoto = profile?.photo_url || "/logo.png"; 
   const siteUrl = "https://portofolio-daffarezky.vercel.app";
+  const sitePhoto = profile?.photo_url || "/logo.png";
 
   return {
     title: {
@@ -124,7 +114,6 @@ export default async function RootLayout({
   const supabase = await createClient();
   const { data: profile } = await supabase.from('profile').select('photo_url').limit(1).single();
 
-  const siteTitle = "Muhammad Daffa Rezky Adyra | Developer & Technology Enthusiast";
   const siteDesc = "Butuh web yang cepat, responsif, dan siap pakai? Saya di sini untuk membantu Anda mengubah ide bisnis menjadi aplikasi web modern yang fungsional. Mari berkolaborasi untuk membangun solusi digital terbaik bagi bisnis Anda. Jelajahi proyek saya di bawah ini dan hubungi saya untuk mulai berdiskusi!";
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://portofolio-daffarezky.vercel.app";
   const sitePhoto = profile?.photo_url || "/logo.png";

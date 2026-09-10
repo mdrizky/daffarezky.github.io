@@ -35,7 +35,7 @@ export default function Navbar() {
   const navLinks = language === 'id' ? [
     { name: "Beranda", path: "/" },
     { name: "Tentang", path: "/tentang" },
-    { name: "Portfolio", path: "/portfolio" },
+    { name: "Portfolio", path: "/projects" },
     { name: "Keahlian", path: "/skills" },
     { name: "Pengalaman", path: "/pengalaman" },
     { name: "Layanan", path: "/services" },
@@ -44,7 +44,7 @@ export default function Navbar() {
   ] : [
     { name: "Home", path: "/" },
     { name: "About", path: "/tentang" },
-    { name: "Portfolio", path: "/portfolio" },
+    { name: "Portfolio", path: "/projects" },
     { name: "Skills", path: "/skills" },
     { name: "Experience", path: "/pengalaman" },
     { name: "Services", path: "/services" },

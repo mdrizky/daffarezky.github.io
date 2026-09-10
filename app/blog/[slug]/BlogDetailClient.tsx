@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { FaCalendarAlt, FaArrowLeft, FaClock, FaShare, FaWhatsapp, FaTwitter, FaLink } from "react-icons/fa";
+import { FaCalendarAlt, FaArrowLeft, FaClock, FaWhatsapp, FaTwitter, FaLink } from "react-icons/fa";
 import { useLanguage } from "@/components/LanguageProvider";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -122,11 +122,11 @@ export default function BlogDetailClient({
 
   // Custom components for ReactMarkdown to add IDs to headings
   const MarkdownComponents = {
-    h2: ({ children }: any) => {
+    h2: ({ children }: { children?: React.ReactNode }) => {
       const id = String(children).toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
       return <h2 id={id}>{children}</h2>;
     },
-    h3: ({ children }: any) => {
+    h3: ({ children }: { children?: React.ReactNode }) => {
       const id = String(children).toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
       return <h3 id={id}>{children}</h3>;
     },

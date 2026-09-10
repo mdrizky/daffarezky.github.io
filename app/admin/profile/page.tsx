@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import { FaSave, FaImage, FaInstagram, FaGithub, FaLinkedin, FaTiktok, FaYoutube, FaWhatsapp, FaEnvelope, FaCalendar, FaMapMarkerAlt, FaLightbulb, FaQuoteLeft } from 'react-icons/fa'
+import { FaSave, FaImage, FaInstagram, FaGithub, FaLinkedin, FaWhatsapp, FaEnvelope } from 'react-icons/fa'
 import { Profile } from '@/types'
 
 export default function AdminProfile() {

@@ -16,7 +16,7 @@ export default function KontakPage() {
           <div className="animate-in fade-in slide-in-from-left-8 duration-700">
             <h1 className="text-4xl md:text-6xl font-heading font-bold mb-6">
               Ada Project? <br />
-              <span className="text-gradient">Let's Talk! 🔥</span>
+              <span className="text-gradient">Let&apos;s Talk! 🔥</span>
             </h1>
             <p className="text-gray-400 text-lg mb-12">
               Jangan ragu untuk menghubungi saya. Saya selalu terbuka untuk mendiskusikan project baru, ide kreatif, atau peluang kolaborasi.

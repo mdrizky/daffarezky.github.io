@@ -27,7 +27,7 @@ export const db = {
       return { data, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('profile')
         .update(updates)
@@ -37,7 +37,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(profileData: any) {
+    async create(profileData: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('profile')
         .insert(profileData)
@@ -84,7 +84,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(projectData: any) {
+    async create(projectData: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('projects')
         .insert(projectData)
@@ -93,7 +93,7 @@ export const db = {
       return { data, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('projects')
         .update(updates)
@@ -130,7 +130,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(skillData: any) {
+    async create(skillData: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('skills')
         .insert(skillData)
@@ -139,7 +139,7 @@ export const db = {
       return { data, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('skills')
         .update(updates)
@@ -186,7 +186,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(messageData: any) {
+    async create(messageData: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('messages')
         .insert(messageData)
@@ -253,7 +253,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(certificateData: any) {
+    async create(certificateData: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('certificates')
         .insert(certificateData)
@@ -262,7 +262,7 @@ export const db = {
       return { data, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('certificates')
         .update(updates)
@@ -300,7 +300,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(educationData: any) {
+    async create(educationData: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('education')
         .insert(educationData)
@@ -309,7 +309,7 @@ export const db = {
       return { data, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('education')
         .update(updates)
@@ -347,7 +347,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(serviceData: any) {
+    async create(serviceData: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('services')
         .insert(serviceData)
@@ -356,7 +356,7 @@ export const db = {
       return { data, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('services')
         .update(updates)
@@ -403,7 +403,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(blogData: any) {
+    async create(blogData: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('blog_posts')
         .insert(blogData)
@@ -412,7 +412,7 @@ export const db = {
       return { data, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('blog_posts')
         .update(updates)
@@ -450,7 +450,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(partnerData: any) {
+    async create(partnerData: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('partners')
         .insert(partnerData)
@@ -459,7 +459,7 @@ export const db = {
       return { data, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('partners')
         .update(updates)
@@ -506,7 +506,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(conceptData: any) {
+    async create(conceptData: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('concepts')
         .insert(conceptData)
@@ -515,7 +515,7 @@ export const db = {
       return { data, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('concepts')
         .update(updates)
@@ -544,7 +544,7 @@ export const db = {
       return { data, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('settings')
         .update(updates)
@@ -565,7 +565,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(data: any) {
+    async create(data: Record<string, unknown>) {
       const { data: result, error } = await supabase
         .from('reasons_to_hire')
         .insert(data)
@@ -574,7 +574,7 @@ export const db = {
       return { data: result, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('reasons_to_hire')
         .update(updates)
@@ -603,7 +603,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(data: any) {
+    async create(data: Record<string, unknown>) {
       const { data: result, error } = await supabase
         .from('journey_milestones')
         .insert(data)
@@ -612,7 +612,7 @@ export const db = {
       return { data: result, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('journey_milestones')
         .update(updates)
@@ -641,7 +641,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(data: any) {
+    async create(data: Record<string, unknown>) {
       const { data: result, error } = await supabase
         .from('focus_areas')
         .insert(data)
@@ -650,7 +650,7 @@ export const db = {
       return { data: result, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('focus_areas')
         .update(updates)
@@ -679,7 +679,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(data: any) {
+    async create(data: Record<string, unknown>) {
       const { data: result, error } = await supabase
         .from('core_values')
         .insert(data)
@@ -688,7 +688,7 @@ export const db = {
       return { data: result, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('core_values')
         .update(updates)
@@ -717,7 +717,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(data: any) {
+    async create(data: Record<string, unknown>) {
       const { data: result, error } = await supabase
         .from('quotes')
         .insert(data)
@@ -726,7 +726,7 @@ export const db = {
       return { data: result, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('quotes')
         .update(updates)
@@ -755,7 +755,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(data: any) {
+    async create(data: Record<string, unknown>) {
       const { data: result, error } = await supabase
         .from('active_projects')
         .insert(data)
@@ -764,7 +764,7 @@ export const db = {
       return { data: result, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('active_projects')
         .update(updates)
@@ -793,7 +793,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(data: any) {
+    async create(data: Record<string, unknown>) {
       const { data: result, error } = await supabase
         .from('future_concepts')
         .insert(data)
@@ -802,7 +802,7 @@ export const db = {
       return { data: result, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('future_concepts')
         .update(updates)
@@ -840,7 +840,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(data: any) {
+    async create(data: Record<string, unknown>) {
       const { data: result, error } = await supabase
         .from('testimonials')
         .insert(data)
@@ -849,7 +849,7 @@ export const db = {
       return { data: result, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('testimonials')
         .update(updates)
@@ -878,7 +878,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(data: any) {
+    async create(data: Record<string, unknown>) {
       const { data: result, error } = await supabase
         .from('experience')
         .insert(data)
@@ -887,7 +887,7 @@ export const db = {
       return { data: result, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('experience')
         .update(updates)
@@ -925,7 +925,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(data: any) {
+    async create(data: Record<string, unknown>) {
       const { data: result, error } = await supabase
         .from('islamic')
         .insert(data)
@@ -934,7 +934,7 @@ export const db = {
       return { data: result, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('islamic')
         .update(updates)
@@ -963,7 +963,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(data: any) {
+    async create(data: Record<string, unknown>) {
       const { data: result, error } = await supabase
         .from('learning_journey')
         .insert(data)
@@ -972,7 +972,7 @@ export const db = {
       return { data: result, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('learning_journey')
         .update(updates)
@@ -1002,7 +1002,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(data: any) {
+    async create(data: Record<string, unknown>) {
       const { data: result, error } = await supabase
         .from('project_images')
         .insert(data)
@@ -1011,7 +1011,7 @@ export const db = {
       return { data: result, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('project_images')
         .update(updates)
@@ -1041,7 +1041,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(data: any) {
+    async create(data: Record<string, unknown>) {
       const { data: result, error } = await supabase
         .from('project_features')
         .insert(data)
@@ -1050,7 +1050,7 @@ export const db = {
       return { data: result, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('project_features')
         .update(updates)
@@ -1080,7 +1080,7 @@ export const db = {
       return { data, error }
     },
 
-    async create(data: any) {
+    async create(data: Record<string, unknown>) {
       const { data: result, error } = await supabase
         .from('project_challenges')
         .insert(data)
@@ -1089,7 +1089,7 @@ export const db = {
       return { data: result, error }
     },
 
-    async update(id: string, updates: any) {
+    async update(id: string, updates: Record<string, unknown>) {
       const { data, error } = await supabase
         .from('project_challenges')
         .update(updates)

@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { FaPlus, FaEdit, FaTrash, FaBriefcase } from 'react-icons/fa'
-import { useLanguage } from '@/components/LanguageProvider'
 
 interface LearningJourney {
   id: string
@@ -18,7 +17,6 @@ interface LearningJourney {
 export default function AdminLearningJourney() {
   const [items, setItems] = useState<LearningJourney[]>([])
   const [loading, setLoading] = useState(true)
-  const { language } = useLanguage()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<LearningJourney | null>(null)

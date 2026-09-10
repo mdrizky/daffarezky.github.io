@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { useLanguage } from "@/components/LanguageProvider";
 import ProjectCard from "@/components/ProjectCard";
 import type { Project } from "@/types";

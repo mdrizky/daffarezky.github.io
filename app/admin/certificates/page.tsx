@@ -3,13 +3,11 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { FaPlus, FaEdit, FaTrash, FaCertificate, FaImage, FaFilePdf } from 'react-icons/fa'
-import { useLanguage } from '@/components/LanguageProvider'
 import type { Certificate } from '@/types'
 
 export default function AdminCertificates() {
   const [items, setItems] = useState<Certificate[]>([])
   const [loading, setLoading] = useState(true)
-  const { language } = useLanguage()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<Certificate | null>(null)

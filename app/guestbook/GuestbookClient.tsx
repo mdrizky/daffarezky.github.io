@@ -146,7 +146,7 @@ export default function GuestbookClient() {
                   </div>
                 </div>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed italic">
-                  "{entry.message}"
+                  &quot;{entry.message}&quot;
                 </p>
               </div>
             ))
