@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import Image from 'next/image'
-import { FaImage, FaTrash, FaSave, FaCheckCircle, FaExclamationTriangle, FaSearch, FaKey } from 'react-icons/fa'
+import Link from 'next/link'
+import { FaImage, FaTrash, FaSave, FaCheckCircle, FaExclamationTriangle, FaSearch, FaUserShield } from 'react-icons/fa'
 
 export default function AdminSettings() {
   // ── Logo management ────────────────────────────────────────────
@@ -14,7 +15,7 @@ export default function AdminSettings() {
   const [logoSuccess, setLogoSuccess] = useState(false)
   const [logoError, setLogoError] = useState('')
 
-  // ── SEO & PIN Settings ─────────────────────────────────────────
+  // ── SEO Settings ───────────────────────────────────────────────
   const [settingsId, setSettingsId] = useState<string | null>(null)
   const [siteTitle, setSiteTitle] = useState('')
   const [siteDescription, setSiteDescription] = useState('')
@@ -22,13 +23,6 @@ export default function AdminSettings() {
   const [settingsSaving, setSettingsSaving] = useState(false)
   const [settingsSuccess, setSettingsSuccess] = useState(false)
   const [settingsError, setSettingsError] = useState('')
-  const [currentPin, setCurrentPin] = useState('')
-  const [newPin, setNewPin] = useState('')
-  const [pinSaving, setPinSaving] = useState(false)
-  const [pinSuccess, setPinSuccess] = useState('')
-  const [pinError, setPinError] = useState('')
-
-  // ── Admin PIN ─────────────────────────────────────────────────
 
   useEffect(() => {
     fetchLogo()
@@ -121,7 +115,6 @@ export default function AdminSettings() {
       const fileName = `logo-${Date.now()}.${ext}`
       const filePath = `profile/${fileName}`
 
-      // Perbaikan: Pastikan bucket 'portfolio-images' sudah ada dan RLS-nya benar di Supabase
       const { error: uploadError } = await supabase.storage
         .from('portfolio-images')
         .upload(filePath, file, { 
@@ -190,18 +183,11 @@ export default function AdminSettings() {
     }
   }
 
-  const handleChangePin = (e: React.FormEvent) => {
-    e.preventDefault()
-    setPinSaving(false)
-    setPinSuccess('')
-    setPinError('PIN sudah dihapus. Kelola akses melalui Supabase Auth dan admin_users.')
-  }
-
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl">
       <div>
         <h1 className="text-3xl font-bold font-syne text-gray-900 dark:text-white">Pengaturan Sistem</h1>
-        <p className="text-gray-500 dark:text-gray-400 mt-2">Kelola logo dan SEO website. Akses admin diatur melalui Supabase Auth dan admin_users.</p>
+        <p className="text-gray-500 dark:text-gray-400 mt-2">Kelola identitas visual dan optimasi SEO website. Akses akun dikelola melalui Supabase Auth.</p>
       </div>
 
       {/* ── Logo ──────────────────────────────────────────────── */}
@@ -284,13 +270,13 @@ export default function AdminSettings() {
         )}
       </div>
 
-      {/* ── SEO & Access ────────────────────────────────────────── */}
+      {/* ── SEO Settings ────────────────────────────────────────── */}
       <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm transition-colors duration-300">
         <div className="flex items-center gap-3 mb-6 border-b border-gray-200 dark:border-white/10 pb-4">
           <div className="p-2 bg-green-50 dark:bg-green-500/10 rounded-lg text-green-500">
             <FaSearch className="text-xl" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Pengaturan SEO & Keamanan</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Pengaturan SEO & Meta Tags</h2>
         </div>
 
         {settingsLoading ? (
@@ -299,21 +285,20 @@ export default function AdminSettings() {
           </div>
         ) : (
           <form onSubmit={handleSaveSettings} className="space-y-6">
-            
             <div className="space-y-2">
-                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">
-                  Judul Website (Title Tag)
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={siteTitle}
-                  onChange={(e) => setSiteTitle(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/50 text-gray-900 dark:text-white transition-all text-sm font-medium"
-                  placeholder="Daffa Rizky | Web Developer"
-                />
-                <p className="text-xs text-gray-500">Maks. 60 karakter untuk hasil optimal di Google.</p>
-              </div>
+              <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">
+                Judul Website (Title Tag)
+              </label>
+              <input
+                type="text"
+                required
+                value={siteTitle}
+                onChange={(e) => setSiteTitle(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/50 text-gray-900 dark:text-white transition-all text-sm font-medium"
+                placeholder="Daffa Rizky | Web Developer"
+              />
+              <p className="text-xs text-gray-500">Maks. 60 karakter untuk hasil optimal di Google.</p>
+            </div>
 
             <div className="space-y-2">
               <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">
@@ -364,84 +349,24 @@ export default function AdminSettings() {
         )}
       </div>
 
-      {/* Legacy PIN controls are deliberately hidden; Supabase Auth is the sole login flow. */}
-      <div className="hidden bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm transition-colors duration-300">
-        <div className="flex items-center gap-3 mb-6 border-b border-gray-200 dark:border-white/10 pb-4">
-          <div className="p-2 bg-red-50 dark:bg-red-500/10 rounded-lg text-red-500">
-            <FaKey className="text-xl" />
+      {/* ── Security & Auth Info ───────────────────────────────────── */}
+      <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm transition-colors duration-300">
+        <div className="flex items-center gap-3 mb-4 border-b border-gray-200 dark:border-white/10 pb-4">
+          <div className="p-2 bg-emerald-50 dark:bg-emerald-500/10 rounded-lg text-emerald-500">
+            <FaUserShield className="text-xl" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Ganti PIN Admin</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Keamanan & Otorisasi Admin</h2>
         </div>
-
-        <form onSubmit={handleChangePin} className="space-y-6">
-          <div className="space-y-2">
-            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">
-              PIN Saat Ini
-            </label>
-            <input
-              type="password"
-              required
-              inputMode="numeric"
-              maxLength={8}
-              value={currentPin}
-              onChange={(e) => setCurrentPin(e.target.value)}
-              className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 text-gray-900 dark:text-white transition-all text-sm font-medium tracking-[0.4em]"
-              placeholder="••••••"
-            />
-            <p className="text-xs text-gray-500">PIN sudah didepresiasi; akses hanya dikelola melalui Supabase Auth dan admin_users.</p>
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">
-              PIN Baru
-            </label>
-            <input
-              type="password"
-              required
-              inputMode="numeric"
-              minLength={4}
-              maxLength={8}
-              pattern="[0-9]{4,8}"
-              value={newPin}
-              onChange={(e) => setNewPin(e.target.value)}
-              className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 text-gray-900 dark:text-white transition-all text-sm font-medium tracking-[0.4em]"
-              placeholder="••••••"
-            />
-            <p className="text-xs text-gray-500">4-8 digit angka. PIN disimpan terenkripsi (bcrypt) di database.</p>
-          </div>
-
-          {pinSuccess && (
-            <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 rounded-xl px-4 py-3 font-medium">
-              <FaCheckCircle className="flex-shrink-0" />
-              {pinSuccess}
-            </div>
-          )}
-          {pinError && (
-            <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-xl px-4 py-3 font-medium">
-              <FaExclamationTriangle className="flex-shrink-0" />
-              {pinError}
-            </div>
-          )}
-
-          <div className="flex justify-end pt-4 border-t border-gray-100 dark:border-white/5">
-            <button
-              type="submit"
-              disabled={pinSaving}
-              className="flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold rounded-xl shadow-lg shadow-red-500/20 hover:shadow-red-500/40 transition-all disabled:opacity-50 disabled:hover:shadow-none"
-            >
-              {pinSaving ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <>
-                  <FaKey />
-                  Ubah PIN
-                </>
-              )}
-            </button>
-          </div>
-        </form>
+        <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+          Sistem autentikasi telah diamankan 100% menggunakan <strong>Supabase Auth</strong> dan tabel <strong>admin_users</strong> dengan Row Level Security (RLS). Seluruh kredensial dikelola secara terpusat tanpa PIN plaintext.
+        </p>
+        <Link
+          href="/admin/users"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-gray-900 font-semibold rounded-xl text-sm transition-colors"
+        >
+          <FaUserShield /> Kelola Pengguna & Role Admin
+        </Link>
       </div>
-
     </div>
   )
 }

@@ -17,6 +17,9 @@ export default async function Home() {
         partners={[]}
         skills={[]}
         posts={[]}
+        education={[]}
+        experience={[]}
+        focusAreas={[]}
       />
     )
   }
@@ -36,6 +39,9 @@ export default async function Home() {
     partnersRes,
     skillsRes,
     postsRes,
+    educationRes,
+    experienceRes,
+    focusAreasRes,
   ] = await Promise.all([
     supabase.from("profile").select("*").limit(1).single(),
     supabase.from("projects").select("*").eq("featured", true).eq("is_published", true).limit(3),
@@ -49,6 +55,9 @@ export default async function Home() {
     supabase.from("partners").select("*").eq("is_published", true).order("order_index", { ascending: true }),
     supabase.from("skills").select("*").eq("is_published", true).order("sort_order", { ascending: true }),
     supabase.from("blog_posts").select("*").eq("is_published", true).eq("status", "published").order("published_at", { ascending: false }).limit(3),
+    supabase.from("education").select("*").eq("is_published", true).order("start_year", { ascending: false }),
+    supabase.from("experience").select("*").eq("is_published", true).order("order_index", { ascending: true }),
+    supabase.from("focus_areas").select("*").eq("is_published", true).order("sort_order", { ascending: true }),
   ]).catch(() => []);
 
   const testimonials = (testimonialsRes?.data || []).map((row: Record<string, unknown>) => mapTestimonial(row));
@@ -69,6 +78,9 @@ export default async function Home() {
       partners={partnersRes?.data || []}
       skills={skillsRes?.data || []}
       posts={postsRes?.data || []}
+      education={educationRes?.data || []}
+      experience={experienceRes?.data || []}
+      focusAreas={focusAreasRes?.data || []}
     />
   );
 }

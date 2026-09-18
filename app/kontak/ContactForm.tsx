@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from "react";
 import { FaPaperPlane, FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
+import { Button } from "@/components/ui/Button";
 
 type FormState = {
   name: string;
@@ -18,7 +19,7 @@ type FormState = {
 type ToastState = { type: "success" | "error"; message: string } | null;
 
 const inputClass =
-  "w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-[var(--color-neon-blue)]/50 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 transition-all text-sm";
+  "w-full px-4 py-3 bg-background border border-input rounded-xl focus:outline-none focus:ring-2 focus:ring-ring text-foreground placeholder:text-muted-foreground transition-all text-sm";
 
 export default function ContactForm() {
   const [form, setForm] = useState<FormState>({
@@ -78,7 +79,7 @@ export default function ContactForm() {
 
       showToast(
         "success",
-        "Pesan terkirim! Saya akan membalas dalam 2 jam. Terima kasih 🎉"
+        "Pesan terkirim! Saya akan membalas secepatnya. Terima kasih 🎉"
       );
       setForm({
         name: "",
@@ -92,7 +93,7 @@ export default function ContactForm() {
         honeypot: "",
       });
     } catch {
-      showToast("error", "Terjadi kesalahan. Coba lagi!");
+      showToast("error", "Terjadi kesalahan. Silakan coba lagi!");
     } finally {
       setLoading(false);
     }
@@ -100,7 +101,7 @@ export default function ContactForm() {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-4">
         {/* Honeypot — hidden from humans */}
         <input
           type="text"
@@ -115,29 +116,29 @@ export default function ContactForm() {
 
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              Nama Lengkap <span className="text-red-500">*</span>
+            <label className="block text-xs font-bold text-foreground mb-1.5 uppercase tracking-wider">
+              Nama Lengkap <span className="text-destructive">*</span>
             </label>
             <input
               type="text"
               name="name"
               value={form.name}
               onChange={handleChange}
-              placeholder="John Doe"
+              placeholder="e.g. John Doe"
               className={inputClass}
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              Email <span className="text-red-500">*</span>
+            <label className="block text-xs font-bold text-foreground mb-1.5 uppercase tracking-wider">
+              Email <span className="text-destructive">*</span>
             </label>
             <input
               type="email"
               name="email"
               value={form.email}
               onChange={handleChange}
-              placeholder="john@example.com"
+              placeholder="e.g. john@example.com"
               className={inputClass}
               required
             />
@@ -146,9 +147,8 @@ export default function ContactForm() {
 
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              WhatsApp{" "}
-              <span className="text-gray-400 font-normal">(opsional)</span>
+            <label className="block text-xs font-bold text-foreground mb-1.5 uppercase tracking-wider">
+              WhatsApp <span className="text-muted-foreground font-normal lowercase">(opsional)</span>
             </label>
             <input
               type="tel"
@@ -160,7 +160,7 @@ export default function ContactForm() {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-xs font-bold text-foreground mb-1.5 uppercase tracking-wider">
               Subjek
             </label>
             <select
@@ -171,10 +171,10 @@ export default function ContactForm() {
             >
               <option value="">Pilih subjek...</option>
               <option value="Jasa Pembuatan Website">Jasa Pembuatan Website</option>
-              <option value="Jasa Aplikasi Mobile">Jasa Aplikasi Mobile</option>
-              <option value="UI/UX Design">UI/UX Design</option>
-              <option value="Konsultasi Digital">Konsultasi Digital</option>
-              <option value="Kolaborasi Project">Kolaborasi Project</option>
+              <option value="Jasa Aplikasi Web / Dashboard">Jasa Aplikasi Web / Dashboard</option>
+              <option value="Integrasi AI & Automasi">Integrasi AI & Automasi</option>
+              <option value="Konsultasi Teknis">Konsultasi Teknis</option>
+              <option value="Peluang Kerja / Kolaborasi">Peluang Kerja / Kolaborasi</option>
               <option value="Lainnya">Lainnya</option>
             </select>
           </div>
@@ -182,19 +182,18 @@ export default function ContactForm() {
 
         <div className="grid sm:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Layanan</label>
+            <label className="block text-xs font-bold text-foreground mb-1.5 uppercase tracking-wider">Layanan</label>
             <select name="service" value={form.service} onChange={handleChange} className={inputClass}>
               <option value="">Pilih layanan</option>
               <option value="Website Development">Website Development</option>
-              <option value="Android Development">Android Development</option>
-              <option value="Backend/API">Backend/API</option>
-              <option value="AI Integration">AI Integration</option>
-              <option value="Dashboard">Dashboard</option>
+              <option value="Web App & Dashboard">Web App & Dashboard</option>
+              <option value="AI Solutions">AI Solutions</option>
+              <option value="UI/UX & Branding">UI/UX & Branding</option>
               <option value="Lainnya">Lainnya</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Budget</label>
+            <label className="block text-xs font-bold text-foreground mb-1.5 uppercase tracking-wider">Budget</label>
             <select name="budget" value={form.budget} onChange={handleChange} className={inputClass}>
               <option value="">Estimasi</option>
               <option value="< 2jt">&lt; 2jt</option>
@@ -204,10 +203,10 @@ export default function ContactForm() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Timeline</label>
+            <label className="block text-xs font-bold text-foreground mb-1.5 uppercase tracking-wider">Timeline</label>
             <select name="timeline" value={form.timeline} onChange={handleChange} className={inputClass}>
               <option value="">Estimasi</option>
-              <option value="ASAP">ASAP</option>
+              <option value="ASAP">Secepatnya (ASAP)</option>
               <option value="1-4 minggu">1–4 minggu</option>
               <option value="1-3 bulan">1–3 bulan</option>
               <option value="Fleksibel">Fleksibel</option>
@@ -216,43 +215,42 @@ export default function ContactForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-            Pesan <span className="text-red-500">*</span>
+          <label className="block text-xs font-bold text-foreground mb-1.5 uppercase tracking-wider">
+            Pesan <span className="text-destructive">*</span>
           </label>
           <textarea
             name="message"
             value={form.message}
             onChange={handleChange}
-            placeholder="Ceritakan tentang project Anda, budget, dan timeline yang diinginkan..."
-            rows={5}
+            placeholder="Ceritakan detail proyek, target, serta kebutuhan yang Anda inginkan..."
+            rows={4}
             className={`${inputClass} resize-none`}
             required
           />
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             {form.message.length}/500 karakter
           </p>
         </div>
 
-        <button
+        <Button
           type="submit"
           disabled={loading}
-          className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-[#00FF88] to-[#0099FF] text-[#0A0A0F] font-bold rounded-xl shadow-[0_0_20px_rgba(0,153,255,0.3)] hover:shadow-[0_0_30px_rgba(0,255,136,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+          className="w-full py-4 text-base font-bold flex items-center justify-center gap-2"
         >
           {loading ? (
             <>
-              <div className="w-5 h-5 border-2 border-[#0A0A0F] border-t-transparent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
               Mengirim...
             </>
           ) : (
             <>
-              <FaPaperPlane />
-              Kirim Pesan
+              <FaPaperPlane /> Kirim Pesan
             </>
           )}
-        </button>
+        </Button>
 
-        <p className="text-xs text-center text-gray-400 dark:text-gray-500">
-          Pesan akan masuk ke email & dashboard admin saya. Biasanya dibalas dalam 2 jam.
+        <p className="text-xs text-center text-muted-foreground">
+          Pesan akan tersimpan di dashboard admin dan dikirim ke email saya secara otomatis.
         </p>
       </form>
 
@@ -261,16 +259,16 @@ export default function ContactForm() {
         <div
           className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-4 rounded-2xl shadow-2xl border text-sm font-medium animate-in slide-in-from-bottom-4 duration-300 max-w-sm ${
             toast.type === "success"
-              ? "bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-500/30 text-green-800 dark:text-green-300"
-              : "bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-500/30 text-red-800 dark:text-red-300"
+              ? "bg-card border-primary text-foreground"
+              : "bg-destructive/10 border-destructive text-destructive"
           }`}
         >
           {toast.type === "success" ? (
-            <FaCheckCircle className="text-green-500 flex-shrink-0 text-lg" />
+            <FaCheckCircle className="text-primary flex-shrink-0 text-lg" />
           ) : (
-            <FaExclamationCircle className="text-red-500 flex-shrink-0 text-lg" />
+            <FaExclamationCircle className="text-destructive flex-shrink-0 text-lg" />
           )}
-          {toast.message}
+          <span>{toast.message}</span>
         </div>
       )}
     </>

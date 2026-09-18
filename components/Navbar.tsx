@@ -65,7 +65,7 @@ export default function Navbar() {
       className={cn(
         "fixed top-0 z-40 w-full transition-all duration-300",
         isScrolled
-          ? "backdrop-blur-xl bg-white/80 dark:bg-[#0A0A0F]/80 py-4 shadow-lg dark:shadow-none border-b border-gray-200/50 dark:border-white/10"
+          ? "backdrop-blur-xl bg-background/80 py-4 shadow-sm border-b border-border/60"
           : "bg-transparent py-6"
       )}
     >
@@ -83,8 +83,10 @@ export default function Navbar() {
                   <Link
                     href={link.path}
                     className={cn(
-                      "text-sm font-bold transition-colors hover:text-[var(--color-neon-green)]",
-                      isActive ? "text-[var(--color-neon-green)]" : "opacity-80 hover:opacity-100"
+                      "text-sm font-semibold transition-colors",
+                      isActive
+                        ? "text-primary"
+                        : "text-muted-foreground hover:text-foreground"
                     )}
                   >
                     {link.name}
@@ -98,14 +100,14 @@ export default function Navbar() {
           <div className="flex items-center gap-2 ml-2">
             <button
               onClick={toggleTheme}
-              className="p-2.5 rounded-xl bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/20 transition-all"
+              className="p-2.5 rounded-xl bg-muted text-foreground hover:bg-accent transition-all"
               title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
             >
               {theme === 'dark' ? <FaSun className="text-amber-400" /> : <FaMoon className="text-indigo-500" />}
             </button>
             <button
               onClick={toggleLanguage}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/20 transition-all text-xs font-bold"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-muted text-foreground hover:bg-accent transition-all text-xs font-bold"
               title="Switch Language"
             >
               <FaGlobe />
@@ -115,7 +117,7 @@ export default function Navbar() {
 
           <Link
             href="/kontak"
-            className="rounded-full bg-gradient-neon px-6 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(0,153,255,0.4)] transition-all hover:scale-105 hover:shadow-[0_0_25px_rgba(0,255,136,0.6)]"
+            className="rounded-full bg-primary text-primary-foreground px-6 py-2.5 text-sm font-semibold shadow-sm transition-all hover:opacity-90 hover:scale-105 active:scale-95"
           >
             {language === 'id' ? 'Hire Me 🔥' : 'Hire Me 🔥'}
           </Link>
@@ -126,21 +128,22 @@ export default function Navbar() {
           {mounted && (
             <button
               onClick={toggleTheme}
-              className="p-2.5 rounded-xl bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300"
+              className="p-2.5 rounded-xl bg-muted text-foreground"
             >
               {resolvedTheme === 'dark' ? <FaSun className="text-amber-400" /> : <FaMoon className="text-indigo-500" />}
             </button>
           )}
           <button
             onClick={toggleLanguage}
-            className="flex items-center gap-1 px-2.5 py-2 rounded-xl bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 text-xs font-bold"
+            className="flex items-center gap-1 px-2.5 py-2 rounded-xl bg-muted text-foreground text-xs font-bold"
           >
             <FaGlobe />
             {language === 'id' ? 'EN' : 'ID'}
           </button>
           <button
-            className="text-gray-700 dark:text-white"
+            className="text-foreground p-1"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           >
             {mobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
           </button>
@@ -149,7 +152,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="absolute top-full left-0 w-full backdrop-blur-xl bg-white/95 dark:bg-[#0A0A0F]/95 flex flex-col items-center py-6 gap-6 lg:hidden shadow-xl border-t border-gray-200 dark:border-white/10 animate-in slide-in-from-top-2">
+        <div className="absolute top-full left-0 w-full backdrop-blur-xl bg-background/95 max-h-[calc(100vh-5rem)] overflow-y-auto flex flex-col items-center py-6 gap-6 lg:hidden shadow-xl border-t border-border animate-in slide-in-from-top-2">
           <ul className="flex flex-col items-center gap-4">
             {navLinks.map((link) => {
               const isActive = pathname === link.path || (link.path !== '/' && pathname.startsWith(link.path));
@@ -159,8 +162,10 @@ export default function Navbar() {
                     href={link.path}
                     onClick={() => setMobileMenuOpen(false)}
                     className={cn(
-                      "text-lg font-medium transition-colors hover:text-[var(--color-neon-green)]",
-                      isActive ? "text-[var(--color-neon-green)]" : "text-gray-700 dark:text-gray-300"
+                      "text-lg font-medium transition-colors",
+                      isActive
+                        ? "text-primary font-bold"
+                        : "text-muted-foreground hover:text-foreground"
                     )}
                   >
                     {link.name}
@@ -172,7 +177,7 @@ export default function Navbar() {
           <Link
             href="/kontak"
             onClick={() => setMobileMenuOpen(false)}
-            className="rounded-full bg-gradient-neon px-8 py-3 text-base font-semibold text-white shadow-[0_0_20px_rgba(0,153,255,0.4)] transition-all active:scale-95"
+            className="rounded-full bg-primary text-primary-foreground px-8 py-3 text-base font-semibold shadow-md transition-all active:scale-95"
           >
             {language === 'id' ? 'Hire Me 🔥' : 'Hire Me 🔥'}
           </Link>

@@ -5,11 +5,16 @@ import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/components/LanguageProvider";
 import { FaBriefcase, FaUsers, FaAward } from "react-icons/fa";
 import type { Experience } from "@/types";
+import { Container } from "@/components/ui/Container";
+import { PageSkeleton } from "@/components/ui/Skeleton";
+import { Badge } from "@/components/ui/Badge";
+import { Card, CardContent } from "@/components/ui/Card";
 
 export default function PengalamanPage() {
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [loading, setLoading] = useState(true);
   const { language } = useLanguage();
+  const id = language === 'id';
 
   useEffect(() => {
     const fetchExperiences = async () => {
@@ -17,6 +22,7 @@ export default function PengalamanPage() {
         const { data } = await supabase
           .from("experience")
           .select("*")
+          .eq("is_published", true)
           .order("order_index", { ascending: true });
         
         if (data) {
@@ -32,16 +38,12 @@ export default function PengalamanPage() {
   }, []);
 
   const t = {
-    pageTitle: language === 'id' ? 'Pengalaman' : 'Experience',
-    pageDesc: language === 'id'
+    pageTitle: id ? 'Pengalaman' : 'Experience',
+    pageDesc: id
       ? 'Perjalanan kepemimpinan, organisasi, dan pengembangan diri yang membentuk karakter dan kemampuan.'
       : 'Leadership journey, organizational experience, and personal development that shapes character and abilities.',
-    leadership: language === 'id' ? 'Kepemimpinan' : 'Leadership',
-    religious: language === 'id' ? 'Keagamaan' : 'Religious',
-    training: language === 'id' ? 'Pelatihan' : 'Training',
-    achievement: language === 'id' ? 'Pencapaian' : 'Achievement',
-    present: language === 'id' ? 'Sekarang' : 'Present',
-    noData: language === 'id'
+    present: id ? 'Sekarang' : 'Present',
+    noData: id
       ? 'Belum ada data pengalaman. Tambahkan melalui panel admin.'
       : 'No experience data yet. Add through admin panel.',
   };
@@ -61,77 +63,73 @@ export default function PengalamanPage() {
     'Magang': <FaBriefcase />,
   };
 
-  if (loading) {
-    return (
-      <div className="pt-32 pb-24 min-h-screen flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-[#00FF88] border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
+  if (loading) return <PageSkeleton />;
 
   return (
     <div className="pt-32 pb-24 min-h-screen">
-      <div className="container mx-auto px-6 md:px-12">
+      <Container>
         {/* Header */}
-        <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <h1 className="text-4xl md:text-6xl font-heading font-bold mb-4 text-gray-900 dark:text-white">
+        <div className="text-center mb-16 animate-fade-in-up">
+          <h1 className="text-4xl md:text-6xl font-heading font-bold mb-4 text-foreground">
             {t.pageTitle}
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto text-lg">
+          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
             {t.pageDesc}
           </p>
         </div>
 
         {/* Content */}
         {experiences.length > 0 ? (
-          <div className="space-y-16 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+          <div className="space-y-16 animate-fade-in max-w-4xl mx-auto">
             {Object.entries(groupedExperiences).map(([category, items]) => (
               <div key={category}>
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="p-3 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-[var(--color-neon-green)] shadow-sm">
+                <div className="flex items-center gap-4 mb-8 border-b border-border pb-4">
+                  <div className="p-3 bg-secondary rounded-xl text-primary shadow-sm border border-border">
                     {categoryIcons[category] || <FaBriefcase />}
                   </div>
-                  <h2 className="text-2xl md:text-3xl font-heading font-bold text-gray-900 dark:text-white">
+                  <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground">
                     {category}
                   </h2>
                 </div>
                 
                 <div className="space-y-6">
                   {items.map((exp) => (
-                    <div
-                      key={exp.id}
-                      className="relative border-l border-gray-300 dark:border-white/10 pl-8 pb-6"
-                    >
-                      <div className={`absolute w-4 h-4 rounded-full -left-[8px] top-1 ${exp.is_current ? 'bg-[var(--color-neon-green)] shadow-[0_0_10px_rgba(0,255,136,0.8)]' : 'bg-gray-400 dark:bg-gray-600'}`}></div>
-                      {exp.is_current && (
-                        <span className="text-[var(--color-neon-green)] text-sm font-bold tracking-wider">
-                          {t.present}
-                        </span>
-                      )}
-                      
-                      <h3 className="text-xl font-bold mt-2 mb-1 text-gray-900 dark:text-white">
-                        {language === 'id' ? exp.title_id : exp.title_en}
-                      </h3>
-                      <p className="text-sm text-gray-900/60 dark:text-gray-400 mb-2 font-semibold">
-                        {exp.organization} • {exp.role} • {exp.start_date} - {exp.is_current ? t.present : exp.end_date}
-                      </p>
-                      {exp.description_id && (
-                        <p className="text-gray-500 dark:text-gray-400 text-sm">
-                          {language === 'id' ? exp.description_id : exp.description_en}
+                    <Card key={exp.id}>
+                      <CardContent className="p-6">
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-1">
+                          <h3 className="text-xl font-bold text-foreground">
+                            {id ? exp.title_id : exp.title_en}
+                          </h3>
+                          {exp.is_current && (
+                            <div className="self-start shrink-0">
+                              <Badge variant="default">{t.present}</Badge>
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-sm font-semibold text-primary mb-3">
+                          {exp.organization} <span className="text-muted-foreground font-normal mx-2">•</span> <span className="text-muted-foreground font-normal">{exp.role}</span>
                         </p>
-                      )}
-                    </div>
+                        <p className="text-xs text-muted-foreground mb-4">
+                          {exp.start_date} - {exp.is_current ? t.present : exp.end_date}
+                        </p>
+                        {(id ? exp.description_id : exp.description_en) && (
+                          <p className="text-muted-foreground text-sm">
+                            {id ? exp.description_id : exp.description_en}
+                          </p>
+                        )}
+                      </CardContent>
+                    </Card>
                   ))}
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-3xl">
-            <p className="text-gray-500 dark:text-gray-400">{t.noData}</p>
+          <div className="text-center py-16 bg-card border border-border rounded-3xl">
+            <p className="text-muted-foreground">{t.noData}</p>
           </div>
         )}
-      </div>
+      </Container>
     </div>
   );
 }

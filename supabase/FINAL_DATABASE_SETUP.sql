@@ -431,6 +431,21 @@ CREATE TABLE IF NOT EXISTS public.analytics_events (
 -- -----------------------------------------------------------------------------
 
 -- projects (case-study fields + publication model)
+SELECT public._add_column_if_missing('projects','status','TEXT DEFAULT ''Completed''');
+SELECT public._add_column_if_missing('projects','slug','TEXT');
+SELECT public._add_column_if_missing('projects','category','TEXT');
+SELECT public._add_column_if_missing('projects','tech_stack','TEXT[] DEFAULT ''{}''');
+SELECT public._add_column_if_missing('projects','featured','BOOLEAN DEFAULT false');
+SELECT public._add_column_if_missing('projects','progress','INTEGER DEFAULT 0');
+SELECT public._add_column_if_missing('projects','start_date','TEXT');
+SELECT public._add_column_if_missing('projects','completion_date','TEXT');
+SELECT public._add_column_if_missing('projects','is_current','BOOLEAN DEFAULT false');
+SELECT public._add_column_if_missing('projects','difficulty','TEXT DEFAULT ''Medium''');
+SELECT public._add_column_if_missing('projects','duration','TEXT');
+SELECT public._add_column_if_missing('projects','year','INTEGER');
+SELECT public._add_column_if_missing('projects','image_url','TEXT');
+SELECT public._add_column_if_missing('projects','demo_url','TEXT');
+SELECT public._add_column_if_missing('projects','github_url','TEXT');
 SELECT public._add_column_if_missing('projects','problem_id','TEXT');
 SELECT public._add_column_if_missing('projects','problem_en','TEXT');
 SELECT public._add_column_if_missing('projects','solution_id','TEXT');
@@ -460,6 +475,9 @@ SELECT public._add_column_if_missing('messages','created_at','TIMESTAMPTZ DEFAUL
 SELECT public._add_column_if_missing('blog_posts','created_at','TIMESTAMPTZ DEFAULT now()');
 
 -- skills
+SELECT public._add_column_if_missing('skills','category','TEXT');
+SELECT public._add_column_if_missing('skills','level','TEXT');
+SELECT public._add_column_if_missing('skills','icon','TEXT');
 SELECT public._add_column_if_missing('skills','show_on_home','BOOLEAN DEFAULT false');
 SELECT public._add_column_if_missing('skills','is_learning','BOOLEAN DEFAULT false');
 SELECT public._add_column_if_missing('skills','sort_order','INTEGER DEFAULT 0');
@@ -487,8 +505,18 @@ SELECT public._add_column_if_missing('learning_journey','sort_order','INTEGER DE
 SELECT public._add_column_if_missing('learning_journey','is_published','BOOLEAN DEFAULT true');
 
 -- certificates / services / partners / reasons / focus / values / quotes / islamic / uses
+SELECT public._add_column_if_missing('certificates','issuer','TEXT');
+SELECT public._add_column_if_missing('certificates','image_url','TEXT');
+SELECT public._add_column_if_missing('certificates','file_url','TEXT');
+SELECT public._add_column_if_missing('certificates','date_issued','TEXT');
 SELECT public._add_column_if_missing('certificates','is_published','BOOLEAN DEFAULT true');
 SELECT public._add_column_if_missing('certificates','sort_order','INTEGER DEFAULT 0');
+SELECT public._add_column_if_missing('services','price','TEXT');
+SELECT public._add_column_if_missing('services','description_id','TEXT');
+SELECT public._add_column_if_missing('services','description_en','TEXT');
+SELECT public._add_column_if_missing('services','features_id','TEXT[] DEFAULT ''{}''');
+SELECT public._add_column_if_missing('services','features_en','TEXT[] DEFAULT ''{}''');
+SELECT public._add_column_if_missing('services','is_popular','BOOLEAN DEFAULT false');
 SELECT public._add_column_if_missing('services','is_published','BOOLEAN DEFAULT true');
 SELECT public._add_column_if_missing('services','sort_order','INTEGER DEFAULT 0');
 SELECT public._add_column_if_missing('partners','is_published','BOOLEAN DEFAULT true');
@@ -531,6 +559,11 @@ UPDATE public.testimonials SET
   client_photo_url = COALESCE(NULLIF(client_photo_url, ''), avatar_url);
 
 -- messages (client lead system)
+SELECT public._add_column_if_missing('messages','status','TEXT DEFAULT ''new''');
+SELECT public._add_column_if_missing('messages','is_read','BOOLEAN DEFAULT false');
+SELECT public._add_column_if_missing('messages','whatsapp','TEXT');
+SELECT public._add_column_if_missing('messages','subject','TEXT');
+SELECT public._add_column_if_missing('messages','replied_at','TIMESTAMPTZ');
 SELECT public._add_column_if_missing('messages','service','TEXT');
 SELECT public._add_column_if_missing('messages','budget','TEXT');
 SELECT public._add_column_if_missing('messages','timeline','TEXT');
@@ -555,6 +588,38 @@ SELECT public._add_column_if_missing('settings','og_image','TEXT');
 SELECT public._add_column_if_missing('settings','canonical_url','TEXT');
 
 -- profile extras
+SELECT public._add_column_if_missing('profile','name','TEXT DEFAULT ''Daffa''');
+SELECT public._add_column_if_missing('profile','title_id','TEXT');
+SELECT public._add_column_if_missing('profile','title_en','TEXT');
+SELECT public._add_column_if_missing('profile','bio_id','TEXT');
+SELECT public._add_column_if_missing('profile','bio_en','TEXT');
+SELECT public._add_column_if_missing('profile','photo_url','TEXT');
+SELECT public._add_column_if_missing('profile','about_photo_url','TEXT');
+SELECT public._add_column_if_missing('profile','logo_url','TEXT');
+SELECT public._add_column_if_missing('profile','wa','TEXT');
+SELECT public._add_column_if_missing('profile','email','TEXT');
+SELECT public._add_column_if_missing('profile','instagram','TEXT');
+SELECT public._add_column_if_missing('profile','github','TEXT');
+SELECT public._add_column_if_missing('profile','linkedin','TEXT');
+SELECT public._add_column_if_missing('profile','tiktok','TEXT');
+SELECT public._add_column_if_missing('profile','youtube','TEXT');
+SELECT public._add_column_if_missing('profile','birth_date','DATE');
+SELECT public._add_column_if_missing('profile','birth_place','TEXT');
+SELECT public._add_column_if_missing('profile','vision_id','TEXT');
+SELECT public._add_column_if_missing('profile','vision_en','TEXT');
+SELECT public._add_column_if_missing('profile','motto_id','TEXT');
+SELECT public._add_column_if_missing('profile','motto_en','TEXT');
+SELECT public._add_column_if_missing('profile','focus_id','TEXT');
+SELECT public._add_column_if_missing('profile','focus_en','TEXT');
+SELECT public._add_column_if_missing('profile','values_id','TEXT');
+SELECT public._add_column_if_missing('profile','values_en','TEXT');
+SELECT public._add_column_if_missing('profile','availability_status_id','TEXT DEFAULT ''Tersedia untuk proyek freelance terpilih''');
+SELECT public._add_column_if_missing('profile','availability_status_en','TEXT DEFAULT ''Available for selected freelance projects''');
+SELECT public._add_column_if_missing('profile','work_hours','TEXT');
+SELECT public._add_column_if_missing('profile','current_city','TEXT');
+SELECT public._add_column_if_missing('profile','stats_projects','TEXT DEFAULT ''0''');
+SELECT public._add_column_if_missing('profile','stats_tools','TEXT DEFAULT ''0''');
+SELECT public._add_column_if_missing('profile','stats_passion','TEXT DEFAULT ''∞''');
 SELECT public._add_column_if_missing('profile','updated_at','TIMESTAMPTZ DEFAULT now()');
 
 -- -----------------------------------------------------------------------------

@@ -65,10 +65,10 @@ export default function AdminTestimonials() {
   const openEdit = (item: Testimonial) => {
     setEditingId(item.id);
     setForm({
-      name: item.name,
-      role: item.role,
-      content_id: item.content_id,
-      content_en: item.content_en,
+      name: item.name || "",
+      role: item.role || "",
+      content_id: item.content_id || "",
+      content_en: item.content_en || "",
       avatar_url: item.avatar_url || "",
     });
   };
@@ -217,7 +217,7 @@ export default function AdminTestimonials() {
                   <div className="relative w-9 h-9 rounded-full overflow-hidden flex-shrink-0">
                     <Image
                       src={item.avatar_url}
-                      alt={item.name}
+                      alt={item.name || "Testimonial Avatar"}
                       fill
                       className="object-cover"
                       sizes="36px"
@@ -225,7 +225,7 @@ export default function AdminTestimonials() {
                   </div>
                 ) : (
                   <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#00FF88] to-[#0099FF] flex items-center justify-center text-[#0A0A0F] font-bold text-xs flex-shrink-0">
-                    {item.name.substring(0, 2).toUpperCase()}
+                    {(item.name || "DR").substring(0, 2).toUpperCase()}
                   </div>
                 )}
                 <div className="flex-1 min-w-0">

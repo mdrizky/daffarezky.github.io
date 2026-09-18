@@ -27,6 +27,8 @@ export type Project = {
   year?: number
   status?: 'Completed' | 'Planned' | 'Ongoing' | 'Archived' | 'Concept'
   is_published?: boolean
+  published_at?: string
+  updated_at?: string
   role?: string
   overview_id?: string
   overview_en?: string
@@ -42,6 +44,7 @@ export type Project = {
   architecture_id?: string
   architecture_en?: string
   categories?: string[]
+  source_table?: string
 }
 
 export type GuestbookEntry = {
@@ -57,6 +60,8 @@ export type NewsletterSubscriber = {
   email: string
   is_active: boolean
   created_at: string
+  unsubscribed_at?: string
+  source?: string
 }
 
 export type BlogComment = {
@@ -78,6 +83,7 @@ export type UsesItem = {
   link?: string
   icon?: string
   sort_order: number
+  is_published?: boolean
 }
 
 export type ProjectImage = {
@@ -126,6 +132,7 @@ export type BlogPost = {
   seo_title?: string
   seo_description?: string
   og_image?: string
+  is_published?: boolean
 }
 
 export type Service = {
@@ -138,6 +145,8 @@ export type Service = {
   features_id: string[]
   features_en: string[]
   is_popular: boolean
+  sort_order?: number
+  is_published?: boolean
 }
 
 export type Message = {
@@ -148,9 +157,13 @@ export type Message = {
   subject?: string
   message: string
   is_read: boolean
-  status: 'new' | 'read' | 'replied'
+  status: 'new' | 'contacted' | 'qualified' | 'in_progress' | 'completed' | 'archived' | 'spam' | 'read' | 'replied'
   replied_at?: string
   created_at: string
+  service?: string
+  budget?: string
+  timeline?: string
+  priority?: string
 }
 
 export type Skill = {
@@ -161,6 +174,8 @@ export type Skill = {
   level: 'Beginner' | 'Intermediate' | 'Advanced'
   show_on_home?: boolean
   is_learning?: boolean
+  sort_order?: number
+  is_published?: boolean
 }
 
 export type Profile = {
@@ -197,6 +212,7 @@ export type Profile = {
   availability_status_en?: string
   work_hours?: string
   current_city?: string
+  updated_at?: string
 }
 
 export type ReasonsToHire = {
@@ -207,17 +223,7 @@ export type ReasonsToHire = {
   description_id?: string
   description_en?: string
   sort_order: number
-}
-
-export type JourneyMilestone = {
-  id: string
-  year: string
-  title_id: string
-  title_en: string
-  description_id?: string
-  description_en?: string
-  icon?: string
-  sort_order: number
+  is_published?: boolean
 }
 
 export type FocusArea = {
@@ -228,6 +234,7 @@ export type FocusArea = {
   description_en?: string
   icon?: string
   sort_order: number
+  is_published?: boolean
 }
 
 export type CoreValue = {
@@ -238,6 +245,7 @@ export type CoreValue = {
   description_en?: string
   icon?: string
   sort_order: number
+  is_published?: boolean
 }
 
 export type Quote = {
@@ -247,44 +255,27 @@ export type Quote = {
   author?: string
   is_personal: boolean
   sort_order: number
-}
-
-export type ActiveProject = {
-  id: string
-  name_id: string
-  name_en: string
-  description_id?: string
-  description_en?: string
-  status_id: string
-  status_en: string
-  progress_percent: number
-  estimated_completion?: string
-  features_id: string[]
-  features_en: string[]
-  sort_order: number
-}
-
-export type FutureConcept = {
-  id: string
-  title_id: string
-  title_en: string
-  description_id?: string
-  description_en?: string
-  category?: string
-  tags: string[]
-  sort_order: number
+  is_published?: boolean
 }
 
 export type Testimonial = {
   id: string
-  name: string
-  role: string
-  content_id: string
-  content_en: string
-  avatar_url: string | null
+  name?: string
+  role?: string
+  content_id?: string
+  content_en?: string
+  avatar_url?: string | null
+  client_name?: string
+  client_company?: string
+  client_photo_url?: string
+  testimonial_id?: string
+  testimonial_en?: string
   created_at: string
   rating?: number
   featured?: boolean
+  sort_order?: number
+  is_published?: boolean
+  project_id?: string
 }
 
 export type Certificate = {
@@ -295,6 +286,8 @@ export type Certificate = {
   image_url?: string
   file_url: string
   date_issued: string
+  sort_order?: number
+  is_published?: boolean
 }
 
 export type Education = {
@@ -313,6 +306,9 @@ export type Education = {
   gallery?: string[]
   certificate_url?: string
   created_at: string
+  field_of_study?: string
+  sort_order?: number
+  is_published?: boolean
 }
 
 export type LearningJourney = {
@@ -345,6 +341,9 @@ export type Achievement = {
   featured?: boolean
   sort_order?: number
   is_published?: boolean
+  created_at?: string
+  updated_at?: string
+  published_at?: string
 }
 
 export type Experience = {
@@ -361,21 +360,8 @@ export type Experience = {
   category: string
   order_index: number
   created_at: string
-}
-
-export type Concept = {
-  id: string
-  title_id: string
-  title_en: string
-  subtitle_id?: string
-  subtitle_en?: string
-  description_id?: string
-  description_en?: string
-  technology: string[]
-  status: string
-  featured: boolean
-  order_index: number
-  created_at: string
+  sort_order?: number
+  is_published?: boolean
 }
 
 export type Partner = {
@@ -385,6 +371,7 @@ export type Partner = {
   website_url?: string
   order_index: number
   created_at: string
+  is_published?: boolean
 }
 
 export type Islamic = {
@@ -400,7 +387,45 @@ export type Islamic = {
   featured: boolean
   order_index: number
   created_at: string
+  is_published?: boolean
 }
 
+export type AdminUser = {
+  id: string
+  user_id: string
+  role: 'super_admin' | 'editor'
+  is_active: boolean
+  created_at: string
+}
 
+export type ProjectTechnology = {
+  id: string
+  project_id: string
+  name: string
+  sort_order: number
+}
 
+export type BlogCategory = {
+  id: string
+  name_id: string
+  name_en: string
+  slug: string
+  sort_order: number
+  is_published: boolean
+  created_at: string
+}
+
+export type BlogTag = {
+  id: string
+  name: string
+  slug: string
+  created_at: string
+}
+
+export type AnalyticsEvent = {
+  id: string
+  event_name: string
+  path?: string
+  metadata?: Record<string, unknown>
+  created_at: string
+}

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/components/LanguageProvider";
 import { PageSkeleton } from "@/components/ui/Skeleton";
+import { Container } from "@/components/ui/Container";
 import type { Project } from "@/types";
 
 // Lazy load the heavy interactive client — it has a modal, filter logic, and images
@@ -41,12 +42,12 @@ export default function ProjectsPage() {
 
   return (
     <div className="pt-32 pb-24 min-h-screen">
-      <div className="container mx-auto px-6 md:px-12">
+      <Container>
         <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <h1 className="text-4xl md:text-6xl font-heading font-bold mb-4 text-gray-900 dark:text-white">
+          <h1 className="text-4xl md:text-6xl font-heading font-bold mb-4 text-foreground">
             {language === 'id' ? 'Karya & ' : 'Works & '}<span className="text-gradient">Portfolio</span>
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto text-lg">
+          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
             {language === 'id'
               ? 'Kumpulan project yang pernah saya kerjakan. Mulai dari website, desain branding, hingga dashboard analytics.'
               : 'A collection of projects I have worked on. From websites and branding design, to analytics dashboards.'}
@@ -56,7 +57,7 @@ export default function ProjectsPage() {
         <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
           {loading ? <PageSkeleton /> : <PortfolioClient initialProjects={projects} />}
         </div>
-      </div>
+      </Container>
     </div>
   );
-}
+}

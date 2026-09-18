@@ -19,8 +19,8 @@ export default function BlogCard({ post }: { post: BlogPost }) {
   });
 
   return (
-    <Link href={`/blog/${post.slug}`} className="block h-full">
-      <div className="bg-white dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden group transition-all duration-300 hover:shadow-xl dark:hover:shadow-[0_0_20px_rgba(0,153,255,0.2)] hover:-translate-y-2 flex flex-col h-full">
+    <Link href={`/blog/${post.slug}`} className="block h-full group">
+      <div className="bg-card border border-border rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col h-full">
         {/* Thumbnail */}
         <div className="relative h-48 w-full overflow-hidden">
           <Image
@@ -29,27 +29,27 @@ export default function BlogCard({ post }: { post: BlogPost }) {
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-110"
           />
-          <div className="absolute top-4 left-4 z-20 px-3 py-1 text-xs font-bold rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white">
+          <div className="absolute top-4 left-4 z-20 px-3 py-1 text-xs font-bold rounded-full bg-secondary/80 backdrop-blur-sm border border-border text-secondary-foreground">
             {post.category}
           </div>
         </div>
 
         {/* Content */}
         <div className="p-6 flex flex-col flex-grow">
-          <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-xs mb-3">
+          <div className="flex items-center gap-2 text-muted-foreground text-xs mb-3">
             <FaCalendarAlt />
             <span>{date}</span>
           </div>
           
-          <h3 className="text-lg font-heading font-bold mb-3 group-hover:text-[var(--color-neon-blue)] transition-colors line-clamp-2 text-gray-900 dark:text-white">
+          <h3 className="text-lg font-heading font-bold mb-3 group-hover:text-primary transition-colors line-clamp-2 text-foreground">
             {title}
           </h3>
           
-          <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 line-clamp-3 flex-grow">
+          <p className="text-muted-foreground text-sm mb-6 line-clamp-3 flex-grow">
             {excerpt}
           </p>
 
-          <div className="flex items-center gap-2 text-[var(--color-neon-blue)] text-sm font-medium mt-auto group-hover:gap-3 transition-all">
+          <div className="flex items-center gap-2 text-primary text-sm font-medium mt-auto group-hover:gap-3 transition-all">
             {language === 'id' ? 'Baca Selengkapnya' : 'Read More'} <FaArrowRight />
           </div>
         </div>

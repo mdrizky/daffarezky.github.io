@@ -143,7 +143,7 @@ export default function BlogDetailClient({
             {/* Back */}
             <Link
               href="/blog"
-              className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-[var(--color-neon-blue)] transition-colors mb-10 group"
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-10 group"
             >
               <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />
               {language === "id" ? "Kembali ke Blog" : "Back to Blog"}
@@ -152,14 +152,14 @@ export default function BlogDetailClient({
             {/* Header */}
             <header className="mb-10">
               <div className="flex flex-wrap items-center gap-3 mb-5">
-                <span className="px-3 py-1 text-xs font-bold rounded-full bg-[var(--color-neon-blue)]/15 text-[var(--color-neon-blue)] border border-[var(--color-neon-blue)]/25">
+                <span className="px-3 py-1 text-xs font-bold rounded-full bg-primary/10 text-primary border border-primary/20">
                   {post.category}
                 </span>
-                <div className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 text-sm">
+                <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
                   <FaCalendarAlt size={12} />
                   <span>{date}</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 text-sm">
+                <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
                   <FaClock size={12} />
                   <span>
                     {minutes} {language === "id" ? "menit baca" : "min read"}
@@ -167,19 +167,19 @@ export default function BlogDetailClient({
                 </div>
               </div>
 
-              <h1 className="text-3xl md:text-5xl font-heading font-bold leading-tight mb-5 text-gray-900 dark:text-white">
+              <h1 className="text-3xl md:text-5xl font-heading font-bold leading-tight mb-5 text-foreground">
                 {title}
               </h1>
 
               {excerpt && (
-                <p className="text-lg text-gray-500 dark:text-gray-400 leading-relaxed border-l-4 border-[var(--color-neon-green)] pl-5">
+                <p className="text-lg text-muted-foreground leading-relaxed border-l-4 border-primary pl-5">
                   {excerpt}
                 </p>
               )}
             </header>
 
             {/* Thumbnail */}
-            <div className="relative aspect-video w-full rounded-3xl overflow-hidden bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 mb-12 shadow-lg">
+            <div className="relative aspect-video w-full rounded-3xl overflow-hidden bg-muted border border-border mb-12 shadow-lg">
               <Image
                 src={post.thumbnail || "/og-image.jpg"}
                 alt={title}
@@ -245,14 +245,14 @@ export default function BlogDetailClient({
         {/* Author CTA + Related Posts (outside the flex-row container or inside a new container) */}
         <div className="container mx-auto px-6 md:px-12 max-w-4xl">
           {/* Author CTA */}
-          <div className="mt-12 p-8 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-3xl text-center flex flex-col items-center shadow-sm">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#00FF88] to-[#0099FF] flex items-center justify-center text-[#0A0A0F] font-bold text-xl mb-4">
+          <div className="mt-12 p-8 bg-card border border-border rounded-3xl text-center flex flex-col items-center shadow-sm">
+            <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xl mb-4">
               DR
             </div>
-            <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
+            <h3 className="text-xl font-bold mb-2 text-foreground font-heading">
               {language === "id" ? "Suka artikel ini?" : "Like this article?"}
             </h3>
-            <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-sm">
+            <p className="text-muted-foreground mb-6 max-w-sm">
               {language === "id"
                 ? "Dapatkan lebih banyak insight dan tips menarik di Instagram saya."
                 : "Get more insights and interesting tips on my Instagram."}
@@ -262,13 +262,13 @@ export default function BlogDetailClient({
                 href="https://instagram.com/m.daffarizkyy_"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-gradient-to-r from-[#E1306C] to-[#833AB4] text-white px-6 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition-transform"
+                className="bg-secondary text-secondary-foreground hover:bg-accent px-6 py-2.5 rounded-full font-bold text-sm transition-colors"
               >
                 Follow IG @m.daffarizkyy_
               </a>
               <Link
                 href="/kontak"
-                className="bg-gradient-to-r from-[#00FF88] to-[#0099FF] text-[#0A0A0F] px-6 py-2.5 rounded-full font-bold text-sm hover:scale-105 transition-transform"
+                className="bg-primary text-primary-foreground px-6 py-2.5 rounded-full font-bold text-sm hover:opacity-90 transition-opacity"
               >
                 {language === "id" ? "Hire Me 🔥" : "Hire Me 🔥"}
               </Link>
@@ -277,8 +277,8 @@ export default function BlogDetailClient({
 
           {/* Related Posts */}
           {relatedPosts && relatedPosts.length > 0 && (
-            <div className="mt-20 border-t border-gray-200 dark:border-white/10 pt-16">
-              <h2 className="text-2xl font-heading font-bold mb-8 text-gray-900 dark:text-white">
+            <div className="mt-20 border-t border-border pt-16">
+              <h2 className="text-2xl font-heading font-bold mb-8 text-foreground">
                 {language === "id" ? "Artikel" : "Related"}{" "}
                 <span className="text-gradient">
                   {language === "id" ? "Terkait" : "Articles"}
@@ -300,7 +300,7 @@ export default function BlogDetailClient({
                       href={`/blog/${relatedPost.slug}`}
                       className="group"
                     >
-                      <div className="relative aspect-video w-full rounded-2xl overflow-hidden mb-3 border border-gray-200 dark:border-white/10">
+                      <div className="relative aspect-video w-full rounded-2xl overflow-hidden mb-3 border border-border">
                         <Image
                           src={relatedPost.thumbnail || "/og-image.jpg"}
                           alt={relTitle}
@@ -308,14 +308,14 @@ export default function BlogDetailClient({
                           className="object-cover transition-transform duration-500 group-hover:scale-110"
                         />
                       </div>
-                      <span className="text-xs font-bold text-[var(--color-neon-blue)] uppercase tracking-wider">
+                      <span className="text-xs font-bold text-primary uppercase tracking-wider">
                         {relatedPost.category}
                       </span>
-                      <h3 className="font-bold mt-1 group-hover:text-[var(--color-neon-blue)] transition-colors line-clamp-2 text-gray-900 dark:text-white">
+                      <h3 className="font-bold mt-1 group-hover:text-primary transition-colors line-clamp-2 text-foreground">
                         {relTitle}
                       </h3>
                       {relExcerpt && (
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
+                        <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
                           {relExcerpt}
                         </p>
                       )}

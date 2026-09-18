@@ -4,6 +4,10 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/components/LanguageProvider";
 import { FaLightbulb } from "react-icons/fa";
+import { Container } from "@/components/ui/Container";
+import { Card, CardContent } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import { PageSkeleton } from "@/components/ui/Skeleton";
 import type { Project } from "@/types";
 
 export default function KonsepPage() {
@@ -34,91 +38,96 @@ export default function KonsepPage() {
   }, []);
 
   const t = {
-    pageTitle: language === 'id' ? 'Konsep' : 'Concepts',
+    pageTitle: language === 'id' ? 'Konsep & Eksplorasi' : 'Concepts & R&D',
     pageDesc: language === 'id'
-      ? 'Ide eksplorasi dan konsep masa depan yang sedang dikembangkan atau ingin diwujudkan.'
-      : 'Exploration ideas and future concepts being developed or want to be realized.',
+      ? 'Ide eksplorasi dan konsep masa depan yang sedang dikembangkan atau dalam tahap riset.'
+      : 'Exploratory ideas and future concepts currently under development or research.',
     technology: language === 'id' ? 'Teknologi' : 'Technology',
-    status: language === 'id' ? 'Status' : 'Status',
+    status: language === 'id' ? 'Konsep' : 'Concept',
     noData: language === 'id'
-      ? 'Belum ada data konsep. Tambahkan melalui panel admin.'
-      : 'No concept data yet. Add through admin panel.',
+      ? 'Belum ada data konsep yang dipublikasikan.'
+      : 'No concept data published yet.',
   };
 
   if (loading) {
     return (
-      <div className="pt-32 pb-24 min-h-screen flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-[#00FF88] border-t-transparent rounded-full animate-spin"></div>
+      <div className="pt-32 pb-24 min-h-screen">
+        <Container>
+          <PageSkeleton />
+        </Container>
       </div>
     );
   }
 
   return (
-    <div className="pt-32 pb-24 min-h-screen">
-      <div className="container mx-auto px-6 md:px-12">
+    <div className="pt-32 pb-24 min-h-screen bg-background transition-colors duration-300">
+      <Container>
         {/* Header */}
-        <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <h1 className="text-4xl md:text-6xl font-heading font-bold mb-4 text-gray-900 dark:text-white">
+        <div className="text-left mb-16 animate-fade-in">
+          <h1 className="text-4xl md:text-6xl font-heading font-bold mb-4 text-foreground">
             {t.pageTitle}
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto text-lg">
+          <p className="text-muted-foreground max-w-2xl text-lg">
             {t.pageDesc}
           </p>
         </div>
 
         {/* Content */}
         {concepts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-fade-in">
             {concepts.map((concept) => (
-              <div
+              <Card
                 key={concept.id}
-                className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-8 hover:border-[var(--color-neon-green)]/50 transition-colors shadow-sm"
+                className="hover:border-border/80 transition-all shadow-sm flex flex-col"
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="p-3 bg-purple-100 dark:bg-purple-500/10 rounded-xl text-purple-600 dark:text-purple-400">
-                    <FaLightbulb size={24} />
-                  </div>
-                  <span className="px-3 py-1 rounded-full text-xs font-bold text-white bg-purple-500">
-                    {t.status}
-                  </span>
-                </div>
-
-                <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
-                  {language === 'id' ? concept.title_id : concept.title_en}
-                </h3>
-
-                {concept.description_id && (
-                  <p className="text-gray-600 dark:text-gray-300 mb-4 text-sm leading-relaxed">
-                    {language === 'id' ? concept.description_id : concept.description_en}
-                  </p>
-                )}
-
-                {concept.tech_stack && concept.tech_stack.length > 0 && (
-                  <div className="mb-4">
-                    <p className="text-xs font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">
-                      {t.technology}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {concept.tech_stack.map((tech, idx) => (
-                        <span
-                          key={idx}
-                          className="px-3 py-1 bg-gray-100 dark:bg-white/10 rounded-full text-xs font-medium text-gray-700 dark:text-gray-300"
-                        >
-                          {tech}
-                        </span>
-                      ))}
+                <CardContent className="p-8 flex flex-col h-full">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="p-3 bg-primary/10 rounded-xl text-primary">
+                      <FaLightbulb size={24} />
                     </div>
+                    <Badge variant="secondary">
+                      {t.status}
+                    </Badge>
                   </div>
-                )}
-              </div>
+
+                  <h2 className="text-2xl font-bold mb-2 text-foreground">
+                    {language === 'id' ? concept.title_id : concept.title_en}
+                  </h2>
+
+                  {concept.description_id && (
+                    <p className="text-muted-foreground mb-6 text-sm leading-relaxed">
+                      {language === 'id' ? concept.description_id : concept.description_en}
+                    </p>
+                  )}
+
+                  {concept.tech_stack && concept.tech_stack.length > 0 && (
+                    <div className="mt-auto pt-4 border-t border-border">
+                      <p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">
+                        {t.technology}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {concept.tech_stack.map((tech, idx) => (
+                          <Badge
+                            key={idx}
+                            variant="outline"
+                            className="text-xs"
+                          >
+                            {tech}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-3xl">
-            <p className="text-gray-500 dark:text-gray-400">{t.noData}</p>
+          <div className="text-center py-16 bg-card border border-border rounded-3xl">
+            <p className="text-muted-foreground">{t.noData}</p>
           </div>
         )}
-      </div>
+      </Container>
     </div>
   );
 }

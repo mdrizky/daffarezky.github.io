@@ -45,7 +45,7 @@ export default function SiteLogo({
 
       {showName && (
         <span
-          className={`font-heading font-bold ${textSize} text-gray-900 dark:text-white hidden sm:block`}
+          className={`font-heading font-bold ${textSize} text-foreground hidden sm:block`}
         >
           {name}
         </span>

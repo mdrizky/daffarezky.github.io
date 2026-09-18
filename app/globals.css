@@ -1,69 +1,147 @@
 @import "tailwindcss";
 
 @theme {
-  --color-neon-green: #00FF88;
-  --color-neon-blue: #0099FF;
+  /* Colors */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  /* Typography */
   --font-heading: var(--font-syne);
   --font-body: var(--font-dm-sans);
 
-  /* Define theme colors as variables */
-  --color-bg: var(--background);
-  --color-text: var(--foreground);
-  --color-text-muted: var(--muted);
-  --color-text-subtle: var(--subtle);
+  /* Radius */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
 }
 
 @layer base {
   :root {
     --background: #FFFFFF;
-    --foreground: #0A0A0F;
-    --muted: #1F2937; /* gray-800 - Very Dark */
-    --subtle: #4B5563; /* gray-600 */
-    --border: #E5E7EB; /* gray-200 */
+    --foreground: #09090b;
+    --card: #FFFFFF;
+    --card-foreground: #09090b;
+    --popover: #FFFFFF;
+    --popover-foreground: #09090b;
+    --primary: #18181b;
+    --primary-foreground: #fafafa;
+    --secondary: #f4f4f5;
+    --secondary-foreground: #18181b;
+    --muted: #f4f4f5;
+    --muted-foreground: #71717a;
+    --accent: #f4f4f5;
+    --accent-foreground: #18181b;
+    --destructive: #ef4444;
+    --destructive-foreground: #fafafa;
+    --border: #e4e4e7;
+    --input: #e4e4e7;
+    --ring: #18181b;
+    --radius: 0.5rem;
   }
 
-  /* Force dark mode styles when .dark class is present */
   .dark {
-    --background: #0A0A0F;
-    --foreground: #FFFFFF;
-    --muted: #D1D5DB; /* gray-300 */
-    --subtle: #9CA3AF; /* gray-400 */
-    --border: #1F2937; /* gray-800 */
+    --background: #09090b;
+    --foreground: #fafafa;
+    --card: #09090b;
+    --card-foreground: #fafafa;
+    --popover: #09090b;
+    --popover-foreground: #fafafa;
+    --primary: #fafafa;
+    --primary-foreground: #18181b;
+    --secondary: #27272a;
+    --secondary-foreground: #fafafa;
+    --muted: #27272a;
+    --muted-foreground: #a1a1aa;
+    --accent: #27272a;
+    --accent-foreground: #fafafa;
+    --destructive: #7f1d1d;
+    --destructive-foreground: #fafafa;
+    --border: #27272a;
+    --input: #27272a;
+    --ring: #d4d4d8;
   }
+}
 
-  html, body {
-    background-color: var(--background) !important;
-    color: var(--foreground) !important;
-    @apply font-body antialiased transition-colors duration-300;
+@layer base {
+  * {
+    @apply border-border;
   }
-
-  /* Ensure all headings and text are dark in light mode unless overridden */
-  h1, h2, h3, h4, h5, h6, p, span, div {
-    @apply transition-colors duration-300;
+  body {
+    @apply bg-background text-foreground font-body antialiased selection:bg-primary/20;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight;
   }
 }
 
 @layer utilities {
   .glass {
-    @apply bg-white/80 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10;
+    @apply bg-background/80 backdrop-blur-md border border-border/50;
   }
   
-  .text-muted {
-    color: var(--muted) !important;
+  .glass-card {
+    @apply bg-card/40 backdrop-blur-md border border-border/50 shadow-sm transition-all duration-300 hover:shadow-md hover:border-border/80;
   }
 
-  .text-subtle {
-    color: var(--subtle) !important;
-  }
-  
   .text-gradient {
-    @apply bg-gradient-to-r from-[var(--color-neon-green)] to-[var(--color-neon-blue)] bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary to-muted-foreground bg-clip-text text-transparent;
   }
   
-  .bg-gradient-neon {
-    @apply bg-gradient-to-r from-[var(--color-neon-green)] to-[var(--color-neon-blue)];
+  .page-container {
+    @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
+  
+  .section-padding {
+    @apply py-16 md:py-24;
+  }
+}
+
+/* Animations */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out forwards;
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 /* Minimal highlight.js token colors for rehype-highlight */
@@ -72,57 +150,26 @@
   color: #e6edf3;
 }
 .hljs-comment,
-.hljs-quote { color: #9ca3af; }
+.hljs-quote { color: #8b949e; font-style: italic; }
 .hljs-keyword,
 .hljs-selector-tag,
-.hljs-subst { color: #7dd3fc; }
+.hljs-subst { color: #ff7b72; }
 .hljs-number,
 .hljs-literal,
 .hljs-variable,
 .hljs-template-variable,
-.hljs-tag .hljs-attr { color: #f97316; }
+.hljs-tag .hljs-attr { color: #79c0ff; }
 .hljs-string,
-.hljs-doctag { color: #34d399; }
+.hljs-doctag { color: #a5d6ff; }
 .hljs-title,
 .hljs-section,
-.hljs-selector-id { color: #60a5fa; }
+.hljs-selector-id { color: #d2a8ff; }
 .hljs-type,
-.hljs-class .hljs-title { color: #a78bfa; }
-.hljs-attr { color: #fbbf24 }
+.hljs-class .hljs-title { color: #ffa657; }
+.hljs-attr { color: #79c0ff; }
 .hljs-built_in,
-.hljs-builtin-name { color: #f59e0b }
+.hljs-builtin-name { color: #ffa657; }
 .hljs-bullet,
-.hljs-code { color: #f5f5f5 }
-.hljs-emphasis { font-style: italic }
-.hljs-strong { font-weight: 700 }
-
-/* Custom animations for admin login */
-@keyframes gradient {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-@keyframes shake {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  10%, 30%, 50%, 70%, 90% {
-    transform: translateX(-5px);
-  }
-  20%, 40%, 60%, 80% {
-    transform: translateX(5px);
-  }
-}
-
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient 3s ease infinite;
-}
-
-.animate-shake {
-  animation: shake 0.5s ease-in-out;
-}
+.hljs-code { color: #f0f6fc; }
+.hljs-emphasis { font-style: italic; }
+.hljs-strong { font-weight: 700; }

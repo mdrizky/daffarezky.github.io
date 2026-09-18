@@ -18,8 +18,8 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
 
     const verify = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession()
-        if (!session) {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) {
           router.replace('/admin/login')
           return
         }
@@ -27,7 +27,7 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
         const { data: adminRow } = await supabase
           .from('admin_users')
           .select('id')
-          .eq('user_id', session.user.id)
+          .eq('user_id', user.id)
           .eq('is_active', true)
           .maybeSingle()
 

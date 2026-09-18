@@ -5,9 +5,11 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useLanguage } from "@/components/LanguageProvider";
 import { PageSkeleton } from "@/components/ui/Skeleton";
+import { Container } from "@/components/ui/Container";
+import { Badge } from "@/components/ui/Badge";
 import type { BlogPost } from "@/types";
 
-// Lazy load the search/filter client — not needed for initial paint
+// Lazy load the search/filter client
 const BlogClient = dynamic(() => import("./BlogClient"), {
   loading: () => <PageSkeleton />,
   ssr: false,
@@ -42,22 +44,25 @@ export default function BlogPage() {
 
   return (
     <div className="pt-32 pb-24 min-h-screen">
-      <div className="container mx-auto px-6 md:px-12">
-        <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <h1 className="text-4xl md:text-6xl font-heading font-bold mb-4 text-gray-900 dark:text-white">
-            Blog & <span className="text-gradient">{language === 'id' ? 'Artikel' : 'Articles'}</span>
+      <Container>
+        <div className="text-center mb-16 max-w-3xl mx-auto">
+          <Badge variant="outline" className="mb-4">
+            {language === 'id' ? 'Artikel & Pemikiran' : 'Articles & Insights'}
+          </Badge>
+          <h1 className="text-4xl md:text-6xl font-heading font-bold mb-4 text-foreground tracking-tight">
+            Blog & <span className="text-gradient">{language === 'id' ? 'Artikel' : 'Insights'}</span>
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto text-lg">
+          <p className="text-muted-foreground text-lg leading-relaxed">
             {language === 'id'
-              ? 'Insight, tips, dan cerita seputar dunia digital marketing, pengembangan website, dan strategi bisnis.'
-              : 'Insights, tips, and stories around the digital marketing world, web development, and business strategy.'}
+              ? 'Insight, tips teknis, dan cerita pengalaman seputar arsitektur web modern, kecerdasan buatan, dan digital product development.'
+              : 'Technical insights, best practices, and stories on modern web architecture, artificial intelligence, and digital products.'}
           </p>
         </div>
 
-        <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+        <div>
           {loading ? <PageSkeleton /> : <BlogClient initialPosts={posts} />}
         </div>
-      </div>
+      </Container>
     </div>
   );
 }

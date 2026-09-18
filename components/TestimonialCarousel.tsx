@@ -25,7 +25,8 @@ function StarRating({ count = 5 }: { count?: number }) {
   );
 }
 
-function getInitials(name: string) {
+function getInitials(name?: string) {
+  if (!name) return "DR";
   return name
     .split(" ")
     .map((w) => w[0])
@@ -36,11 +37,13 @@ function getInitials(name: string) {
 
 interface TestimonialCarouselProps {
   initialData?: Testimonial[];
+  testimonials?: Testimonial[];
 }
 
-export default function TestimonialCarousel({ initialData }: TestimonialCarouselProps) {
+export default function TestimonialCarousel({ initialData, testimonials: propsTestimonials }: TestimonialCarouselProps) {
   const { language } = useLanguage();
-  const [testimonials] = useState<Testimonial[]>(initialData && initialData.length > 0 ? initialData : FALLBACK);
+  const rawList = propsTestimonials || initialData;
+  const [testimonials] = useState<Testimonial[]>(rawList && rawList.length > 0 ? rawList : FALLBACK);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
@@ -108,7 +111,7 @@ export default function TestimonialCarousel({ initialData }: TestimonialCarousel
                       <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border-2 border-[var(--color-neon-green)]/30">
                         <Image
                           src={t.avatar_url}
-                          alt={t.name}
+                          alt={t.name || "Testimonial Avatar"}
                           fill
                           className="object-cover"
                           sizes="40px"
@@ -120,7 +123,7 @@ export default function TestimonialCarousel({ initialData }: TestimonialCarousel
                       </div>
                     )}
                     <div>
-                      <p className="text-sm font-bold text-gray-900 dark:text-white">{t.name}</p>
+                      <p className="text-sm font-bold text-gray-900 dark:text-white">{t.name || "Anonymous"}</p>
                       {t.role && (
                         <p className="text-xs text-gray-500 dark:text-gray-400">{t.role}</p>
                       )}

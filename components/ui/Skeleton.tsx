@@ -9,7 +9,7 @@ export function Skeleton({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        "animate-pulse rounded-xl bg-gray-200 dark:bg-white/8",
+        "animate-pulse rounded-md bg-muted",
         className
       )}
     />
@@ -42,7 +42,7 @@ export function PageSkeleton() {
 /** Single card skeleton */
 export function CardSkeleton() {
   return (
-    <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl overflow-hidden">
+    <div className="bg-card border border-border rounded-xl overflow-hidden">
       <Skeleton className="h-48 w-full rounded-none" />
       <div className="p-6 space-y-3">
         <Skeleton className="h-5 w-3/4" />
@@ -77,7 +77,7 @@ export function BlogDetailSkeleton() {
         <Skeleton className="h-12 w-4/5 mb-8" />
 
         {/* Thumbnail */}
-        <Skeleton className="aspect-video w-full rounded-3xl mb-12" />
+        <Skeleton className="aspect-video w-full rounded-2xl mb-12" />
 
         {/* Content paragraphs */}
         <div className="space-y-4">
@@ -104,7 +104,7 @@ export function AdminDashboardSkeleton() {
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 space-y-4"
+            className="bg-card border border-border rounded-xl p-6 space-y-4"
           >
             <div className="flex justify-between">
               <Skeleton className="h-12 w-12 rounded-xl" />
@@ -118,17 +118,17 @@ export function AdminDashboardSkeleton() {
 
       {/* Bottom panels */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 space-y-4">
+        <div className="lg:col-span-2 bg-card border border-border rounded-xl p-6 space-y-4">
           <Skeleton className="h-7 w-40" />
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="p-4 rounded-xl border border-gray-100 dark:border-white/5 space-y-2">
+            <div key={i} className="p-4 rounded-xl border border-border space-y-2">
               <Skeleton className="h-5 w-32" />
               <Skeleton className="h-4 w-48" />
               <Skeleton className="h-4 w-full" />
             </div>
           ))}
         </div>
-        <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 space-y-4">
+        <div className="bg-card border border-border rounded-xl p-6 space-y-4">
           <Skeleton className="h-7 w-32" />
           {Array.from({ length: 4 }).map((_, i) => (
             <Skeleton key={i} className="h-16 w-full rounded-xl" />
@@ -155,8 +155,8 @@ export function AdminPageSkeleton() {
       </div>
 
       {/* Table rows */}
-      <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl overflow-hidden">
-        <div className="p-4 border-b border-gray-100 dark:border-white/5 grid grid-cols-4 gap-4">
+      <div className="bg-card border border-border rounded-xl overflow-hidden">
+        <div className="p-4 border-b border-border grid grid-cols-4 gap-4">
           {["w-24", "w-32", "w-20", "w-16"].map((w, i) => (
             <Skeleton key={i} className={`h-4 ${w}`} />
           ))}
@@ -164,14 +164,14 @@ export function AdminPageSkeleton() {
         {Array.from({ length: 5 }).map((_, i) => (
           <div
             key={i}
-            className="p-4 border-b border-gray-50 dark:border-white/5 grid grid-cols-4 gap-4 items-center"
+            className="p-4 border-b border-border grid grid-cols-4 gap-4 items-center"
           >
             <Skeleton className="h-5 w-full" />
             <Skeleton className="h-5 w-3/4" />
             <Skeleton className="h-6 w-16 rounded-full" />
             <div className="flex gap-2">
-              <Skeleton className="h-8 w-8 rounded-lg" />
-              <Skeleton className="h-8 w-8 rounded-lg" />
+              <Skeleton className="h-8 w-8 rounded-md" />
+              <Skeleton className="h-8 w-8 rounded-md" />
             </div>
           </div>
         ))}

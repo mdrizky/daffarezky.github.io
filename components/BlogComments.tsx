@@ -28,20 +28,19 @@ export default function BlogComments({ postId }: { postId: string }) {
   };
 
   useEffect(() => {
+    const fetchComments = async () => {
+      const { data } = await supabase
+        .from("blog_comments")
+        .select("*")
+        .eq("post_id", postId)
+        .eq("is_approved", true)
+        .order("created_at", { ascending: true });
+      
+      if (data) setComments(data);
+      setLoading(false);
+    };
     fetchComments();
   }, [postId]);
-
-  const fetchComments = async () => {
-    const { data } = await supabase
-      .from("blog_comments")
-      .select("*")
-      .eq("post_id", postId)
-      .eq("is_approved", true)
-      .order("created_at", { ascending: true });
-    
-    if (data) setComments(data);
-    setLoading(false);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

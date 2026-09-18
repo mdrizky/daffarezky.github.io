@@ -14,8 +14,16 @@ interface Partner {
 
 const FALLBACK_PARTNERS: Partner[] = [];
 
-export default function PartnerSlider({ language, initialData }: { language: 'id' | 'en', initialData?: Partner[] }) {
-  const partners = initialData && initialData.length > 0 ? initialData : FALLBACK_PARTNERS;
+export default function PartnerSlider({
+  language = 'id',
+  initialData,
+  partners: propsPartners
+}: {
+  language?: 'id' | 'en',
+  initialData?: Partner[],
+  partners?: Partner[]
+}) {
+  const partners = propsPartners || (initialData && initialData.length > 0 ? initialData : FALLBACK_PARTNERS);
 
   const [emblaRef] = useEmblaCarousel(
     {

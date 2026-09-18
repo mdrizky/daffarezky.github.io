@@ -44,7 +44,7 @@ export default function Footer() {
   const quickLinks = language === 'id' ? quickLinksId : quickLinksEn;
 
   return (
-    <footer className="border-t border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-[#0A0A0F] pt-16 pb-8 transition-colors duration-300">
+    <footer className="border-t border-border bg-card/40 pt-16 pb-8 transition-colors duration-300">
       <div className="container mx-auto px-6 md:px-12">
         {/* Newsletter Section */}
         <div className="mb-16">
@@ -55,14 +55,14 @@ export default function Footer() {
           {/* Brand */}
           <div className="flex flex-col gap-6">
             <SiteLogo size={40} textSize="text-xl" />
-            <p className="text-gray-500 dark:text-gray-400 max-w-sm leading-relaxed">
+            <p className="text-muted-foreground max-w-sm leading-relaxed text-sm">
               {language === 'id'
                 ? 'Web & Mobile Developer yang berfokus pada pengembangan teknologi, inovasi digital, dan solusi yang memberikan dampak positif bagi masyarakat.'
                 : 'Web & Mobile Developer focused on technology development, digital innovation, and solutions that provide a positive impact on society.'}
             </p>
             <div className="flex flex-col gap-1">
-              <span className="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">Motto</span>
-              <p className="text-sm font-medium text-[var(--color-neon-blue)]">
+              <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Motto</span>
+              <p className="text-sm font-medium text-primary">
                 Teknologi • Inovasi • Kebermanfaatan
               </p>
             </div>
@@ -70,7 +70,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div className="flex flex-col gap-4">
-            <h3 className="font-heading font-bold text-lg text-gray-900 dark:text-white">
+            <h3 className="font-heading font-bold text-lg text-foreground">
               {language === 'id' ? 'Tautan Cepat' : 'Quick Links'}
             </h3>
             <ul className="flex flex-col gap-2">
@@ -78,7 +78,7 @@ export default function Footer() {
                 <li key={item.name}>
                   <Link
                     href={item.path}
-                    className="text-gray-500 dark:text-gray-400 hover:text-[var(--color-neon-green)] transition-colors"
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {item.name}
                   </Link>
@@ -89,10 +89,10 @@ export default function Footer() {
 
           {/* Connect */}
           <div className="flex flex-col gap-4">
-            <h3 className="font-heading font-bold text-lg text-gray-900 dark:text-white">
+            <h3 className="font-heading font-bold text-lg text-foreground">
               {language === 'id' ? 'Hubungi' : 'Connect'}
             </h3>
-            <p className="text-gray-500 dark:text-gray-400 mb-2">
+            <p className="text-muted-foreground mb-2 text-sm">
               {language === 'id'
                 ? 'Mari bangun sesuatu yang hebat bersama.'
                 : "Let's build something great together."}
@@ -102,15 +102,15 @@ export default function Footer() {
         </div>
 
         {/* Bottom */}
-        <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-gray-200 dark:border-white/5 relative gap-4 text-center md:text-left">
-          <p className="text-gray-500 text-sm">
+        <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-border/60 relative gap-4 text-center md:text-left">
+          <p className="text-muted-foreground text-sm">
             © 2026 {profileName}. {language === 'id' ? 'Dibangun dengan dedikasi, pembelajaran, dan semangat kebermanfaatan.' : 'Built with dedication, learning, and the spirit of benefit.'}
           </p>
           
           {/* Hidden Admin Link */}
           <Link 
             href="/admin" 
-            className="absolute bottom-0 right-0 p-2 text-transparent hover:text-gray-300 dark:hover:text-white/20 transition-colors text-xs"
+            className="absolute bottom-0 right-0 p-2 text-muted-foreground/30 hover:text-muted-foreground transition-colors text-xs"
             aria-label="Admin Access"
           >
             ⌘
