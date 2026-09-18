@@ -22,13 +22,13 @@ export default function AdminSettings() {
   const [settingsSaving, setSettingsSaving] = useState(false)
   const [settingsSuccess, setSettingsSuccess] = useState(false)
   const [settingsError, setSettingsError] = useState('')
-
-  // ── Admin PIN ─────────────────────────────────────────────────
   const [currentPin, setCurrentPin] = useState('')
   const [newPin, setNewPin] = useState('')
   const [pinSaving, setPinSaving] = useState(false)
   const [pinSuccess, setPinSuccess] = useState('')
   const [pinError, setPinError] = useState('')
+
+  // ── Admin PIN ─────────────────────────────────────────────────
 
   useEffect(() => {
     fetchLogo()
@@ -190,40 +190,18 @@ export default function AdminSettings() {
     }
   }
 
-  const handleChangePin = async (e: React.FormEvent) => {
+  const handleChangePin = (e: React.FormEvent) => {
     e.preventDefault()
-    setPinSaving(true)
-    setPinError('')
+    setPinSaving(false)
     setPinSuccess('')
-
-    try {
-      const res = await fetch('/api/admin/change-pin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ current_pin: currentPin, new_pin: newPin }),
-      })
-
-      const body = await res.json()
-
-      if (res.status === 403) throw new Error(body.error || 'PIN saat ini salah.')
-      if (!res.ok) throw new Error(body.error || 'Gagal mengubah PIN.')
-
-      setCurrentPin('')
-      setNewPin('')
-      setPinSuccess('PIN admin berhasil diubah!')
-      setTimeout(() => setPinSuccess(''), 3000)
-    } catch (err: unknown) {
-      setPinError((err instanceof Error ? err.message : null) || 'Gagal mengubah PIN.')
-    } finally {
-      setPinSaving(false)
-    }
+    setPinError('PIN sudah dihapus. Kelola akses melalui Supabase Auth dan admin_users.')
   }
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl">
       <div>
         <h1 className="text-3xl font-bold font-syne text-gray-900 dark:text-white">Pengaturan Sistem</h1>
-        <p className="text-gray-500 dark:text-gray-400 mt-2">Kelola logo website, SEO, dan PIN admin. Akses admin dibatasi hanya untuk admin_users + PIN.</p>
+        <p className="text-gray-500 dark:text-gray-400 mt-2">Kelola logo dan SEO website. Akses admin diatur melalui Supabase Auth dan admin_users.</p>
       </div>
 
       {/* ── Logo ──────────────────────────────────────────────── */}
@@ -386,8 +364,8 @@ export default function AdminSettings() {
         )}
       </div>
 
-      {/* ── Ganti PIN Admin ─────────────────────────────────────── */}
-      <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm transition-colors duration-300">
+      {/* Legacy PIN controls are deliberately hidden; Supabase Auth is the sole login flow. */}
+      <div className="hidden bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm transition-colors duration-300">
         <div className="flex items-center gap-3 mb-6 border-b border-gray-200 dark:border-white/10 pb-4">
           <div className="p-2 bg-red-50 dark:bg-red-500/10 rounded-lg text-red-500">
             <FaKey className="text-xl" />
@@ -410,7 +388,7 @@ export default function AdminSettings() {
               className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 text-gray-900 dark:text-white transition-all text-sm font-medium tracking-[0.4em]"
               placeholder="••••••"
             />
-            <p className="text-xs text-gray-500">PIN default: <code className="bg-gray-100 dark:bg-white/10 px-1.5 py-0.5 rounded">240708</code> (jika belum pernah diubah).</p>
+            <p className="text-xs text-gray-500">PIN sudah didepresiasi; akses hanya dikelola melalui Supabase Auth dan admin_users.</p>
           </div>
 
           <div className="space-y-2">

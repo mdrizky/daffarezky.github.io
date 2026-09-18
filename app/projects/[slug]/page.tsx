@@ -108,6 +108,12 @@ export default async function ProjectCaseStudy({
               <p className="mt-3 whitespace-pre-wrap leading-relaxed text-gray-600 dark:text-gray-400">{project.solution_id}</p>
             </section>
           ) : null}
+          {project.architecture_id ? (
+            <section>
+              <h2 className="font-heading text-2xl font-bold">Architecture</h2>
+              <p className="mt-3 whitespace-pre-wrap leading-relaxed text-gray-600 dark:text-gray-400">{project.architecture_id}</p>
+            </section>
+          ) : null}
           {features.length > 0 ? (
             <section>
               <h2 className="font-heading text-2xl font-bold">Features</h2>

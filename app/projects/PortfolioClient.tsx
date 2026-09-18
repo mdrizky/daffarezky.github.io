@@ -12,11 +12,22 @@ export default function PortfolioClient({ initialProjects }: { initialProjects: 
   const { language } = useLanguage();
 
   const allLabel = language === 'id' ? 'Semua' : 'All';
-  const categories = [allLabel, "Website", "Aplikasi Mobile", "Project IoT", "UI/UX"];
+  const categories = [allLabel, "Web", "Mobile", "AI", "Backend", "Dashboard", "Other"];
 
-  const filteredProjects = filter === allLabel 
-    ? initialProjects 
-    : initialProjects.filter(p => p.category === filter);
+  const categoryAliases: Record<string, string[]> = {
+    Web: ['Web', 'Website'],
+    Mobile: ['Mobile', 'Aplikasi Mobile'],
+    AI: ['AI'],
+    Backend: ['Backend', 'Backend/API'],
+    Dashboard: ['Dashboard', 'Analytics'],
+    Other: ['Other', 'Project IoT', 'UI/UX'],
+  };
+  const filteredProjects = filter === allLabel
+    ? initialProjects
+    : initialProjects.filter((project) => {
+        const accepted = categoryAliases[filter] || [filter];
+        return accepted.includes(project.category) || project.categories?.some((category) => accepted.includes(category));
+      });
 
   const getTitle = (p: Project) => language === 'id' ? p.title_id : p.title_en;
   const getDescription = (p: Project) => language === 'id' ? p.description_id : p.description_en;
@@ -55,7 +66,6 @@ export default function PortfolioClient({ initialProjects }: { initialProjects: 
             <ProjectCard 
               key={project.id} 
               project={project} 
-              onClick={() => setSelectedProject(project)}
             />
           ))}
         </div>

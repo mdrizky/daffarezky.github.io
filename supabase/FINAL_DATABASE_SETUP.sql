@@ -170,21 +170,6 @@ CREATE TABLE IF NOT EXISTS public.education (
   logo_url TEXT
 );
 
-CREATE TABLE IF NOT EXISTS public.concepts (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  created_at TIMESTAMPTZ DEFAULT now(),
-  title_id TEXT NOT NULL,
-  title_en TEXT NOT NULL,
-  subtitle_id TEXT,
-  subtitle_en TEXT,
-  description_id TEXT,
-  description_en TEXT,
-  technology TEXT[] DEFAULT '{}',
-  status TEXT DEFAULT 'Concept',
-  featured BOOLEAN DEFAULT false,
-  order_index INTEGER DEFAULT 0
-);
-
 CREATE TABLE IF NOT EXISTS public.partners (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   created_at TIMESTAMPTZ DEFAULT now(),
@@ -225,8 +210,7 @@ CREATE TABLE IF NOT EXISTS public.settings (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   created_at TIMESTAMPTZ DEFAULT now(),
   site_title TEXT,
-  site_description TEXT,
-  admin_pin_hash TEXT
+  site_description TEXT
 );
 
 CREATE TABLE IF NOT EXISTS public.reasons_to_hire (
@@ -237,18 +221,6 @@ CREATE TABLE IF NOT EXISTS public.reasons_to_hire (
   title_en TEXT NOT NULL,
   description_id TEXT,
   description_en TEXT,
-  sort_order INTEGER DEFAULT 0
-);
-
-CREATE TABLE IF NOT EXISTS public.journey_milestones (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  created_at TIMESTAMPTZ DEFAULT now(),
-  year TEXT NOT NULL,
-  title_id TEXT NOT NULL,
-  title_en TEXT NOT NULL,
-  description_id TEXT,
-  description_en TEXT,
-  icon TEXT,
   sort_order INTEGER DEFAULT 0
 );
 
@@ -281,34 +253,6 @@ CREATE TABLE IF NOT EXISTS public.quotes (
   text_en TEXT NOT NULL,
   author TEXT,
   is_personal BOOLEAN DEFAULT false,
-  sort_order INTEGER DEFAULT 0
-);
-
-CREATE TABLE IF NOT EXISTS public.active_projects (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  created_at TIMESTAMPTZ DEFAULT now(),
-  name_id TEXT NOT NULL,
-  name_en TEXT NOT NULL,
-  description_id TEXT,
-  description_en TEXT,
-  status_id TEXT DEFAULT 'Sedang Dikerjakan',
-  status_en TEXT DEFAULT 'In Progress',
-  progress_percent INTEGER DEFAULT 0,
-  estimated_completion TEXT,
-  features_id TEXT[],
-  features_en TEXT[],
-  sort_order INTEGER DEFAULT 0
-);
-
-CREATE TABLE IF NOT EXISTS public.future_concepts (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  created_at TIMESTAMPTZ DEFAULT now(),
-  title_id TEXT NOT NULL,
-  title_en TEXT NOT NULL,
-  description_id TEXT,
-  description_en TEXT,
-  category TEXT,
-  tags TEXT[],
   sort_order INTEGER DEFAULT 0
 );
 
@@ -507,6 +451,13 @@ SELECT public._add_column_if_missing('projects','published_at','TIMESTAMPTZ DEFA
 SELECT public._add_column_if_missing('projects','updated_at','TIMESTAMPTZ DEFAULT now()');
 SELECT public._add_column_if_missing('projects','sort_order','INTEGER DEFAULT 0');
 SELECT public._add_column_if_missing('projects','source_table','TEXT');
+SELECT public._add_column_if_missing('projects','architecture_id','TEXT');
+SELECT public._add_column_if_missing('projects','architecture_en','TEXT');
+SELECT public._add_column_if_missing('projects','categories','TEXT[] DEFAULT ''{}''');
+
+-- Fresh installations get timestamps above; existing installations need them too.
+SELECT public._add_column_if_missing('messages','created_at','TIMESTAMPTZ DEFAULT now()');
+SELECT public._add_column_if_missing('blog_posts','created_at','TIMESTAMPTZ DEFAULT now()');
 
 -- skills
 SELECT public._add_column_if_missing('skills','show_on_home','BOOLEAN DEFAULT false');
@@ -627,9 +578,13 @@ END $$;
 
 ALTER TABLE public.projects
   ADD CONSTRAINT projects_status_check
-  CHECK (status IN ('Completed','Ongoing','Archived','Concept'));
+  CHECK (status IN ('Completed','Planned','Ongoing','Archived','Concept'));
 
-UPDATE public.projects SET status = 'Completed' WHERE status IS NULL OR status NOT IN ('Completed','Ongoing','Archived','Concept');
+UPDATE public.projects SET status = 'Completed' WHERE status IS NULL OR status NOT IN ('Completed','Planned','Ongoing','Archived','Concept');
+
+UPDATE public.projects
+SET categories = ARRAY[category]
+WHERE (categories IS NULL OR cardinality(categories) = 0) AND category IS NOT NULL AND category <> '';
 
 DO $$
 DECLARE r RECORD;
@@ -681,15 +636,18 @@ CREATE UNIQUE INDEX IF NOT EXISTS projects_slug_unique ON public.projects (slug)
 -- -----------------------------------------------------------------------------
 
 -- journey_milestones → learning_journey
-INSERT INTO public.learning_journey (year, title_id, title_en, description_id, description_en, icon, sort_order, is_published)
-SELECT jm.year, jm.title_id, jm.title_en, jm.description_id, jm.description_en, jm.icon, jm.sort_order, true
-FROM public.journey_milestones jm
-WHERE NOT EXISTS (
-  SELECT 1 FROM public.learning_journey lj
-  WHERE lj.year = jm.year AND COALESCE(lj.title_id,'') = COALESCE(jm.title_id,'')
-);
+DO $$ BEGIN
+  IF to_regclass('public.journey_milestones') IS NOT NULL THEN
+    INSERT INTO public.learning_journey (year, title_id, title_en, description_id, description_en, icon, sort_order, is_published)
+    SELECT jm.year, jm.title_id, jm.title_en, jm.description_id, jm.description_en, jm.icon, jm.sort_order, true
+    FROM public.journey_milestones jm
+    WHERE NOT EXISTS (SELECT 1 FROM public.learning_journey lj WHERE lj.year = jm.year AND COALESCE(lj.title_id,'') = COALESCE(jm.title_id,''));
+  END IF;
+END $$;
 
 -- active_projects → projects (Ongoing)
+DO $$ BEGIN
+IF to_regclass('public.active_projects') IS NOT NULL THEN
 INSERT INTO public.projects (
   title_id, title_en, description_id, description_en, status, is_current, progress,
   current_features_id, current_features_en, is_published, source_table, featured
@@ -704,8 +662,12 @@ WHERE NOT EXISTS (
   SELECT 1 FROM public.projects p
   WHERE p.title_id = ap.name_id AND p.source_table = 'active_projects'
 );
+END IF;
+END $$;
 
 -- concepts → projects (Concept)
+DO $$ BEGIN
+IF to_regclass('public.concepts') IS NOT NULL THEN
 INSERT INTO public.projects (
   title_id, title_en, description_id, description_en, tech_stack, status, featured,
   sort_order, is_published, source_table, category
@@ -718,8 +680,12 @@ WHERE NOT EXISTS (
   SELECT 1 FROM public.projects p
   WHERE p.title_id = c.title_id AND p.source_table = 'concepts'
 );
+END IF;
+END $$;
 
 -- future_concepts → projects (Concept)
+DO $$ BEGIN
+IF to_regclass('public.future_concepts') IS NOT NULL THEN
 INSERT INTO public.projects (
   title_id, title_en, description_id, description_en, status, category,
   tech_stack, sort_order, is_published, source_table
@@ -732,6 +698,8 @@ WHERE NOT EXISTS (
   SELECT 1 FROM public.projects p
   WHERE p.title_id = fc.title_id AND p.source_table = 'future_concepts'
 );
+END IF;
+END $$;
 
 -- Backfill slugs for projects
 UPDATE public.projects
@@ -761,11 +729,6 @@ BEGIN
   END IF;
 END $$;
 
--- New secure (bcrypt-hashed) admin PIN. Used as the second factor for admin login.
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-
-ALTER TABLE public.settings ADD COLUMN IF NOT EXISTS admin_pin_hash TEXT;
-
 INSERT INTO public.profile (name, title_id, title_en, bio_id, bio_en, availability_status_id, availability_status_en)
 SELECT 'Daffa Rizky', 'Web & Mobile Developer', 'Web & Mobile Developer',
        'Membangun website, aplikasi Android, sistem backend, dan integrasi AI.',
@@ -778,11 +741,7 @@ SELECT 'Muhammad Daffa Rezky Adyra | Web & Mobile Developer',
        'Websites, Android apps, backend systems, and AI integrations — built to solve real problems.'
 WHERE NOT EXISTS (SELECT 1 FROM public.settings);
 
--- Default admin PIN: 240708 (change it immediately from /admin/settings).
--- Only seeds when no PIN has been set yet — never overwrites an existing one.
-UPDATE public.settings
-SET admin_pin_hash = crypt('240708', gen_salt('bf', 10))
-WHERE admin_pin_hash IS NULL;
+-- No shared admin PIN is seeded. Supabase Auth credentials are the only login secret.
 
 -- -----------------------------------------------------------------------------
 -- 7. AUTHORIZATION HELPERS
@@ -825,51 +784,12 @@ $$;
 REVOKE ALL ON FUNCTION public.is_super_admin() FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.is_super_admin() TO anon, authenticated;
 
--- Verify the admin PIN (bcrypt hash) stored in settings.
-CREATE OR REPLACE FUNCTION public.verify_admin_pin(pin TEXT)
-RETURNS boolean
-LANGUAGE sql
-STABLE
-SECURITY DEFINER
-SET search_path = public
-AS $$
-  SELECT EXISTS (
-    SELECT 1
-    FROM public.settings s
-    WHERE s.admin_pin_hash = crypt(pin, s.admin_pin_hash)
-    LIMIT 1
-  );
-$$;
-
-REVOKE ALL ON FUNCTION public.verify_admin_pin(TEXT) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.verify_admin_pin(TEXT) TO anon, authenticated;
-
--- Change the admin PIN. Returns false if the current PIN is wrong.
-CREATE OR REPLACE FUNCTION public.change_admin_pin(current_pin TEXT, new_pin TEXT)
-RETURNS boolean
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public
-AS $$
-DECLARE
-  ok boolean;
-BEGIN
-  SELECT public.verify_admin_pin(current_pin) INTO ok;
-
-  IF NOT COALESCE(ok, false) THEN
-    RETURN false;
-  END IF;
-
-  UPDATE public.settings
-  SET admin_pin_hash = crypt(new_pin, gen_salt('bf', 10))
-  WHERE admin_pin_hash IS NOT NULL;
-
-  RETURN true;
-END;
-$$;
-
-REVOKE ALL ON FUNCTION public.change_admin_pin(TEXT, TEXT) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.change_admin_pin(TEXT, TEXT) TO authenticated;
+-- Authentication is intentionally Supabase Auth + admin_users only. Remove any
+-- legacy shared-PIN objects left by a previous installation.
+DROP FUNCTION IF EXISTS public.change_admin_pin(TEXT, TEXT);
+DROP FUNCTION IF EXISTS public.verify_admin_pin(TEXT);
+ALTER TABLE public.settings DROP COLUMN IF EXISTS admin_pin;
+ALTER TABLE public.settings DROP COLUMN IF EXISTS admin_pin_hash;
 
 -- updated_at maintenance trigger (applies to every table that has updated_at)
 CREATE OR REPLACE FUNCTION public.set_updated_at()
@@ -1043,8 +963,8 @@ CREATE POLICY "public_insert_blog_comments" ON public.blog_comments
   );
 CREATE POLICY "admin_all_blog_comments" ON public.blog_comments FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());
 
--- settings: public SEO fields via admin write; safe to read publicly now that PIN is gone
-CREATE POLICY "public_read_settings" ON public.settings FOR SELECT USING (true);
+-- Settings are CMS configuration.  Public pages obtain their static metadata from
+-- Next.js; only administrators may read or change the backing rows.
 CREATE POLICY "admin_all_settings" ON public.settings FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());
 
 -- messages: public INSERT only (validated)

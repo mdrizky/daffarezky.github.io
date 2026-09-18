@@ -25,7 +25,7 @@ export type Project = {
   slug?: string
   duration?: string
   year?: number
-  status?: 'Completed' | 'Ongoing' | 'Archived' | 'Concept'
+  status?: 'Completed' | 'Planned' | 'Ongoing' | 'Archived' | 'Concept'
   is_published?: boolean
   role?: string
   overview_id?: string
@@ -39,6 +39,9 @@ export type Project = {
   solution_en?: string
   result_id?: string
   result_en?: string
+  architecture_id?: string
+  architecture_en?: string
+  categories?: string[]
 }
 
 export type GuestbookEntry = {
@@ -116,6 +119,13 @@ export type BlogPost = {
   excerpt_id: string
   excerpt_en: string
   created_at: string
+  updated_at?: string
+  published_at?: string
+  status?: 'draft' | 'published' | 'archived'
+  reading_time?: number
+  seo_title?: string
+  seo_description?: string
+  og_image?: string
 }
 
 export type Service = {
@@ -299,7 +309,7 @@ export type Education = {
   is_current: boolean
   logo_url?: string
   location?: string
-  achievements?: string
+  achievement?: string
   gallery?: string[]
   certificate_url?: string
   created_at: string

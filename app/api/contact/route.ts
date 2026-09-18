@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, email, whatsapp, subject, message, honeypot } = body;
+    const { name, email, whatsapp, subject, service, budget, timeline, message, honeypot } = body;
 
     // Honeypot check (bot trap)
     if (honeypot) {
@@ -235,6 +235,9 @@ export async function POST(request: NextRequest) {
         email: email.trim().toLowerCase(),
         whatsapp: whatsapp?.trim() || null,
         subject: subject?.trim() || null,
+        service: service?.trim() || null,
+        budget: budget?.trim() || null,
+        timeline: timeline?.trim() || null,
         message: message.trim(),
         is_read: false,
         status: 'new',

@@ -3,13 +3,12 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { FaLock, FaEnvelope, FaEye, FaEyeSlash, FaKey } from 'react-icons/fa'
+import { FaLock, FaEnvelope, FaEye, FaEyeSlash } from 'react-icons/fa'
 import { supabase } from '@/lib/supabase'
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [pin, setPin] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -42,22 +41,6 @@ export default function AdminLogin() {
       if (!adminRow) {
         await supabase.auth.signOut()
         throw new Error('Akun ini terautentikasi, tetapi tidak terdaftar sebagai admin.')
-      }
-
-      const res = await fetch('/api/admin/verify-pin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin }),
-      })
-
-      if (res.status === 403) {
-        await supabase.auth.signOut()
-        throw new Error('PIN salah. Akses ditolak.')
-      }
-
-      if (!res.ok) {
-        await supabase.auth.signOut()
-        throw new Error('Gagal memverifikasi PIN.')
       }
 
       setIsSuccess(true)
@@ -157,29 +140,6 @@ export default function AdminLogin() {
                   >
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.4em] ml-4">
-                  Admin PIN
-                </label>
-                <div className="relative group">
-                  <div className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500">
-                    <FaKey />
-                  </div>
-                  <input
-                    type="password"
-                    value={pin}
-                    onChange={(e) => setPin(e.target.value)}
-                    inputMode="numeric"
-                    maxLength={8}
-                    className="w-full py-5 pl-14 pr-6 bg-black/40 border-2 border-white/5 rounded-2xl text-white tracking-[0.5em] focus:outline-none focus:border-[var(--color-neon-blue)]/30 transition-all duration-300"
-                    placeholder="••••••"
-                    required
-                    pattern="[0-9]{4,8}"
-                    disabled={loading || isSuccess}
-                  />
                 </div>
               </div>
 
