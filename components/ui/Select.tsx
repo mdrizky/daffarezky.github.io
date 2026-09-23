@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, ReactNode } from 'react'
 
-interface SelectOption {
+export interface SelectOption {
   value: string | number
   label: string
   icon?: ReactNode
