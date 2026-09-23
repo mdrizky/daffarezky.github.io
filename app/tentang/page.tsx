@@ -55,10 +55,16 @@ export default function TentangPage() {
     ? (profile?.vision_id || "Menjadi profesional di bidang teknologi...")
     : (profile?.vision_en || "To be a professional in the field of technology...");
 
-  if (loading) return <PageSkeleton />;
+  if (loading) return (
+    <div className="pt-32 pb-24 min-h-screen">
+      <Container>
+        <PageSkeleton />
+      </Container>
+    </div>
+  );
 
   return (
-    <div className="pt-32 pb-24 min-h-screen">
+    <div className="pt-32 pb-24 min-h-screen bg-background transition-colors duration-300">
       <Container>
         {/* Header */}
         <div className="mb-20 max-w-2xl animate-fade-in-up">
