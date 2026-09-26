@@ -349,7 +349,7 @@ CREATE TABLE IF NOT EXISTS public.newsletter_subscribers (
 
 CREATE TABLE IF NOT EXISTS public.blog_comments (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  post_id UUID REFERENCES public.blog_posts(id) ON DELETE CASCADE,
+  post_id TEXT NOT NULL,
   name TEXT NOT NULL,
   email TEXT NOT NULL,
   content TEXT NOT NULL,

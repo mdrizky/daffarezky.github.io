@@ -7,6 +7,7 @@ export default function ServiceWorkerRegister() {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
         .then((registration) => {
+          registration.update()
           console.log('Service Worker registered:', registration)
         })
         .catch((error) => {

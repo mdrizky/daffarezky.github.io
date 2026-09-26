@@ -342,13 +342,42 @@ CREATE TABLE IF NOT EXISTS public.newsletter_subscribers (
 
 CREATE TABLE IF NOT EXISTS public.blog_comments (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  post_id UUID REFERENCES public.blog_posts(id) ON DELETE CASCADE,
+  -- Keep this as text because existing blog_posts.id columns may be UUID or TEXT.
+  -- The RLS policy below still verifies that the referenced post exists and is published.
+  post_id TEXT NOT NULL,
   name TEXT NOT NULL,
   email TEXT NOT NULL,
   content TEXT NOT NULL,
   is_approved BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Existing installs may have created blog_comments.post_id as UUID. Remove the
+-- incompatible FK first, then normalize the column without changing its values.
+DO $$
+DECLARE constraint_name text;
+BEGIN
+  FOR constraint_name IN
+    SELECT conname
+    FROM pg_constraint
+    WHERE conrelid = 'public.blog_comments'::regclass
+      AND contype = 'f'
+  LOOP
+    EXECUTE format('ALTER TABLE public.blog_comments DROP CONSTRAINT %I', constraint_name);
+  END LOOP;
+
+  IF EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'blog_comments'
+      AND column_name = 'post_id'
+      AND data_type = 'uuid'
+  ) THEN
+    ALTER TABLE public.blog_comments
+      ALTER COLUMN post_id TYPE text USING post_id::text;
+  END IF;
+END $$;
 
 CREATE TABLE IF NOT EXISTS public.uses_items (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -1020,7 +1049,7 @@ CREATE POLICY "public_insert_blog_comments" ON public.blog_comments
   FOR INSERT WITH CHECK (
     EXISTS (
       SELECT 1 FROM public.blog_posts p
-      WHERE p.id = post_id AND p.is_published = true AND p.status = 'published'
+      WHERE p.id::text = post_id::text AND p.is_published = true AND p.status = 'published'
     )
     AND char_length(trim(name)) BETWEEN 2 AND 80
     AND char_length(trim(content)) BETWEEN 2 AND 2000
