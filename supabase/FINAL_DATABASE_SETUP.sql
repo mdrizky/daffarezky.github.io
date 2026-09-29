@@ -455,6 +455,37 @@ CREATE TABLE IF NOT EXISTS public.analytics_events (
   metadata JSONB DEFAULT '{}'::jsonb
 );
 
+-- Normalize the legacy analytics column name without losing existing events.
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'analytics_events' AND column_name = 'event_type'
+  ) AND NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'analytics_events' AND column_name = 'event_name'
+  ) THEN
+    ALTER TABLE public.analytics_events RENAME COLUMN event_type TO event_name;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'analytics_events' AND column_name = 'event_name'
+  ) THEN
+    ALTER TABLE public.analytics_events ADD COLUMN event_name TEXT;
+  END IF;
+
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'analytics_events' AND column_name = 'event_type'
+  ) THEN
+    UPDATE public.analytics_events
+    SET event_name = COALESCE(NULLIF(event_name, ''), event_type)
+    WHERE event_name IS NULL OR event_name = '';
+    ALTER TABLE public.analytics_events ALTER COLUMN event_type DROP NOT NULL;
+  END IF;
+END $$;
+
 -- -----------------------------------------------------------------------------
 -- 3. ADDITIVE COLUMNS (upgrade existing databases; no-op on fresh installs)
 -- -----------------------------------------------------------------------------
@@ -1085,11 +1116,23 @@ CREATE POLICY "public_insert_newsletter" ON public.newsletter_subscribers
   FOR INSERT WITH CHECK (email ~* '^[^@]+@[^@]+\.[^@]+$');
 CREATE POLICY "admin_all_newsletter" ON public.newsletter_subscribers FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());
 
--- deprecated satellite tables: admin-only (public uses projects / learning_journey)
-CREATE POLICY "admin_all_concepts" ON public.concepts FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());
-CREATE POLICY "admin_all_active_projects" ON public.active_projects FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());
-CREATE POLICY "admin_all_future_concepts" ON public.future_concepts FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());
-CREATE POLICY "admin_all_journey_milestones" ON public.journey_milestones FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());
+-- Deprecated satellite tables are optional; apply admin-only policies only when
+-- an older installation still has them.
+DO $$
+BEGIN
+  IF to_regclass('public.concepts') IS NOT NULL THEN
+    EXECUTE 'CREATE POLICY "admin_all_concepts" ON public.concepts FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin())';
+  END IF;
+  IF to_regclass('public.active_projects') IS NOT NULL THEN
+    EXECUTE 'CREATE POLICY "admin_all_active_projects" ON public.active_projects FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin())';
+  END IF;
+  IF to_regclass('public.future_concepts') IS NOT NULL THEN
+    EXECUTE 'CREATE POLICY "admin_all_future_concepts" ON public.future_concepts FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin())';
+  END IF;
+  IF to_regclass('public.journey_milestones') IS NOT NULL THEN
+    EXECUTE 'CREATE POLICY "admin_all_journey_milestones" ON public.journey_milestones FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin())';
+  END IF;
+END $$;
 
 -- admin_users: user can read own row; super_admin manages all
 CREATE POLICY "admin_users_self_select" ON public.admin_users

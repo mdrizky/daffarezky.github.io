@@ -429,6 +429,36 @@ CREATE TABLE IF NOT EXISTS public.analytics_events (
   metadata JSONB DEFAULT '{}'::jsonb
 );
 
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'analytics_events' AND column_name = 'event_type'
+  ) AND NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'analytics_events' AND column_name = 'event_name'
+  ) THEN
+    ALTER TABLE public.analytics_events RENAME COLUMN event_type TO event_name;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'analytics_events' AND column_name = 'event_name'
+  ) THEN
+    ALTER TABLE public.analytics_events ADD COLUMN event_name TEXT;
+  END IF;
+
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'analytics_events' AND column_name = 'event_type'
+  ) THEN
+    UPDATE public.analytics_events
+    SET event_name = COALESCE(NULLIF(event_name, ''), event_type)
+    WHERE event_name IS NULL OR event_name = '';
+    ALTER TABLE public.analytics_events ALTER COLUMN event_type DROP NOT NULL;
+  END IF;
+END $$;
+
 CREATE TABLE IF NOT EXISTS public.partners (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   created_at TIMESTAMPTZ DEFAULT now(),

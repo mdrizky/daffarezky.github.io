@@ -4,7 +4,6 @@ import { useLanguage } from '@/components/LanguageProvider'
 import { Container } from '@/components/ui/Container'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
-import { Timeline } from '@/components/ui/Timeline'
 import {
   FaComments,
   FaLightbulb,
@@ -175,14 +174,6 @@ export default function ProsesPage() {
         : 'Thorough testing and highest industry standards for perfect results.',
     },
   ]
-
-  const timelineItems = processSteps.map((step) => ({
-    id: step.id,
-    title: step.title,
-    description: step.duration,
-    status: step.status,
-    icon: step.icon,
-  }))
 
   return (
     <div className="pt-32 pb-24 min-h-screen bg-background transition-colors duration-300">

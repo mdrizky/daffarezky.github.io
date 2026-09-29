@@ -2,22 +2,26 @@ import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'destructive' | 'outline' | 'link'
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline' | 'destructive' | 'link'
 type Size = 'sm' | 'md' | 'lg' | 'icon'
 
 const variants: Record<Variant, string> = {
-  primary: 'bg-primary text-primary-foreground hover:opacity-90',
-  secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-  outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
-  ghost: 'hover:bg-accent hover:text-accent-foreground',
-  destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-  link: 'text-primary underline-offset-4 hover:underline'
+  primary:
+    'bg-gray-900 text-white dark:bg-white dark:text-gray-900 hover:opacity-90',
+  secondary:
+    'border border-gray-200 dark:border-white/15 bg-white dark:bg-white/5 text-gray-800 dark:text-white hover:bg-gray-50 dark:hover:bg-white/10',
+  outline:
+    'border border-gray-200 dark:border-white/15 bg-transparent text-gray-800 dark:text-white hover:bg-gray-50 dark:hover:bg-white/10',
+  ghost: 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5',
+  danger: 'bg-red-600 text-white hover:bg-red-700',
+  destructive: 'bg-red-600 text-white hover:bg-red-700',
+  link: 'text-[var(--color-neon-blue)] underline-offset-4 hover:underline',
 }
 
 const sizes: Record<Size, string> = {
-  sm: 'h-8 px-3 text-xs',
-  md: 'h-10 px-4 py-2 text-sm',
-  lg: 'h-12 px-8 text-base',
+  sm: 'px-3 py-1.5 text-sm',
+  md: 'px-5 py-2.5 text-sm',
+  lg: 'px-8 py-3 text-base',
   icon: 'h-10 w-10',
 }
 
@@ -37,7 +41,7 @@ export function Button({
   ...props
 }: Props) {
   const cls = cn(
-    'inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50',
+    'inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200',
     variants[variant],
     sizes[size],
     className

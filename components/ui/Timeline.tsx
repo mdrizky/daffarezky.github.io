@@ -88,7 +88,7 @@ export function Timeline({
           </div>
 
           {/* Content */}
-          <div className={`pb-8 pt-1 ${index === items.length - 1 ? 'pb-0' : ''}`}>
+          <div className={`${variant === 'compact' ? 'pb-4' : 'pb-8'} pt-1 ${index === items.length - 1 ? 'pb-0' : ''}`}>
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <h3 className="font-semibold text-foreground text-lg">{item.title}</h3>

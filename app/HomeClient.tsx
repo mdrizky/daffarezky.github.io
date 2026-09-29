@@ -59,42 +59,39 @@ export default function HomeClient({
 
   return (
     <div className="flex flex-col pb-24">
-      {/* 1. Hero Section - Premium */}
+      {/* 1. Hero Section */}
       <section className="relative flex min-h-[90vh] items-center pt-32 pb-16 overflow-hidden">
-        {/* Background gradient effect */}
-        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/5 via-transparent to-transparent"></div>
-        
         <Container className="grid items-center gap-12 lg:grid-cols-2">
           <div className="order-2 flex flex-col gap-6 lg:order-1 animate-fade-in-up">
             {availability && (
-              <Badge variant="secondary" className="w-fit animate-bounce-subtle">
-                <span className="w-2 h-2 bg-success rounded-full mr-2 inline-block"></span>
+              <Badge className="w-fit animate-bounce-subtle">
+                <span className="w-2 h-2 bg-green-400 rounded-full mr-2 inline-block"></span>
                 {availability}
               </Badge>
             )}
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-gray-500 dark:text-gray-400">
               {profile?.name || "Daffa"} — {title}
             </p>
-            <h1 className="font-heading text-4xl font-bold leading-tight text-foreground md:text-6xl lg:text-7xl">
+            <h1 className="font-heading text-4xl font-bold leading-tight text-gray-900 dark:text-white md:text-6xl lg:text-7xl">
               {id
                 ? "Membangun identitas digital profesional dan terpercaya."
                 : "Building professional and trustworthy digital identities."}
             </h1>
-            <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">
+            <p className="max-w-xl text-lg leading-relaxed text-gray-600 dark:text-gray-400">
               {bio || (id
                   ? "Saya membangun produk digital yang berguna dan menyelesaikan masalah nyata — untuk klien, tim, dan pengguna."
                   : "I build useful digital products that solve real problems — for clients, teams, and users.")}
             </p>
             <div className="mt-4 flex flex-wrap gap-4">
               <Button href="/projects">{id ? "Lihat proyek" : "View projects"}</Button>
-              <Button href="/kontak" variant="outline">{id ? "Hubungi Saya" : "Hire Me"}</Button>
+              <Button href="/kontak" variant="secondary">{id ? "Hubungi Saya" : "Hire Me"}</Button>
             </div>
             <div className="mt-8">
               <SocialLinks />
             </div>
           </div>
           <div className="order-1 flex justify-center lg:order-2 lg:justify-end animate-fade-in">
-            <div className="relative aspect-square w-full max-w-md overflow-hidden rounded-3xl border-4 border-border bg-muted shadow-2xl">
+            <div className="relative h-[280px] w-[280px] overflow-hidden rounded-3xl border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/5 md:h-[400px] md:w-[400px] shadow-2xl">
               {profile?.photo_url ? (
                 <Image
                   src={profile.photo_url}
@@ -104,7 +101,7 @@ export default function HomeClient({
                   priority
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                <div className="flex h-full w-full items-center justify-center text-gray-400 dark:text-gray-500">
                   No Image
                 </div>
               )}
@@ -115,10 +112,10 @@ export default function HomeClient({
 
       {/* 2. Tech Stack / Partners Slider */}
       {partners && partners.length > 0 && (
-        <section className="border-y border-border bg-gradient-to-r from-card via-card/50 to-card py-12 overflow-hidden">
+        <section className="border-y border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.02] py-12 overflow-hidden">
           <Container>
             <div className="mb-6">
-              <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider text-center">
+              <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-center">
                 {id ? 'Dipercaya oleh' : 'Trusted by'}
               </p>
             </div>
@@ -127,7 +124,7 @@ export default function HomeClient({
         </section>
       )}
 
-      {/* 3. Featured Projects - Enhanced */}
+      {/* 3. Featured Projects */}
       <section className="section-padding">
         <Container>
           <SectionHeader
@@ -143,7 +140,7 @@ export default function HomeClient({
             ))}
           </div>
           <div className="mt-12 text-center">
-            <Button href="/projects" variant="outline">
+            <Button href="/projects" variant="secondary">
               {id ? "Lihat Semua Proyek" : "View All Projects"}
               <span className="ml-2">→</span>
             </Button>
@@ -151,9 +148,9 @@ export default function HomeClient({
         </Container>
       </section>
 
-      {/* 4. What I Build (Focus Areas) - Enhanced */}
+      {/* 4. What I Build (Focus Areas) */}
       {focusAreas && focusAreas.length > 0 && (
-        <section className="section-padding bg-gradient-to-b from-background via-card/30 to-background">
+        <section className="section-padding bg-gray-50 dark:bg-white/[0.02]">
           <Container>
             <SectionHeader
               eyebrow={id ? "Fokus" : "Focus"}
@@ -163,11 +160,11 @@ export default function HomeClient({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-stagger">
               {focusAreas.map((area, idx) => (
                 <div key={area.id} className="animate-fade-in-up" style={{ animationDelay: `${idx * 0.1}s` }}>
-                  <Card className="bg-background/50 backdrop-blur-sm border-border/50 hover:border-border/80 transition-all h-full">
+                  <Card className="hover:border-[var(--color-neon-blue)]/30 dark:hover:border-[var(--color-neon-blue)]/30 transition-all h-full hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(0,153,255,0.05)]">
                     <CardContent className="p-8">
                       {area.icon && <div className="text-4xl mb-4">{area.icon}</div>}
-                      <h3 className="text-xl font-bold mb-3 text-foreground">{id ? area.title_id : area.title_en}</h3>
-                      <p className="text-muted-foreground leading-relaxed">{id ? area.description_id : area.description_en}</p>
+                      <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">{id ? area.title_id : area.title_en}</h3>
+                      <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{id ? area.description_id : area.description_en}</p>
                     </CardContent>
                   </Card>
                 </div>
@@ -177,7 +174,7 @@ export default function HomeClient({
         </section>
       )}
 
-      {/* 5. About (Profile summary) - Enhanced */}
+      {/* 5. About (Profile summary) */}
       <section className="section-padding">
         <Container>
           <div className="grid md:grid-cols-2 gap-12 items-center animate-fade-in">
@@ -188,22 +185,22 @@ export default function HomeClient({
                 title={profile?.name || "Daffa Rezky"}
                 description={id ? "Developer, designer, dan problem solver dengan passion untuk teknologi dan inovasi." : "Developer, designer, and problem solver with passion for technology and innovation."}
               />
-              <div className="prose dark:prose-invert text-muted-foreground max-w-lg">
+              <div className="text-gray-600 dark:text-gray-400 max-w-lg">
                 <p className="leading-relaxed">{bio}</p>
                 <div className="mt-8 grid grid-cols-2 gap-8">
                   <div className="space-y-2">
-                    <h4 className="text-4xl font-bold text-foreground font-heading">{stats.projects}+</h4>
-                    <span className="text-sm text-muted-foreground">{id ? "Proyek Selesai" : "Completed Projects"}</span>
+                    <h4 className="text-4xl font-bold text-gray-900 dark:text-white font-heading">{stats.projects}+</h4>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">{id ? "Proyek Selesai" : "Completed Projects"}</span>
                   </div>
                   <div className="space-y-2">
-                    <h4 className="text-4xl font-bold text-foreground font-heading">{stats.skills}+</h4>
-                    <span className="text-sm text-muted-foreground">{id ? "Skill Dikuasai" : "Skills Mastered"}</span>
+                    <h4 className="text-4xl font-bold text-gray-900 dark:text-white font-heading">{stats.skills}+</h4>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">{id ? "Skill Dikuasai" : "Skills Mastered"}</span>
                   </div>
                 </div>
               </div>
             </div>
             <div className="order-1 md:order-2 flex justify-center md:justify-end">
-              <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-muted border border-border shadow-lg">
+              <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 shadow-lg">
                 {profile?.about_photo_url && (
                   <Image 
                     src={profile.about_photo_url} 
@@ -218,9 +215,9 @@ export default function HomeClient({
         </Container>
       </section>
 
-      {/* 6. Learning Journey - Enhanced */}
+      {/* 6. Learning Journey */}
       {milestones && milestones.length > 0 && (
-        <section className="section-padding bg-card/50">
+        <section className="section-padding bg-gray-50 dark:bg-white/[0.02]">
           <Container>
             <SectionHeader 
               eyebrow={id ? "Perjalanan" : "Journey"} 
@@ -232,16 +229,16 @@ export default function HomeClient({
                 {milestones.map((m, idx) => (
                   <div key={m.id} className="flex gap-6 animate-fade-in-up" style={{ animationDelay: `${idx * 0.1}s` }}>
                     <div className="flex flex-col items-center flex-shrink-0">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold border-2 border-primary shadow-sm">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#00FF88]/20 to-[#0099FF]/20 text-[var(--color-neon-green)] flex items-center justify-center font-bold border-2 border-[var(--color-neon-green)]/50 shadow-sm">
                         {m.year}
                       </div>
                       {idx < milestones.length - 1 && (
-                        <div className="w-0.5 h-24 bg-gradient-to-b from-primary/50 to-transparent mt-4"></div>
+                        <div className="w-0.5 h-24 bg-gradient-to-b from-[var(--color-neon-green)]/50 to-transparent mt-4"></div>
                       )}
                     </div>
                     <div className="pb-8 pt-2">
-                      <h3 className="text-lg font-bold text-foreground">{id ? m.title_id : m.title_en}</h3>
-                      <p className="text-muted-foreground mt-1">{id ? m.description_id : m.description_en}</p>
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">{id ? m.title_id : m.title_en}</h3>
+                      <p className="text-gray-600 dark:text-gray-400 mt-1">{id ? m.description_id : m.description_en}</p>
                     </div>
                   </div>
                 ))}
@@ -251,7 +248,7 @@ export default function HomeClient({
         </section>
       )}
 
-      {/* 7. Education - Enhanced */}
+      {/* 7. Education */}
       {education && education.length > 0 && (
         <section className="section-padding">
           <Container>
@@ -263,19 +260,19 @@ export default function HomeClient({
             <div className="grid md:grid-cols-2 gap-6 animate-stagger">
               {education.map((edu, idx) => (
                 <div key={edu.id} className="animate-fade-in-up" style={{ animationDelay: `${idx * 0.1}s` }}>
-                  <Card className="h-full hover:border-border/80 transition-all">
+                  <Card className="h-full hover:border-[var(--color-neon-blue)]/30 transition-all">
                     <CardContent className="p-6">
                       <div className="flex justify-between items-start mb-4 gap-3">
-                        <h3 className="font-bold text-lg text-foreground line-clamp-2">{edu.institution}</h3>
+                        <h3 className="font-bold text-lg text-gray-900 dark:text-white line-clamp-2">{edu.institution}</h3>
                         <Badge variant="outline" className="flex-shrink-0">
                           {edu.start_year} - {edu.is_current ? (id ? 'Sekarang' : 'Present') : edu.end_year}
                         </Badge>
                       </div>
-                      <p className="font-semibold text-primary mb-2">{id ? edu.degree_id : edu.degree_en}</p>
+                      <p className="font-semibold text-[var(--color-neon-blue)] mb-2">{id ? edu.degree_id : edu.degree_en}</p>
                       {edu.field_of_study && (
-                        <p className="text-xs text-muted-foreground mb-3">{id ? 'Bidang: ' : 'Field: '}{edu.field_of_study}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">{id ? 'Bidang: ' : 'Field: '}{edu.field_of_study}</p>
                       )}
-                      <p className="text-sm text-muted-foreground leading-relaxed">{id ? edu.description_id : edu.description_en}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{id ? edu.description_id : edu.description_en}</p>
                     </CardContent>
                   </Card>
                 </div>
@@ -285,9 +282,9 @@ export default function HomeClient({
         </section>
       )}
 
-      {/* 8. Experience - Enhanced */}
+      {/* 8. Experience */}
       {experience && experience.length > 0 && (
-        <section className="section-padding bg-card/50">
+        <section className="section-padding bg-gray-50 dark:bg-white/[0.02]">
           <Container>
             <SectionHeader 
               eyebrow={id ? "Pengalaman" : "Experience"} 
@@ -296,18 +293,18 @@ export default function HomeClient({
             />
             <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
               {experience.map((exp, idx) => (
-                <Card key={exp.id} className="hover:border-border/80 transition-all" style={{ animationDelay: `${idx * 0.1}s` }}>
+                <Card key={exp.id} className="hover:border-[var(--color-neon-blue)]/30 transition-all" style={{ animationDelay: `${idx * 0.1}s` }}>
                   <CardContent className="p-6">
                     <div className="flex flex-col md:flex-row justify-between md:items-start gap-3 mb-3">
                       <div className="flex-1">
-                        <h3 className="font-bold text-lg text-foreground">{id ? exp.title_id : exp.title_en}</h3>
-                        <p className="text-sm text-primary font-semibold mt-1">{exp.organization} • {exp.role}</p>
+                        <h3 className="font-bold text-lg text-gray-900 dark:text-white">{id ? exp.title_id : exp.title_en}</h3>
+                        <p className="text-sm text-[var(--color-neon-blue)] font-semibold mt-1">{exp.organization} • {exp.role}</p>
                       </div>
                       <Badge variant="secondary" className="flex-shrink-0 whitespace-nowrap">
                         {exp.start_date} - {exp.is_current ? (id ? 'Sekarang' : 'Present') : exp.end_date}
                       </Badge>
                     </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{id ? exp.description_id : exp.description_en}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{id ? exp.description_id : exp.description_en}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -316,7 +313,7 @@ export default function HomeClient({
         </section>
       )}
 
-      {/* 9. Skills - Enhanced */}
+      {/* 9. Skills */}
       <section className="section-padding">
         <Container>
           <SectionHeader 
@@ -334,9 +331,9 @@ export default function HomeClient({
         </Container>
       </section>
 
-      {/* 10. Services - Enhanced */}
+      {/* 10. Services */}
       {servicesData && servicesData.length > 0 && (
-        <section className="section-padding bg-card/50">
+        <section className="section-padding bg-gray-50 dark:bg-white/[0.02]">
           <Container>
             <SectionHeader 
               eyebrow={id ? "Layanan" : "Services"} 
@@ -354,7 +351,7 @@ export default function HomeClient({
         </section>
       )}
 
-      {/* 11. Why Hire Me - Enhanced */}
+      {/* 11. Why Hire Me */}
       {reasons && reasons.length > 0 && (
         <section className="section-padding">
           <Container>
@@ -366,11 +363,11 @@ export default function HomeClient({
             <div className="grid md:grid-cols-3 gap-8 animate-stagger">
               {reasons.map((reason, idx) => (
                 <div key={reason.id} className="animate-fade-in-up" style={{ animationDelay: `${idx * 0.1}s` }}>
-                  <Card className="h-full hover:border-border/80 transition-all bg-background/50 backdrop-blur-sm">
+                  <Card className="h-full hover:border-[var(--color-neon-blue)]/30 transition-all hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(0,153,255,0.05)]">
                     <CardContent className="p-8 text-center space-y-4">
                       <div className="text-5xl">{reason.icon || "💡"}</div>
-                      <h3 className="font-bold text-lg text-foreground">{id ? reason.title_id : reason.title_en}</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{id ? reason.description_id : reason.description_en}</p>
+                      <h3 className="font-bold text-lg text-gray-900 dark:text-white">{id ? reason.title_id : reason.title_en}</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{id ? reason.description_id : reason.description_en}</p>
                     </CardContent>
                   </Card>
                 </div>
@@ -380,9 +377,9 @@ export default function HomeClient({
         </section>
       )}
 
-      {/* 12. Testimonials - Enhanced */}
+      {/* 12. Testimonials */}
       {testimonials && testimonials.length > 0 && (
-        <section className="section-padding bg-card/50 overflow-hidden">
+        <section className="section-padding bg-gray-50 dark:bg-white/[0.02] overflow-hidden">
           <Container>
             <SectionHeader 
               eyebrow="Testimonials" 
@@ -396,7 +393,7 @@ export default function HomeClient({
         </section>
       )}
 
-      {/* 13. Blog - Enhanced */}
+      {/* 13. Blog */}
       {posts && posts.length > 0 && (
         <section className="section-padding">
           <Container>
@@ -413,7 +410,7 @@ export default function HomeClient({
               ))}
             </div>
             <div className="mt-12 text-center">
-              <Button href="/blog" variant="outline">
+              <Button href="/blog" variant="secondary">
                 {id ? "Lihat Semua Artikel" : "View All Articles"}
                 <span className="ml-2">→</span>
               </Button>
@@ -422,44 +419,40 @@ export default function HomeClient({
         </section>
       )}
 
-      {/* 14. Final CTA - Premium */}
+      {/* 14. Final CTA */}
       <section className="section-padding">
         <Container>
           <div className="relative overflow-hidden rounded-3xl">
             {/* Background gradient */}
-            <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-primary/80"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-[#00FF88] via-[#0099FF] to-[#00FF88] animate-gradient-shift"></div>
             
-            <Card className="bg-transparent border-none relative z-10">
-              <CardContent className="p-12 md:p-16 text-center space-y-6">
-                <h2 className="text-4xl md:text-5xl font-bold font-heading text-primary-foreground">
-                  {id ? "Siap untuk Memulai Proyek?" : "Ready to Start Your Project?"}
-                </h2>
-                <p className="text-lg text-primary-foreground/90 max-w-2xl mx-auto leading-relaxed">
-                  {id 
-                    ? "Punya ide, pertanyaan, atau ingin berkolaborasi? Mari kita ciptakan sesuatu yang luar biasa bersama." 
-                    : "Have an idea, questions, or want to collaborate? Let's create something amazing together."}
-                </p>
-                <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
-                  <Button 
-                    href="/kontak" 
-                    variant="secondary" 
-                    size="lg"
-                    className="font-semibold"
-                  >
-                    {id ? "Hubungi Saya Sekarang" : "Contact Me Now"}
-                    <span className="ml-2">→</span>
-                  </Button>
-                  <Button 
-                    href="/proses" 
-                    variant="outline" 
-                    size="lg"
-                    className="border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10"
-                  >
-                    {id ? "Lihat Proses" : "View Process"}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="relative z-10 p-12 md:p-16 text-center space-y-6">
+              <h2 className="text-4xl md:text-5xl font-bold font-heading text-white">
+                {id ? "Siap untuk Memulai Proyek?" : "Ready to Start Your Project?"}
+              </h2>
+              <p className="text-lg text-white/90 max-w-2xl mx-auto leading-relaxed">
+                {id 
+                  ? "Punya ide, pertanyaan, atau ingin berkolaborasi? Mari kita ciptakan sesuatu yang luar biasa bersama." 
+                  : "Have an idea, questions, or want to collaborate? Let's create something amazing together."}
+              </p>
+              <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
+                <Button 
+                  href="/kontak" 
+                  size="lg"
+                  className="bg-white text-gray-900 hover:bg-white/90 font-semibold rounded-full"
+                >
+                  {id ? "Hubungi Saya Sekarang" : "Contact Me Now"}
+                  <span className="ml-2">→</span>
+                </Button>
+                <Button 
+                  href="/proses" 
+                  size="lg"
+                  className="border-white/30 text-white hover:bg-white/10 rounded-full border"
+                >
+                  {id ? "Lihat Proses" : "View Process"}
+                </Button>
+              </div>
+            </div>
           </div>
         </Container>
       </section>
