@@ -17,7 +17,10 @@ import {
   FaRocket, 
   FaHeadset, 
   FaCheckCircle, 
-  FaQuestionCircle 
+  FaQuestionCircle,
+  FaLightbulb,
+  FaPlusCircle,
+  FaShieldAlt
 } from "react-icons/fa";
 
 export default function ServicesPage() {
@@ -29,70 +32,84 @@ export default function ServicesPage() {
     const defaultSvc: Service[] = [
       {
         id: "1",
-        name_id: "Pengembangan Website Modern",
-        name_en: "Modern Website Development",
+        name_id: "Paket Website Modern & Landing Page",
+        name_en: "Modern Website & Landing Page Package",
         price: "Mulai dari Rp 1.500.000",
-        description_id: "Website responsif, cepat, dan SEO-friendly menggunakan Next.js & Tailwind CSS.",
-        description_en: "Responsive, ultra-fast, and SEO-optimized website built with Next.js & Tailwind CSS.",
+        timeline: "3 – 5 Hari",
+        target_client_id: "UMKM, bisnis lokal, toko (seperti bisnis perhiasan/retail), atau personal branding yang ingin go-digital secara profesional.",
+        target_client_en: "MSMEs, local businesses, retail shops, or personal branding looking to establish a professional digital presence.",
+        description_id: "Sangat cepat berkat efisiensi AI. Website modern, estetik, dan responsif sempurna di semua perangkat.",
+        description_en: "Ultra-fast execution driven by AI efficiency. Modern, aesthetic, and fully responsive across all devices.",
         features_id: [
-          "Landing Page & Company Profile",
-          "Arsitektur Komponen Modern",
-          "Optimasi Core Web Vitals & SEO",
-          "Integrasi CMS / Supabase Backend",
-          "Mobile & Tablet Responsive"
+          "Desain Landing Page / Company Profile yang modern, estetik, dan responsif (HP, tablet, PC)",
+          "Struktur kode optimal menggunakan teknologi web modern (Next.js / Tailwind CSS)",
+          "Optimasi kecepatan muat (Core Web Vitals) dan dasar SEO agar mudah terindeks Google",
+          "Integrasi tombol aksi cepat (WhatsApp chat, formulir kontak, atau media sosial)",
+          "Gratis setup domain/hosting awal (Vercel/Netlify/Cloud pilihan klien)",
+          "Bonus: 1x sesi revisi minor setelah preview pertama"
         ],
         features_en: [
-          "Landing Page & Company Profile",
-          "Modern Component Architecture",
-          "Core Web Vitals & SEO Optimization",
-          "Supabase / Headless CMS Integration",
-          "Full Mobile & Tablet Responsiveness"
+          "Modern, aesthetic, and responsive Landing Page / Company Profile design (mobile, tablet, PC)",
+          "Clean code architecture with modern web tech (Next.js / Tailwind CSS)",
+          "Core Web Vitals & basic SEO optimization for Google indexing",
+          "Quick action integration (WhatsApp chat, contact form, or social links)",
+          "Free initial domain/hosting deployment (Vercel/Netlify/Cloud)",
+          "Bonus: 1x minor revision session after initial preview"
         ],
-        is_popular: true
+        is_popular: true,
+        badge_text: "Paling Laku / Best Seller"
       },
       {
         id: "2",
-        name_id: "Aplikasi Web & Dashboard Admin",
-        name_en: "Web Applications & Admin Dashboards",
+        name_id: "Paket Aplikasi Web & Dashboard Admin",
+        name_en: "Web App & Admin Dashboard Package",
         price: "Mulai dari Rp 3.500.000",
-        description_id: "Sistem aplikasi web interaktif, manajemen data internal, portal pengguna, dan dashboard analitik.",
-        description_en: "Interactive web applications, internal data portals, user dashboards, and custom analytics tools.",
+        timeline: "1 – 2 Minggu",
+        target_client_id: "Bisnis yang membutuhkan sistem operasional internal, manajemen inventaris barang, portal pencatatan transaksi, atau manajemen data khusus.",
+        target_client_en: "Businesses requiring internal operational systems, inventory management, transaction portals, or dedicated data workflows.",
+        description_id: "Custom system terstruktur untuk mengelola operasional, database interaktif, dan visualisasi grafik.",
+        description_en: "Custom structured system for operational control, interactive databases, and real-time visual analytics.",
         features_id: [
-          "Authentication & Role-Based Access Control",
-          "CRUD Database Interaktif",
-          "Visualisasi Data & Charts",
-          "Integrasi REST / GraphQL API",
-          "Export Data (PDF/Excel) & Notifikasi"
+          "Sistem Otentikasi Aman (Login/Register berjenjang Role-Based Access Control Admin & Pengguna)",
+          "Database Interaktif (CRUD lengkap kelola data produk, pesanan, atau user real-time)",
+          "Dashboard Analitik dengan visualisasi grafik/tabel data interaktif",
+          "Backend kuat dan aman (Laravel / Node.js / Database terstruktur)",
+          "Fitur ekspor laporan penting (format Excel / PDF)",
+          "Bonus: Akses live staging link eksklusif untuk memantau progres langsung"
         ],
         features_en: [
-          "Authentication & Role-Based Access Control",
-          "Interactive Database CRUD",
-          "Data Visualization & Charts",
-          "REST / GraphQL API Integration",
-          "Export Data (PDF/Excel) & Notifications"
+          "Secure Auth System (Role-Based Access Control for Admins & Users)",
+          "Interactive Database (Full CRUD to manage products, orders, or users in real-time)",
+          "Interactive Analytics Dashboard with data charts & tables",
+          "Robust & secure backend (Laravel / Node.js / structured DB)",
+          "Crucial report exports (Excel / PDF format)",
+          "Bonus: Exclusive live staging link to track real-time dev progress"
         ],
         is_popular: false
       },
       {
         id: "3",
-        name_id: "Solusi AI & Otomasi Sistem",
-        name_en: "AI Solutions & System Automation",
-        price: "Mulai dari Rp 4.500.000",
-        description_id: "Integrasi kecerdasan buatan (LLM, computer vision) dan otomasi alur kerja digital.",
-        description_en: "Integration of artificial intelligence (LLM, vision models) and intelligent workflow automation.",
+        name_id: "Paket Solusi AI & Integrasi Sistem Cerdas",
+        name_en: "AI Solutions & Smart System Integration",
+        price: "Mulai dari Rp 4.500.000+",
+        timeline: "1 – 2 Minggu",
+        target_client_id: "Perusahaan atau klien progresif yang ingin mengintegrasikan teknologi kecerdasan buatan, otomasi alur kerja, atau chatbot cerdas ke dalam sistem mereka.",
+        target_client_en: "Forward-thinking companies looking to integrate AI technology, workflow automation, or intelligent chatbots.",
+        description_id: "Next-gen solution dengan implementasi LLM, otomasi alur kerja digital, dan skrip scraping kilat.",
+        description_en: "Next-gen solution featuring LLM integration, digital workflow automation, and fast data processing pipelines.",
         features_id: [
-          "Integrasi OpenAI / Gemini API",
-          "Chatbot Cerdas Berbasis Dokumen (RAG)",
-          "Otomasi Bot & Web Scraping",
-          "Pipeline Pemrosesan Data Cepat",
-          "Monitoring & Maintenance Dukungan"
+          "Integrasi API Kecerdasan Buatan (OpenAI GPT, Gemini API, atau Smart Chatbot RAG)",
+          "Sistem otomasi alur kerja digital atau skrip web scraping otomatis untuk efisiensi data",
+          "Pipeline pemrosesan data kilat dan aman",
+          "Dokumentasi teknis lengkap dan panduan pengoperasian bagi admin klien",
+          "Garansi pemeliharaan dan bug fixing pasca-peluncuran selama 1 bulan penuh"
         ],
         features_en: [
-          "OpenAI / Gemini API Integration",
-          "Intelligent RAG Document Assistants",
-          "Automation Bots & Scraping Pipelines",
-          "High-performance Data Workflows",
-          "Monitoring & Ongoing Support"
+          "AI API Integration (OpenAI GPT, Gemini API, or RAG-based Smart Chatbot)",
+          "Digital workflow automation or automated web scraping scripts for data efficiency",
+          "Ultra-fast and secure data processing pipelines",
+          "Comprehensive technical documentation and client admin user guide",
+          "Full 1-month post-launch warranty and bug-fixing support"
         ],
         is_popular: false
       }
@@ -106,7 +123,12 @@ export default function ServicesPage() {
           .order("sort_order", { ascending: true });
 
         if (data && data.length > 0) {
-          setServices(data);
+          // Merge with default detailed metadata if missing
+          const merged = data.map((item, idx) => ({
+            ...defaultSvc[idx % defaultSvc.length],
+            ...item
+          }));
+          setServices(merged);
         } else {
           setServices(defaultSvc);
         }
@@ -218,10 +240,77 @@ export default function ServicesPage() {
         </div>
 
         {/* Pricing & Service Packages */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-28">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-20">
           {services.map((service) => (
             <ServiceCard key={service.id} service={service} />
           ))}
+        </div>
+
+        {/* Tips Rahasia Menakar Harga & Transparansi Kolaborasi */}
+        <div className="mb-28 bg-card border border-border rounded-3xl p-8 md:p-12 shadow-sm">
+          <div className="max-w-3xl mb-8">
+            <Badge variant="outline" className="mb-3">
+              {language === 'id' ? 'Transparansi Biaya' : 'Cost Transparency'}
+            </Badge>
+            <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground mb-3">
+              {language === 'id' ? 'Tips Rahasia Programmer Menakar Harga & Kerjasama' : 'Pricing Principles & Collaboration Guidelines'}
+            </h2>
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              {language === 'id'
+                ? 'Pedoman transparan dalam penentuan nilai investasi proyek, efisiensi AI, penambahan add-on, dan skema pembayaran aman.'
+                : 'Transparent guidelines on project investment, AI efficiency, optional add-ons, and secure payment milestones.'}
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="p-6 rounded-2xl bg-muted/40 border border-border flex flex-col justify-between">
+              <div>
+                <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-lg mb-4">
+                  <FaLightbulb />
+                </div>
+                <h3 className="font-bold text-base text-foreground mb-2">
+                  {language === 'id' ? '1. Psikologi Angka & Nilai Bisnis' : '1. Business Value & AI Efficiency'}
+                </h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {language === 'id'
+                    ? 'Harga sangat kompetitif untuk pasar Indonesia, namun tetap menguntungkan Anda karena waktu pengerjaan terpangkas jauh (hanya hitungan hari) berkat bantuan efisiensi AI modern.'
+                    : 'Highly competitive pricing for the market while maintaining top-notch delivery speed (in days) using modern AI-assisted engineering.'}
+                </p>
+              </div>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-muted/40 border border-border flex flex-col justify-between">
+              <div>
+                <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-lg mb-4">
+                  <FaPlusCircle />
+                </div>
+                <h3 className="font-bold text-base text-foreground mb-2">
+                  {language === 'id' ? '2. Sistem Add-on Tambahan' : '2. Flexible Add-on System'}
+                </h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {language === 'id'
+                    ? 'Jika klien meminta fitur ekstra di luar paket utama (misalnya: integrasi payment gateway tambahan, multi-bahasa, dll), tetapkan biaya tambahan terpisah (misal: +Rp 300.000 s.d. Rp 500.000 per fitur tambahan).'
+                    : 'If you need extra features beyond the primary package (e.g. payment gateway, multilingual), fixed add-on pricing applies (+Rp 300k - Rp 500k per feature).'}
+                </p>
+              </div>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-muted/40 border border-border flex flex-col justify-between">
+              <div>
+                <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-lg mb-4">
+                  <FaShieldAlt />
+                </div>
+                <h3 className="font-bold text-base text-foreground mb-2">
+                  {language === 'id' ? '3. Skema Pembayaran Aman' : '3. Secure Milestone Payments'}
+                </h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {language === 'id'
+                    ? 'Selalu terapkan sistem DP (Uang Muka) minimal 50% di awal sebelum penulisan kode dimulai, dan sisa 50% dilunasi setelah proyek selesai dan lolos uji coba di server staging.'
+                    : '50% initial down payment prior to development kickoff, with final 50% released after completion and staging verification.'}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Process Section */}

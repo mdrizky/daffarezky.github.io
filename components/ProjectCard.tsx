@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
+import { FaArrowRight, FaCheckCircle, FaTools, FaClock } from "react-icons/fa";
 import { useLanguage } from "@/components/LanguageProvider";
 import type { Project } from "@/types";
 import { projectHref } from "@/lib/mappers";
+import { Badge } from "@/components/ui/Badge";
 
 type ProjectCardProps = {
   project: Project;
@@ -14,96 +15,84 @@ type ProjectCardProps = {
 
 export default function ProjectCard({ project, onClick }: ProjectCardProps) {
   const { language } = useLanguage();
+  const id = language === 'id';
 
-  const title = language === 'id' ? project.title_id : project.title_en;
-  const description = language === 'id' ? project.description_id : project.description_en;
-  const isVideoDemo = /youtube\.com|youtu\.be|vimeo\.com|\.mp4|\.webm/i.test(project.demo_url || "")
-  const demoLabel = isVideoDemo ? (language === 'id' ? 'Video Demo' : 'Video Demo') : (language === 'id' ? 'Demo' : 'Live Demo')
+  const title = id ? project.title_id : project.title_en;
+  
+  // Format status cleanly for Indonesian / English
+  const getStatusDisplay = (status?: string) => {
+    const s = (status || "").toLowerCase();
+    if (s.includes("selesai") || s === "completed") {
+      return {
+        label: id ? "Selesai 100%" : "Completed 100%",
+        className: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
+        icon: <FaCheckCircle className="text-xs mr-1" />
+      };
+    }
+    if (s.includes("pengembangan") || s === "ongoing" || s.includes("dev")) {
+      return {
+        label: id ? "Tahap Pengembangan (Siap Pakai)" : "In Development (Ready)",
+        className: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
+        icon: <FaTools className="text-xs mr-1" />
+      };
+    }
+    return {
+      label: status || (id ? "Aktif" : "Active"),
+      className: "bg-primary/10 text-primary border-primary/20",
+      icon: <FaClock className="text-xs mr-1" />
+    };
+  };
+
+  const statusInfo = getStatusDisplay(project.status);
 
   return (
-    <article className="bg-card border border-border rounded-xl overflow-hidden group transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col h-full">
-      <Link href={projectHref(project)} onClick={onClick} className="block">
-      {/* Image Container */}
-      <div className="relative h-48 w-full overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent z-10 opacity-60"></div>
+    <Link 
+      href={projectHref(project)} 
+      onClick={onClick} 
+      className="group flex flex-col h-full bg-card text-card-foreground border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+    >
+      {/* 1. Gambar dari project */}
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
         <Image
           src={project.image_url || "/og-image.jpg"}
-          alt={title}
+          alt={title || "Project Image"}
           fill
-          className="object-cover transition-transform duration-500 group-hover:scale-110"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
+        
+        {/* Status Badge overlay */}
+        <div className="absolute top-3 left-3 z-10">
+          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold backdrop-blur-md border shadow-sm ${statusInfo.className}`}>
+            {statusInfo.icon}
+            {statusInfo.label}
+          </span>
+        </div>
+
         {project.featured && (
-          <div className="absolute top-4 right-4 z-20 px-3 py-1 text-xs font-bold rounded-full bg-primary text-primary-foreground shadow-md">
-            Featured
+          <div className="absolute top-3 right-3 z-10">
+            <Badge variant="default" className="text-xs font-bold shadow-sm">
+              Featured
+            </Badge>
           </div>
         )}
+      </div>
 
-        {/* Bottom Flyer Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 z-30 bg-background/90 backdrop-blur-md p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 border-t border-border">
-          <div className="text-[10px] font-black text-primary uppercase tracking-widest mb-1">
-            {project.year} · {project.duration || (language === 'id' ? 'Selesai' : 'Completed')}
-          </div>
-          <p className="text-foreground text-[11px] font-medium line-clamp-1">
-            {language === 'id' ? project.bottom_flyer_id : project.bottom_flyer_en}
-          </p>
+      {/* 2 & 3. Nama project & Jenis (Category) */}
+      <div className="p-5 flex flex-col flex-grow justify-between gap-3">
+        <div>
+          <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block mb-1">
+            {project.category || (id ? "Website" : "Website")}
+          </span>
+          <h3 className="font-heading font-bold text-lg text-foreground group-hover:text-primary transition-colors line-clamp-1">
+            {title}
+          </h3>
+        </div>
+
+        <div className="flex items-center justify-between pt-3 border-t border-border/60 text-xs font-semibold text-primary">
+          <span>{id ? "Lihat Detail Proyek" : "View Case Study"}</span>
+          <FaArrowRight className="transition-transform group-hover:translate-x-1" />
         </div>
       </div>
-      </Link>
-
-      {/* Content */}
-      <div className="p-6 flex flex-col flex-grow">
-        <Link href={projectHref(project)} onClick={onClick} className="block">
-        <span className="text-muted-foreground text-xs font-semibold tracking-wider uppercase mb-2">
-          {project.category}
-        </span>
-        <h3 className="text-xl font-heading font-bold mb-2 group-hover:text-primary transition-colors text-foreground">
-          {title}
-        </h3>
-        <p className="text-muted-foreground text-sm mb-4 line-clamp-none flex-grow leading-relaxed">
-          {description}
-        </p>
-        </Link>
-
-        {/* Tech Stack */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          {project.tech_stack?.slice(0, 4).map((tech, i) => (
-            <span key={i} className="px-2 py-1 text-xs rounded-md bg-secondary text-secondary-foreground">
-              {tech}
-            </span>
-          ))}
-          {project.tech_stack?.length > 4 && (
-            <span key="more" className="px-2 py-1 text-xs rounded-md bg-secondary text-secondary-foreground">
-              +{project.tech_stack.length - 4}
-            </span>
-          )}
-        </div>
-
-        {/* Actions */}
-        <div className="flex gap-4 mt-auto pt-4 border-t border-border">
-          {project.demo_url && (
-            <a 
-              href={project.demo_url} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-primary transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <FaExternalLinkAlt /> {demoLabel}
-            </a>
-          )}
-          {project.github_url && (
-            <a 
-              href={project.github_url} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-foreground transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <FaGithub /> GitHub
-            </a>
-          )}
-        </div>
-      </div>
-    </article>
+    </Link>
   );
 }

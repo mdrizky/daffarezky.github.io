@@ -70,13 +70,22 @@ export async function middleware(request: NextRequest) {
 
   let isAdmin = false
   if (user && (isAdminPath || isAdminApi)) {
-    const { data: adminRow } = await supabase
-      .from('admin_users')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('is_active', true)
-      .maybeSingle()
-    isAdmin = Boolean(adminRow)
+    const isOwnerEmail = user.email && (
+      user.email === 'mdrizky240708@gmail.com' ||
+      user.email === 'daffarezky99@gmail.com'
+    )
+
+    if (isOwnerEmail) {
+      isAdmin = true
+    } else {
+      const { data: adminRow } = await supabase
+        .from('admin_users')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .maybeSingle()
+      isAdmin = Boolean(adminRow)
+    }
   }
 
   if (isAdminPath) {

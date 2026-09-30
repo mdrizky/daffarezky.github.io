@@ -161,41 +161,73 @@ export default function TentangPage() {
           </div>
         </section>
 
-        {/* 3. Learning Journey */}
+        {/* 3. Perjalanan Belajar (Kiri) & Pendidikan (Kanan) */}
         <section className="mb-24">
-          <SectionHeader align="left" title={id ? 'Perjalanan Belajar' : 'Learning Journey'} />
-          <div className="space-y-8 max-w-3xl">
-            {milestones.map(m => (
-              <div key={m.id} className="flex gap-6">
-                <div className="flex flex-col items-center">
-                  <Badge variant="secondary" className="px-3 py-1 font-bold whitespace-nowrap">{m.year}</Badge>
-                  <div className="w-px h-full bg-border mt-4"></div>
-                </div>
-                <div className="pb-8">
-                  <h3 className="text-xl font-bold mb-2 text-foreground">{id ? m.title_id : m.title_en}</h3>
-                  <p className="text-muted-foreground">{id ? m.description_id : m.description_en}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* 4. Education */}
-        <section>
-          <SectionHeader align="left" title={id ? 'Pendidikan' : 'Education'} />
-          <div className="grid md:grid-cols-2 gap-6">
-            {education.map(edu => (
-              <Card key={edu.id}>
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <h3 className="font-bold text-lg text-foreground">{edu.institution}</h3>
-                    <Badge variant="outline">{edu.start_year} - {edu.is_current ? (id ? 'Sekarang' : 'Present') : edu.end_year}</Badge>
+          <div className="grid lg:grid-cols-12 gap-12 items-start">
+            {/* Kolom Kiri: Perjalanan Belajar */}
+            <div className="lg:col-span-6 space-y-8">
+              <SectionHeader align="left" title={id ? 'Perjalanan Belajar' : 'Learning Journey'} eyebrow={id ? 'Evolusi' : 'Evolution'} />
+              <div className="space-y-6">
+                {milestones.map((m, idx) => (
+                  <div key={m.id} className="flex gap-5">
+                    <div className="flex flex-col items-center">
+                      <Badge variant="secondary" className="px-3 py-1 font-bold whitespace-nowrap bg-primary/10 text-primary border-primary/20">
+                        {m.year}
+                      </Badge>
+                      {idx < milestones.length - 1 && (
+                        <div className="w-0.5 flex-grow bg-border my-2 min-h-[40px]"></div>
+                      )}
+                    </div>
+                    <div className="pb-6">
+                      <h3 className="text-lg font-bold text-foreground mb-1">{id ? m.title_id : m.title_en}</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{id ? m.description_id : m.description_en}</p>
+                    </div>
                   </div>
-                  <p className="font-medium text-primary mb-2">{id ? edu.degree_id : edu.degree_en}</p>
-                  <p className="text-sm text-muted-foreground">{id ? edu.description_id : edu.description_en}</p>
-                </CardContent>
-              </Card>
-            ))}
+                ))}
+              </div>
+            </div>
+
+            {/* Kolom Kanan: Pendidikan */}
+            <div className="lg:col-span-6 space-y-8">
+              <SectionHeader align="left" title={id ? 'Pendidikan' : 'Education'} eyebrow={id ? 'Akademik' : 'Academic'} />
+              <div className="space-y-4">
+                {education.map(edu => (
+                  <Card key={edu.id} className="bg-card text-card-foreground border-border hover:border-primary/40 transition-all shadow-sm">
+                    <CardContent className="p-5 flex items-center gap-4">
+                      {/* Logo Sekolah */}
+                      <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-muted border border-border flex items-center justify-center shrink-0">
+                        {edu.logo_url ? (
+                          <Image
+                            src={edu.logo_url}
+                            alt={edu.institution}
+                            fill
+                            className="object-contain p-1"
+                          />
+                        ) : (
+                          <span className="font-heading font-bold text-primary text-sm">
+                            {edu.institution.substring(0, 2).toUpperCase()}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Info Sekolah: Nama, Tingkatan, Jurusan, Periode */}
+                      <div className="flex-grow min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <h4 className="font-bold text-base text-foreground truncate">{edu.institution}</h4>
+                          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground shrink-0 border border-border">
+                            {edu.start_year} - {edu.is_current ? (id ? 'Sekarang' : 'Present') : edu.end_year}
+                          </span>
+                        </div>
+                        <p className="text-xs text-primary font-medium mt-0.5">
+                          {id ? edu.degree_id : edu.degree_en}
+                          {edu.field_of_study ? ` • ${edu.field_of_study}` : ''}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
       </Container>

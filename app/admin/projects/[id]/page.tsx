@@ -46,6 +46,10 @@ export default function ProjectForm() {
     solution_en: '',
     result_id: '',
     result_en: '',
+    target_audience_id: '',
+    target_audience_en: '',
+    workflow_id: '',
+    workflow_en: '',
   })
 
   useEffect(() => {
@@ -96,6 +100,10 @@ export default function ProjectForm() {
           solution_en: data.solution_en || '',
           result_id: data.result_id || '',
           result_en: data.result_en || '',
+          target_audience_id: data.target_audience_id || '',
+          target_audience_en: data.target_audience_en || '',
+          workflow_id: data.workflow_id || '',
+          workflow_en: data.workflow_en || '',
         })
       }
     } catch (error) {
@@ -185,6 +193,10 @@ export default function ProjectForm() {
         solution_en: formData.solution_en,
         result_id: formData.result_id,
         result_en: formData.result_en,
+        target_audience_id: formData.target_audience_id,
+        target_audience_en: formData.target_audience_en,
+        workflow_id: formData.workflow_id,
+        workflow_en: formData.workflow_en,
       }
 
       if (isNew) {
@@ -390,8 +402,12 @@ export default function ProjectForm() {
                   name="status"
                   value={formData.status}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all [&>option]:bg-white dark:[&>option]:bg-[#0A0A0F]"
                 >
+                  <option value="Selesai 100%">Selesai 100%</option>
+                  <option value="Tahap Pengembangan (Siap Pakai)">Tahap Pengembangan (Siap Pakai)</option>
+                  <option value="Dalam Pengerjaan">Dalam Pengerjaan</option>
+                  <option value="Rencana">Rencana</option>
                   <option value="Completed">Completed</option>
                   <option value="Ongoing">Ongoing</option>
                   <option value="Archived">Archived</option>
@@ -628,6 +644,64 @@ export default function ProjectForm() {
                   onChange={handleChange}
                   className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-gray-900 dark:text-white transition-all"
                   placeholder="Final result or impact..."
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  Target Pengguna / Audiens <span className="text-blue-500">(Indonesia)</span>
+                </label>
+                <textarea
+                  name="target_audience_id"
+                  rows={3}
+                  value={formData.target_audience_id}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
+                  placeholder="Kepada siapa proyek ini ditujukan (misal: Pelaku UMKM, Mahasiswa, Komunitas)..."
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  Target Audience <span className="text-purple-500">(English)</span>
+                </label>
+                <textarea
+                  name="target_audience_en"
+                  rows={3}
+                  value={formData.target_audience_en}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-gray-900 dark:text-white transition-all"
+                  placeholder="Who is this project built for (e.g. Small Businesses, Students)..."
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  Alur Kerja & Cara Kerja Sistem <span className="text-blue-500">(Indonesia)</span>
+                </label>
+                <textarea
+                  name="workflow_id"
+                  rows={3}
+                  value={formData.workflow_id}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-white transition-all"
+                  placeholder="Jelaskan alur proses atau flow sistem aplikasi..."
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  Workflow & System Architecture <span className="text-purple-500">(English)</span>
+                </label>
+                <textarea
+                  name="workflow_en"
+                  rows={3}
+                  value={formData.workflow_en}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-gray-900 dark:text-white transition-all"
+                  placeholder="Explain system workflow or operational lifecycle..."
                 />
               </div>
             </div>

@@ -88,8 +88,8 @@ export default function AdminProjects() {
               <tr>
                 <th className="p-4 font-semibold text-sm">Project (ID & EN)</th>
                 <th className="p-4 font-semibold text-sm">Kategori</th>
+                <th className="p-4 font-semibold text-sm">Status</th>
                 <th className="p-4 font-semibold text-sm">Progres</th>
-                <th className="p-4 font-semibold text-sm text-center">Current</th>
                 <th className="p-4 font-semibold text-sm text-center">Featured</th>
                 <th className="p-4 font-semibold text-sm text-right">Aksi</th>
               </tr>
@@ -130,6 +130,17 @@ export default function AdminProjects() {
                     </td>
                     <td className="p-4">
                       <span className="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-300 rounded-full border border-gray-200 dark:border-white/5">{project.category}</span>
+                    </td>
+                    <td className="p-4">
+                      <span className={`inline-block px-2.5 py-1 text-xs font-semibold rounded-full border ${
+                        project.status === 'Selesai 100%' || project.status === 'Completed'
+                          ? 'bg-green-500/10 text-green-700 dark:text-green-300 border-green-500/30'
+                          : project.status === 'Tahap Pengembangan (Siap Pakai)'
+                          ? 'bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/30'
+                          : 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30'
+                      }`}>
+                        {project.status || (project.progress === 100 ? 'Selesai 100%' : 'Tahap Pengembangan')}
+                      </span>
                     </td>
                     <td className="p-4">
                       <div className="flex items-center gap-2">

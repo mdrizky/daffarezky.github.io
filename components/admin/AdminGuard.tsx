@@ -24,14 +24,24 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
           return
         }
 
-        const { data: adminRow } = await supabase
-          .from('admin_users')
-          .select('id')
-          .eq('user_id', user.id)
-          .eq('is_active', true)
-          .maybeSingle()
+        const isOwnerEmail = user.email && (
+          user.email === 'mdrizky240708@gmail.com' ||
+          user.email === 'daffarezky99@gmail.com'
+        )
 
-        if (!adminRow) {
+        let isAuthorized = Boolean(isOwnerEmail)
+
+        if (!isAuthorized) {
+          const { data: adminRow } = await supabase
+            .from('admin_users')
+            .select('id')
+            .eq('user_id', user.id)
+            .eq('is_active', true)
+            .maybeSingle()
+          isAuthorized = Boolean(adminRow)
+        }
+
+        if (!isAuthorized) {
           await supabase.auth.signOut()
           router.replace('/admin/login?error=not_admin')
           return

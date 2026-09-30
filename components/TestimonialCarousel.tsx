@@ -90,25 +90,22 @@ export default function TestimonialCarousel({ initialData, testimonials: propsTe
                 key={t.id}
                 className="flex-none w-[85%] sm:w-[48%] lg:w-[31%] min-w-0"
               >
-                <div className="h-full bg-white dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-2xl p-7 flex flex-col gap-4 relative overflow-hidden group hover:border-[var(--color-neon-blue)]/40 transition-all duration-300 hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(0,153,255,0.1)]">
-                  {/* Glow */}
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--color-neon-blue)]/5 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-
+                <div className="h-full bg-card text-card-foreground border border-border rounded-2xl p-7 flex flex-col gap-4 relative overflow-hidden group hover:border-primary/40 transition-all duration-300 shadow-sm hover:shadow-md">
                   {/* Quote icon */}
-                  <FaQuoteLeft className="text-[var(--color-neon-blue)] opacity-30 text-3xl" />
+                  <FaQuoteLeft className="text-primary/30 text-3xl" />
 
                   {/* Stars */}
                   <StarRating count={5} />
 
                   {/* Content */}
-                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed flex-grow italic">
+                  <p className="text-muted-foreground text-sm leading-relaxed flex-grow italic">
                     &quot;{content}&quot;
                   </p>
 
                   {/* Author */}
-                  <div className="flex items-center gap-3 pt-4 border-t border-gray-100 dark:border-white/10">
+                  <div className="flex items-center gap-3 pt-4 border-t border-border">
                     {t.avatar_url ? (
-                      <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border-2 border-[var(--color-neon-green)]/30">
+                      <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border border-border">
                         <Image
                           src={t.avatar_url}
                           alt={t.name || "Testimonial Avatar"}
@@ -118,14 +115,14 @@ export default function TestimonialCarousel({ initialData, testimonials: propsTe
                         />
                       </div>
                     ) : (
-                      <div className="w-10 h-10 rounded-full flex-shrink-0 bg-gradient-to-br from-[#00FF88] to-[#0099FF] flex items-center justify-center text-[#0A0A0F] font-bold text-sm">
+                      <div className="w-10 h-10 rounded-full flex-shrink-0 bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
                         {getInitials(t.name)}
                       </div>
                     )}
                     <div>
-                      <p className="text-sm font-bold text-gray-900 dark:text-white">{t.name || "Anonymous"}</p>
+                      <p className="text-sm font-bold text-foreground">{t.name || "Anonymous"}</p>
                       {t.role && (
-                        <p className="text-xs text-gray-500 dark:text-gray-400">{t.role}</p>
+                        <p className="text-xs text-muted-foreground">{t.role}</p>
                       )}
                     </div>
                   </div>
@@ -141,13 +138,15 @@ export default function TestimonialCarousel({ initialData, testimonials: propsTe
         <>
           <button
             onClick={scrollPrev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 w-10 h-10 rounded-full bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/20 transition-all shadow-md z-10"
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center text-foreground hover:bg-muted transition-all shadow-md z-10"
+            aria-label="Previous testimonial"
           >
             <FaChevronLeft size={14} />
           </button>
           <button
             onClick={scrollNext}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 w-10 h-10 rounded-full bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/20 transition-all shadow-md z-10"
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center text-foreground hover:bg-muted transition-all shadow-md z-10"
+            aria-label="Next testimonial"
           >
             <FaChevronRight size={14} />
           </button>

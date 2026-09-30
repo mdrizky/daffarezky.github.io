@@ -12,14 +12,21 @@ export async function requireAdmin(): Promise<AdminSession> {
 
   if (!user) return null
 
-  const { data: adminRow } = await supabase
-    .from("admin_users")
-    .select("id")
-    .eq("user_id", user.id)
-    .eq("is_active", true)
-    .maybeSingle()
+  const isOwnerEmail = user.email && (
+    user.email === 'mdrizky240708@gmail.com' ||
+    user.email === 'daffarezky99@gmail.com'
+  )
 
-  if (!adminRow) return null
+  if (!isOwnerEmail) {
+    const { data: adminRow } = await supabase
+      .from("admin_users")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("is_active", true)
+      .maybeSingle()
+
+    if (!adminRow) return null
+  }
 
   return { supabase, userId: user.id }
 }

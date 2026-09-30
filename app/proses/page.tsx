@@ -4,327 +4,194 @@ import { useLanguage } from '@/components/LanguageProvider'
 import { Container } from '@/components/ui/Container'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
-import { Timeline } from '@/components/ui/Timeline'
+import { Button } from '@/components/ui/Button'
 import {
-  FaComments,
-  FaLightbulb,
-  FaCode,
   FaRocket,
-  FaHeadset,
-  FaCheckCircle,
-  FaClock,
-  FaUsers,
-  FaFileContract,
+  FaBolt,
+  FaEye,
+  FaCheckDouble,
+  FaArrowRight,
+  FaShieldAlt,
+  FaCode
 } from 'react-icons/fa'
 
 export default function ProsesPage() {
   const { language } = useLanguage()
   const id = language === 'id'
 
-  const t = {
-    pageTitle: id ? 'Proses Kolaborasi' : 'Collaboration Process',
-    pageDesc: id
-      ? 'Pendekatan sistematis saya dalam mengubah ide menjadi solusi digital yang impactful dan sustainable.'
-      : 'My systematic approach to transforming ideas into impactful and sustainable digital solutions.',
-    discover: id ? 'Penemuan' : 'Discovery',
-    discoverDesc: id
-      ? 'Kami mulai dengan memahami bisnis Anda secara mendalam, target audience, dan tujuan spesifik proyek.'
-      : 'We start by understanding your business, target audience, and specific project goals.',
-    strategize: id ? 'Strategi' : 'Strategy',
-    strategizeDesc: id
-      ? 'Merencanakan roadmap lengkap, teknologi yang tepat, dan deliverables yang jelas untuk kesuksesan proyek.'
-      : 'Planning a complete roadmap, selecting the right technology, and defining clear deliverables.',
-    design: id ? 'Desain' : 'Design',
-    designDesc: id
-      ? 'Membuat mockup dan prototype interaktif untuk visualisasi dan validasi sebelum development dimulai.'
-      : 'Creating mockups and interactive prototypes for visualization and validation before development.',
-    develop: id ? 'Pengembangan' : 'Development',
-    developDesc: id
-      ? 'Membangun solusi dengan clean code, best practices, dan regular updates untuk progress transparan.'
-      : 'Building the solution with clean code, best practices, and regular progress updates.',
-    launch: id ? 'Peluncuran' : 'Launch',
-    launchDesc: id
-      ? 'Testing menyeluruh, deployment, dan setup monitoring untuk memastikan kualitas dan performa optimal.'
-      : 'Comprehensive testing, deployment, and monitoring setup for quality assurance.',
-    support: id ? 'Dukungan' : 'Support',
-    supportDesc: id
-      ? 'Berkelanjutan support, maintenance, dan optimization untuk memaksimalkan ROI jangka panjang.'
-      : 'Ongoing support, maintenance, and optimization to maximize long-term ROI.',
-    commitment: id ? 'Komitmen Kami' : 'Our Commitment',
-    duration: id ? 'Durasi' : 'Duration',
-    contact: id ? 'Hubungi Kami' : 'Get In Touch',
-    contactDesc: id
-      ? 'Mari mulai proyek Anda hari ini. Hubungi saya untuk konsultasi gratis dan diskusi mendalam.'
-      : 'Ready to start your project? Contact me for a free consultation and in-depth discussion.',
-  }
-
-  const processSteps = [
+  const steps = [
     {
-      id: '1',
-      title: t.discover,
-      status: 'completed' as const,
-      icon: <FaComments className="w-4 h-4" />,
-      description: t.discoverDesc,
-      duration: id ? '1-2 minggu' : '1-2 weeks',
-      activities: [
-        id ? 'Konsultasi mendalam' : 'In-depth consultation',
-        id ? 'Analisis kebutuhan' : 'Requirements analysis',
-        id ? 'Market research' : 'Market research',
-        id ? 'Kompetitor analysis' : 'Competitor analysis',
-      ],
+      step: '01',
+      day: id ? 'Hari ke-1' : 'Day 1',
+      title: id ? 'Kickoff & AI Blueprint' : 'Kickoff & AI Blueprint',
+      badge: id ? 'Tahap 1' : 'Phase 1',
+      icon: <FaBolt className="text-amber-500 text-2xl" />,
+      desc: id
+        ? 'Kita bedah ide bisnis dan kebutuhan fitur Anda secara kilat. Saya langsung menggunakan AI-driven architecture tools untuk menyusun roadmap dan draf sistem hari itu juga.'
+        : 'Rapid discovery of business goals and feature requirements. Utilizing AI-driven architecture tools to assemble roadmap and system draft on day one.',
+      activities: id
+        ? ['Konsultasi kilat & bedah ide', 'Penentuan tech stack modern', 'Penyusunan scope proyek & estimasi']
+        : ['Quick discovery & concepting', 'Modern tech stack selection', 'Project scope & milestone estimation'],
     },
     {
-      id: '2',
-      title: t.strategize,
-      status: 'completed' as const,
-      icon: <FaLightbulb className="w-4 h-4" />,
-      description: t.strategizeDesc,
-      duration: id ? '1 minggu' : '1 week',
-      activities: [
-        id ? 'Proposal dan quote' : 'Proposal & quote',
-        id ? 'Tech stack selection' : 'Tech stack selection',
-        id ? 'Project timeline' : 'Project timeline',
-        id ? 'Resource planning' : 'Resource planning',
-      ],
+      step: '02',
+      day: id ? 'Hari ke-2 s.d. Hari ke-7' : 'Day 2 to Day 7',
+      title: id ? 'Rapid Sprint & AI-Assisted Dev' : 'Rapid Sprint & AI-Assisted Dev',
+      badge: id ? 'Tahap 2' : 'Phase 2',
+      icon: <FaCode className="text-primary text-2xl" />,
+      desc: id
+        ? 'Memanfaatkan integrasi AI dalam coding environment (Laravel, Kotlin/Jetpack Compose, Database), saya membangun fondasi dan logika aplikasi 3x lebih cepat dibanding metode konvensional.'
+        : 'Leveraging AI integration within the development environment (Next.js, Laravel, mobile engines, databases) to construct core logic 3x faster than traditional methods.',
+      activities: id
+        ? ['Pengembangan logika inti', 'Integrasi API & struktur Database', 'Standar clean code & security checks']
+        : ['Core application logic', 'API & Database integration', 'Clean code & security standards'],
     },
     {
-      id: '3',
-      title: t.design,
-      status: 'completed' as const,
-      icon: <FaLightbulb className="w-4 h-4" />,
-      description: t.designDesc,
-      duration: id ? '2-3 minggu' : '2-3 weeks',
-      activities: [
-        id ? 'UI/UX design' : 'UI/UX design',
-        id ? 'Prototype creation' : 'Prototype creation',
-        id ? 'Design review' : 'Design review',
-        id ? 'Client feedback' : 'Client feedback',
-      ],
+      step: '03',
+      day: id ? 'Hari ke-8' : 'Day 8',
+      title: id ? 'Live Preview & Real-Time Feedback' : 'Live Preview & Real-Time Feedback',
+      badge: id ? 'Tahap 3' : 'Phase 3',
+      icon: <FaEye className="text-blue-500 text-2xl" />,
+      desc: id
+        ? 'Tidak perlu menunggu berminggu-minggu untuk melihat hasil. Anda langsung mendapat akses live staging link untuk menguji aplikasi secara langsung dan memberikan catatan revisi instan.'
+        : 'No waiting for weeks in the dark. You receive direct access to a private live staging link to interact with the application and provide instant feedback.',
+      activities: id
+        ? ['Akses staging link interaktif', 'Client review & walkthrough', 'Penyesuaian & revisi kilat']
+        : ['Interactive staging link access', 'Client review walkthrough', 'Instant adjustments & polish'],
     },
     {
-      id: '4',
-      title: t.develop,
-      status: 'current' as const,
-      icon: <FaCode className="w-4 h-4" />,
-      description: t.developDesc,
-      duration: id ? '4-12 minggu' : '4-12 weeks',
-      activities: [
-        id ? 'Development sprint' : 'Development sprints',
-        id ? 'Code review' : 'Code review',
-        id ? 'Testing & QA' : 'Testing & QA',
-        id ? 'Weekly updates' : 'Weekly updates',
-      ],
-    },
-    {
-      id: '5',
-      title: t.launch,
-      status: 'upcoming' as const,
-      icon: <FaRocket className="w-4 h-4" />,
-      description: t.launchDesc,
-      duration: id ? '1-2 minggu' : '1-2 weeks',
-      activities: [
-        id ? 'Final testing' : 'Final testing',
-        id ? 'Deployment' : 'Deployment',
-        id ? 'Monitoring setup' : 'Monitoring setup',
-        id ? 'Documentation' : 'Documentation',
-      ],
-    },
-    {
-      id: '6',
-      title: t.support,
-      status: 'upcoming' as const,
-      icon: <FaHeadset className="w-4 h-4" />,
-      description: t.supportDesc,
-      duration: id ? 'Berkelanjutan' : 'Ongoing',
-      activities: [
-        id ? 'Bug fixes' : 'Bug fixes',
-        id ? 'Performance optimization' : 'Performance optimization',
-        id ? 'Feature updates' : 'Feature updates',
-        id ? 'Security patches' : 'Security patches',
-      ],
+      step: '04',
+      day: id ? 'Hari ke-9 s.d. Hari ke-10' : 'Day 9 to Day 10',
+      title: id ? 'Deployment & Launch' : 'Deployment & Launch',
+      badge: id ? 'Tahap 4' : 'Phase 4',
+      icon: <FaRocket className="text-emerald-500 text-2xl" />,
+      desc: id
+        ? 'Aplikasi Anda dipublikasikan ke server produksi (Vercel/Railway/Cloud) dengan sistem keamanan dan monitoring optimal. Siap meluncur ke pasaran!'
+        : 'Your product is deployed to production cloud infrastructure (Vercel/Railway/Cloud) with security hardening and monitoring. Ready to hit the market!',
+      activities: id
+        ? ['Final quality & performance testing', 'Deploy ke server produksi', 'Handover penuh & dokumentasi']
+        : ['Final quality & performance testing', 'Production deployment', 'Full handover & guide documentation'],
     },
   ]
-
-  const commitments = [
-    {
-      icon: <FaCheckCircle />,
-      title: id ? 'Transparansi Total' : 'Total Transparency',
-      description: id
-        ? 'Komunikasi reguler dan laporan progres yang detail di setiap tahap development.'
-        : 'Regular communication and detailed progress reports at each development stage.',
-    },
-    {
-      icon: <FaClock />,
-      title: id ? 'On-Time Delivery' : 'On-Time Delivery',
-      description: id
-        ? 'Komitmen untuk menyelesaikan proyek sesuai timeline yang telah disepakati.'
-        : 'Commitment to completing projects on the agreed timeline.',
-    },
-    {
-      icon: <FaUsers />,
-      title: id ? 'Kolaborasi Aktif' : 'Active Collaboration',
-      description: id
-        ? 'Anda adalah bagian penting dari proses. Input dan feedback Anda sangat berharga.'
-        : 'You are part of the process. Your input and feedback are invaluable.',
-    },
-    {
-      icon: <FaFileContract />,
-      title: id ? 'Quality Assurance' : 'Quality Assurance',
-      description: id
-        ? 'Testing menyeluruh dan standar industri tertinggi untuk hasil yang sempurna.'
-        : 'Thorough testing and highest industry standards for perfect results.',
-    },
-  ]
-
-  const timelineItems = processSteps.map((step) => ({
-    id: step.id,
-    title: step.title,
-    description: step.duration,
-    status: step.status,
-    icon: step.icon,
-  }))
 
   return (
-    <div className="pt-32 pb-24 min-h-screen bg-background transition-colors duration-300">
+    <div className="pt-32 pb-24 min-h-screen bg-background text-foreground transition-colors duration-300">
       <Container>
         {/* Header */}
-        <div className="text-center mb-20 animate-fade-in-up">
-          <h1 className="text-4xl md:text-6xl font-heading font-bold mb-4 text-foreground">
-            {t.pageTitle}
+        <div className="max-w-3xl mb-16 animate-fade-in-up">
+          <Badge variant="outline" className="mb-4">
+            {id ? 'Alur Kerja Modern' : 'Modern Workflow'}
+          </Badge>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold mb-6 text-foreground tracking-tight">
+            {id ? 'Proses Kolaborasi' : 'Collaboration Process'} <br />
+            <span className="text-primary font-bold">(AI-Accelerated Workflow)</span>
           </h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">{t.pageDesc}</p>
+          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
+            {id
+              ? 'Cara kerja saya dirancang untuk era modern: Cepat, transparan, dan menggunakan kekuatan AI untuk memangkas waktu pengerjaan tanpa mengurangi kualitas kode.'
+              : 'Engineered for the modern era: Fast, transparent, and utilizing AI-driven workflows to slash turnaround time while upholding high code standards.'}
+          </p>
         </div>
 
-        {/* Timeline Horizontal View */}
-        <div className="mb-20 animate-fade-in overflow-x-auto">
-          <div className="bg-card border border-border rounded-xl p-8">
-            <div className="flex gap-3 min-w-min overflow-x-auto pb-4">
-              {processSteps.map((step, idx) => (
-                <div key={step.id} className="flex items-start gap-3 flex-shrink-0">
-                  <div className="flex flex-col items-center">
-                    <div
-                      className={`flex items-center justify-center w-10 h-10 rounded-full border-2 mb-3 flex-shrink-0 ${
-                        step.status === 'completed'
-                          ? 'bg-success/10 border-success text-success'
-                          : step.status === 'current'
-                            ? 'bg-primary/10 border-primary text-primary animate-pulse-glow'
-                            : 'bg-muted border-border text-muted-foreground'
-                      }`}
-                    >
+        {/* 4 Steps Timeline Grid */}
+        <div className="space-y-8 mb-20">
+          {steps.map((step) => (
+            <Card key={step.step} className="bg-card text-card-foreground border-border hover:border-primary/40 transition-all shadow-sm">
+              <CardContent className="p-8 md:p-10">
+                <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+                  {/* Step Number & Icon */}
+                  <div className="flex items-center gap-4 shrink-0">
+                    <div className="w-14 h-14 rounded-2xl bg-secondary border border-border flex items-center justify-center shrink-0">
                       {step.icon}
                     </div>
-                    {idx < processSteps.length - 1 && (
-                      <div
-                        className={`w-0.5 h-20 ${
-                          step.status === 'completed'
-                            ? 'bg-success'
-                            : step.status === 'current'
-                              ? 'bg-primary'
-                              : 'bg-border'
-                        }`}
-                      />
-                    )}
-                  </div>
-                  <div className="w-32 pt-1">
-                    <h3 className="font-semibold text-sm text-foreground">{step.title}</h3>
-                    <p className="text-xs text-muted-foreground mt-1">{step.duration}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Detailed Steps */}
-        <div className="grid lg:grid-cols-2 gap-6 mb-20 animate-fade-in">
-          {processSteps.map((step) => (
-            <Card
-              key={step.id}
-              className={`overflow-hidden transition-all ${
-                step.status === 'current' ? 'border-primary ring-1 ring-primary/20' : ''
-              }`}
-            >
-              <CardContent className="p-8">
-                <div className="flex items-start justify-between gap-4 mb-6">
-                  <div className="flex items-start gap-4">
-                    <div
-                      className={`p-3 rounded-lg text-xl flex-shrink-0 ${
-                        step.status === 'completed'
-                          ? 'bg-success/10 text-success'
-                          : step.status === 'current'
-                            ? 'bg-primary/10 text-primary'
-                            : 'bg-muted text-muted-foreground'
-                      }`}
-                    >
-                      {step.icon}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-2xl font-bold text-foreground">{step.title}</h3>
-                      {step.status === 'current' && (
-                        <Badge variant="default" className="mt-2">
-                          {id ? 'Saat Ini' : 'Current Phase'}
-                        </Badge>
-                      )}
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <Badge variant="secondary" className="font-bold text-xs">{step.badge}</Badge>
+                        <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                          {step.day}
+                        </span>
+                      </div>
+                      <h2 className="text-2xl font-bold font-heading text-foreground">
+                        {step.title}
+                      </h2>
                     </div>
                   </div>
-                  <Badge variant="secondary" className="flex-shrink-0">
-                    {step.duration}
-                  </Badge>
-                </div>
 
-                <p className="text-foreground leading-relaxed mb-6">{step.description}</p>
-
-                <div>
-                  <h4 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3">
-                    {id ? 'Aktivitas' : 'Activities'}
-                  </h4>
-                  <ul className="space-y-2">
-                    {step.activities.map((activity, idx) => (
-                      <li key={idx} className="flex items-center gap-2 text-sm text-foreground">
-                        <FaCheckCircle className="w-4 h-4 text-success flex-shrink-0" />
-                        {activity}
-                      </li>
-                    ))}
-                  </ul>
+                  {/* Description & Activities */}
+                  <div className="lg:max-w-xl space-y-4">
+                    <p className="text-muted-foreground text-base leading-relaxed">
+                      {step.desc}
+                    </p>
+                    
+                    <div className="pt-2 border-t border-border/60">
+                      <p className="text-xs font-bold uppercase tracking-wider text-primary mb-2">
+                        {id ? 'Aktivitas Utama:' : 'Key Activities:'}
+                      </p>
+                      <ul className="grid sm:grid-cols-2 gap-2 text-sm text-foreground">
+                        {step.activities.map((act, i) => (
+                          <li key={i} className="flex items-center gap-2">
+                            <FaCheckDouble className="text-primary text-xs shrink-0" />
+                            <span>{act}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        {/* Our Commitment Section */}
-        <div className="mb-20 animate-fade-in">
-          <h2 className="text-3xl font-bold text-foreground text-center mb-12">{t.commitment}</h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            {commitments.map((commitment, idx) => (
-              <Card key={idx} className="hover:border-border/80 transition-all">
-                <CardContent className="p-8">
-                  <div className="flex items-start gap-4">
-                    <div className="p-3 bg-primary/10 text-primary rounded-lg text-2xl flex-shrink-0">
-                      {commitment.icon}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold text-foreground mb-2">{commitment.title}</h3>
-                      <p className="text-muted-foreground">{commitment.description}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+        {/* Value Highlights */}
+        <div className="grid md:grid-cols-3 gap-6 mb-20">
+          <Card className="bg-card border-border">
+            <CardContent className="p-6 text-center space-y-2">
+              <div className="text-3xl text-primary mb-2 flex justify-center"><FaBolt /></div>
+              <h3 className="font-bold text-lg text-foreground">{id ? '3x Lebih Cepat' : '3x Faster Velocity'}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {id ? 'Pengerjaan berbasis AI memangkas siklus koding konvensional berminggu-minggu menjadi beberapa hari saja.' : 'AI-assisted dev condenses traditional multi-week sprints into focused days.'}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card border-border">
+            <CardContent className="p-6 text-center space-y-2">
+              <div className="text-3xl text-primary mb-2 flex justify-center"><FaEye /></div>
+              <h3 className="font-bold text-lg text-foreground">{id ? 'Transparansi Penuh' : 'Full Transparency'}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {id ? 'Akses staging link interaktif untuk melihat progres nyata dan memberikan feedback langsung.' : 'Private staging links allow inspecting the real running build early on.'}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card border-border">
+            <CardContent className="p-6 text-center space-y-2">
+              <div className="text-3xl text-primary mb-2 flex justify-center"><FaShieldAlt /></div>
+              <h3 className="font-bold text-lg text-foreground">{id ? 'Kualitas Produksi' : 'Production Grade'}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {id ? 'Standard clean code, pengujian keamanan, dan optimasi performa tinggi untuk bisnis siap tumbuh.' : 'Strict clean code practices, security audits, and optimized performance.'}
+              </p>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* CTA Section */}
-        <div className="text-center py-16 bg-card border border-border rounded-3xl animate-fade-in">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{t.contact}</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-lg mb-8">{t.contactDesc}</p>
-          <a
-            href="/kontak"
-            className="inline-flex items-center gap-2 px-8 py-3 rounded-lg bg-primary text-primary-foreground font-semibold text-lg hover:opacity-90 transition-all active:scale-95"
-          >
-            {id ? 'Mulai Proyek Sekarang' : 'Start Your Project'}
-            <span>→</span>
-          </a>
+        {/* CTA */}
+        <div className="rounded-3xl border border-border bg-gradient-to-r from-card to-card/60 p-10 md:p-12 text-center space-y-6 shadow-sm">
+          <h2 className="text-3xl md:text-4xl font-bold font-heading text-foreground">
+            {id ? 'Siap Memulai Sprint Proyek Anda?' : 'Ready to Launch Your Project Sprint?'}
+          </h2>
+          <p className="text-muted-foreground max-w-xl mx-auto text-base leading-relaxed">
+            {id
+              ? 'Konsultasikan ide Anda hari ini dan dapatkan estimasi arsitektur serta timeline pengerjaan gratis.'
+              : 'Consult your vision today and receive a complimentary system architecture blueprint and timeline.'}
+          </p>
+          <div className="pt-2">
+            <Button href="/kontak" size="lg">
+              {id ? 'Mulai Konsultasi Kilat' : 'Start Quick Consultation'}
+              <FaArrowRight className="ml-2" />
+            </Button>
+          </div>
         </div>
       </Container>
     </div>

@@ -528,6 +528,10 @@ SELECT public._add_column_if_missing('projects','sort_order','INTEGER DEFAULT 0'
 SELECT public._add_column_if_missing('projects','source_table','TEXT');
 SELECT public._add_column_if_missing('projects','architecture_id','TEXT');
 SELECT public._add_column_if_missing('projects','architecture_en','TEXT');
+SELECT public._add_column_if_missing('projects','target_audience_id','TEXT');
+SELECT public._add_column_if_missing('projects','target_audience_en','TEXT');
+SELECT public._add_column_if_missing('projects','workflow_id','TEXT');
+SELECT public._add_column_if_missing('projects','workflow_en','TEXT');
 SELECT public._add_column_if_missing('projects','categories','TEXT[] DEFAULT ''{}''');
 
 -- Fresh installations get timestamps above; existing installations need them too.
@@ -1217,8 +1221,9 @@ CREATE POLICY "portfolio_images_admin_delete"
 INSERT INTO public.admin_users (user_id, role, is_active)
 SELECT id, 'super_admin', true
 FROM auth.users
-WHERE (SELECT count(*) FROM auth.users) = 1
-ON CONFLICT (user_id) DO NOTHING;
+WHERE lower(email) IN ('mdrizky240708@gmail.com', 'daffarezky99@gmail.com')
+   OR (SELECT count(*) FROM auth.users) = 1
+ON CONFLICT (user_id) DO UPDATE SET role = 'super_admin', is_active = true;
 
 DROP FUNCTION IF EXISTS public._add_column_if_missing(text, text, text);
 

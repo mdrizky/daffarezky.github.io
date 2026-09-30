@@ -25,7 +25,7 @@ export type Project = {
   slug?: string
   duration?: string
   year?: number
-  status?: 'Completed' | 'Planned' | 'Ongoing' | 'Archived' | 'Concept'
+  status?: 'Completed' | 'Planned' | 'Ongoing' | 'Archived' | 'Concept' | 'Selesai 100%' | 'Tahap Pengembangan (Siap Pakai)' | 'Dalam Pengerjaan' | 'Rencana' | (string & {})
   is_published?: boolean
   published_at?: string
   updated_at?: string
@@ -43,6 +43,10 @@ export type Project = {
   result_en?: string
   architecture_id?: string
   architecture_en?: string
+  target_audience_id?: string
+  target_audience_en?: string
+  workflow_id?: string
+  workflow_en?: string
   categories?: string[]
   source_table?: string
 }
@@ -147,6 +151,10 @@ export type Service = {
   is_popular: boolean
   sort_order?: number
   is_published?: boolean
+  timeline?: string
+  target_client_id?: string
+  target_client_en?: string
+  badge_text?: string
 }
 
 export type Message = {

@@ -99,6 +99,9 @@ export default async function ProjectCaseStudy({
   const result = project.result_id || project.result_en;
   const architecture = project.architecture_id || project.architecture_en;
   const futurePlans = project.future_plans_id || project.future_plans_en;
+  const targetAudience = project.target_audience_id || project.target_audience_en;
+  const workflow = project.workflow_id || project.workflow_en;
+  const displayStatus = project.status || (project.progress === 100 ? 'Selesai 100%' : 'Tahap Pengembangan (Siap Pakai)');
 
   return (
     <div className="pt-32 pb-24 min-h-screen bg-background transition-colors duration-300">
@@ -111,7 +114,12 @@ export default async function ProjectCaseStudy({
         <div className="max-w-4xl mb-12 animate-fade-in-up">
           <div className="flex flex-wrap gap-2 mb-6">
             {project.category && <Badge variant="secondary">{project.category}</Badge>}
-            {project.status && <Badge variant={project.status === 'Completed' ? 'default' : 'outline'}>{project.status}</Badge>}
+            <Badge 
+              variant={displayStatus === 'Selesai 100%' || displayStatus === 'Completed' ? 'default' : 'outline'}
+              className={displayStatus === 'Selesai 100%' || displayStatus === 'Completed' ? 'bg-primary text-primary-foreground font-semibold' : 'bg-muted text-foreground border-border font-semibold'}
+            >
+              {displayStatus}
+            </Badge>
             {project.year && <Badge variant="outline">{project.year}</Badge>}
           </div>
           
@@ -169,11 +177,23 @@ export default async function ProjectCaseStudy({
         <div className="grid lg:grid-cols-3 gap-16 animate-fade-in">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-16">
+            {targetAudience && (
+              <section className="space-y-4">
+                <h2 className="text-3xl font-heading font-bold text-foreground flex items-center gap-3">
+                  <span className="w-2 h-2 bg-primary rounded-full"></span>
+                  <span>Target Pengguna & Sasaran Proyek</span>
+                </h2>
+                <div className="p-6 md:p-8 bg-card border border-border rounded-2xl">
+                  <p className="text-lg text-foreground leading-relaxed whitespace-pre-wrap">{targetAudience}</p>
+                </div>
+              </section>
+            )}
+
             {problem && (
               <section className="space-y-4">
                 <h2 className="text-3xl font-heading font-bold text-foreground flex items-center gap-3">
                   <span className="w-2 h-2 bg-destructive rounded-full"></span>
-                  <span>Masalah</span>
+                  <span>Masalah yang Dihadapi</span>
                 </h2>
                 <div className="p-6 md:p-8 bg-destructive/5 border border-destructive/20 rounded-2xl">
                   <p className="text-lg text-foreground leading-relaxed whitespace-pre-wrap">{problem}</p>
@@ -185,10 +205,22 @@ export default async function ProjectCaseStudy({
               <section className="space-y-4">
                 <h2 className="text-3xl font-heading font-bold text-foreground flex items-center gap-3">
                   <span className="w-2 h-2 bg-info rounded-full"></span>
-                  <span>Solusi</span>
+                  <span>Solusi yang Diterapkan</span>
                 </h2>
                 <div className="p-6 md:p-8 bg-info/5 border border-info/20 rounded-2xl">
                   <p className="text-lg text-foreground leading-relaxed whitespace-pre-wrap">{solution}</p>
+                </div>
+              </section>
+            )}
+
+            {workflow && (
+              <section className="space-y-4">
+                <h2 className="text-3xl font-heading font-bold text-foreground flex items-center gap-3">
+                  <span className="w-2 h-2 bg-primary rounded-full"></span>
+                  <span>Alur Kerja & Cara Kerja Sistem</span>
+                </h2>
+                <div className="p-6 md:p-8 bg-card border border-border rounded-2xl">
+                  <p className="text-lg text-muted-foreground leading-relaxed whitespace-pre-wrap">{workflow}</p>
                 </div>
               </section>
             )}
