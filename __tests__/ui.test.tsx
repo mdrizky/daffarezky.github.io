@@ -11,7 +11,7 @@ describe('UI Design System Components', () => {
     render(<Badge>Frontend</Badge>)
     const badge = screen.getByText('Frontend')
     expect(badge).toBeDefined()
-    expect(badge.className).toContain('rounded-full')
+    expect(badge.className).toContain('bg-primary')
   })
 
   it('renders Button as button element and as link when href is passed', () => {

@@ -18,6 +18,7 @@ import {
   FaCalendarAlt,
   FaExternalLinkAlt,
   FaDownload,
+  FaTimes,
 } from 'react-icons/fa'
 
 type AchievementCategory = 'Competition' | 'Certification' | 'Exhibition' | 'Hackathon' | 'Award' | 'Course' | 'Other'

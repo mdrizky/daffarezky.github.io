@@ -31,7 +31,7 @@ export default function SiteLogo({
     <Link href={href} className={`flex items-center gap-2 group ${className}`}>
       <div
         className="relative flex-shrink-0 rounded-xl overflow-hidden shadow-[0_0_15px_rgba(0,255,136,0.4)] transition-transform group-hover:scale-105"
-        style={{ width: size, height: size }}
+        style={{ width: `${size}px`, height: `${size}px`, maxWidth: `${size}px`, maxHeight: `${size}px`, minWidth: `${size}px`, minHeight: `${size}px`, flexShrink: 0 }}
       >
         <Image
           src={logoUrl}
@@ -40,6 +40,7 @@ export default function SiteLogo({
           className="object-cover"
           sizes={`${size}px`}
           priority
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
       </div>
 

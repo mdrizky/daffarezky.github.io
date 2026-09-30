@@ -14,17 +14,17 @@ export function SectionHeader({
   return (
     <div className={cn('mb-12', align === 'center' ? 'text-center' : 'text-left')}>
       {eyebrow ? (
-        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           {eyebrow}
         </p>
       ) : null}
-      <h2 className="font-heading text-3xl font-bold tracking-tight text-gray-900 dark:text-white md:text-4xl">
+      <h2 className="font-heading text-3xl font-bold tracking-tight text-foreground md:text-4xl">
         {title}
       </h2>
       {description ? (
         <p
           className={cn(
-            'mt-3 text-base text-gray-600 dark:text-gray-400',
+            'mt-3 text-base text-muted-foreground',
             align === 'center' ? 'mx-auto max-w-2xl' : 'max-w-2xl'
           )}
         >

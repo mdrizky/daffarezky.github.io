@@ -1,48 +1,18 @@
-const CACHE_NAME = 'daffa-portfolio-v2';
-const urlsToCache = [
-  '/',
-  '/manifest.json',
-  '/logo.png',
-];
+// Force unregister and clear all stale caches from any prior service worker version
+self.addEventListener('install', () => {
+  self.skipWaiting();
+});
 
-self.addEventListener('install', (event) => {
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(urlsToCache))
-      .then(() => self.skipWaiting())
+    caches.keys()
+      .then((keys) => Promise.all(keys.map((key) => caches.delete(key))))
+      .then(() => self.registration.unregister())
+      .then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', (event) => {
-  const requestUrl = new URL(event.request.url);
-
-  // Never serve stale Next.js documents or build assets from the service worker.
-  if (event.request.mode === 'navigate' || requestUrl.pathname.startsWith('/_next/')) {
-    event.respondWith(fetch(event.request));
-    return;
-  }
-
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        if (response) {
-          return response;
-        }
-        return fetch(event.request);
-      })
-  );
-});
-
-self.addEventListener('activate', (event) => {
-  const cacheWhitelist = [CACHE_NAME];
-  event.waitUntil(
-    caches.keys().then((cacheNames) => Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
-          }
-        })
-      )
-    ).then(() => self.clients.claim())
-  );
+  // Always fetch fresh from network to avoid serving stale HTML/CSS chunks
+  event.respondWith(fetch(event.request));
 });
