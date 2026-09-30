@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
-import { FaArrowLeft, FaSave, FaImage } from 'react-icons/fa'
+import { FaArrowLeft, FaSave, FaImage, FaPlus, FaTrash, FaStar, FaUpload } from 'react-icons/fa'
 
 export default function ProjectForm() {
   const router = useRouter()
@@ -51,6 +51,19 @@ export default function ProjectForm() {
     workflow_id: '',
     workflow_en: '',
   })
+
+  // Multi-image gallery state
+  interface GalleryItem {
+    id?: string;
+    image_url: string;
+    caption_id?: string;
+    caption_en?: string;
+    sort_order?: number;
+  }
+  const [galleryImages, setGalleryImages] = useState<GalleryItem[]>([])
+  const [newGalleryUrl, setNewGalleryUrl] = useState('')
+  const [newGalleryCaption, setNewGalleryCaption] = useState('')
+  const [uploadingGallery, setUploadingGallery] = useState(false)
 
   useEffect(() => {
     if (!isNew) {
@@ -106,6 +119,17 @@ export default function ProjectForm() {
           workflow_en: data.workflow_en || '',
         })
       }
+
+      // Fetch gallery images
+      const { data: galleryData } = await supabase
+        .from('project_images')
+        .select('*')
+        .eq('project_id', id)
+        .order('sort_order', { ascending: true })
+
+      if (galleryData) {
+        setGalleryImages(galleryData)
+      }
     } catch (error) {
       console.error('Error fetching project:', error)
       alert('Gagal mengambil data project')
@@ -154,6 +178,76 @@ export default function ProjectForm() {
     }
   }
 
+  const handleAddGalleryUrl = () => {
+    if (!newGalleryUrl.trim()) return
+    setGalleryImages(prev => [
+      ...prev,
+      {
+        image_url: newGalleryUrl.trim(),
+        caption_id: newGalleryCaption.trim(),
+        caption_en: newGalleryCaption.trim(),
+        sort_order: prev.length
+      }
+    ])
+    setNewGalleryUrl('')
+    setNewGalleryCaption('')
+  }
+
+  const handleMultipleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    try {
+      setUploadingGallery(true)
+      const newItems: GalleryItem[] = []
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        const fileExt = file.name.split('.').pop()
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`
+        const filePath = `projects/gallery/${fileName}`
+
+        const { error: uploadError } = await supabase.storage
+          .from('portfolio-images')
+          .upload(filePath, file)
+
+        if (uploadError) {
+          console.error('Gallery image upload error:', uploadError)
+          continue
+        }
+
+        const { data } = supabase.storage
+          .from('portfolio-images')
+          .getPublicUrl(filePath)
+
+        if (data?.publicUrl) {
+          newItems.push({
+            image_url: data.publicUrl,
+            caption_id: file.name.replace(/\.[^/.]+$/, ""),
+            caption_en: file.name.replace(/\.[^/.]+$/, ""),
+            sort_order: galleryImages.length + newItems.length
+          })
+        }
+      }
+
+      setGalleryImages(prev => [...prev, ...newItems])
+    } catch (error) {
+      console.error('Error uploading gallery images:', error)
+      alert('Gagal mengupload beberapa gambar galeri')
+    } finally {
+      setUploadingGallery(false)
+      e.target.value = ''
+    }
+  }
+
+  const handleRemoveGalleryImage = (index: number) => {
+    setGalleryImages(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const handleSetGalleryAsCover = (imgUrl: string) => {
+    setFormData(prev => ({ ...prev, image_url: imgUrl }))
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
@@ -199,12 +293,37 @@ export default function ProjectForm() {
         workflow_en: formData.workflow_en,
       }
 
+      let savedProjectId = id
       if (isNew) {
-        const { error } = await supabase.from('projects').insert([payload])
+        const { data: inserted, error } = await supabase
+          .from('projects')
+          .insert([payload])
+          .select('id')
+          .single()
         if (error) throw error
+        savedProjectId = inserted.id
       } else {
         const { error } = await supabase.from('projects').update(payload).eq('id', id)
         if (error) throw error
+      }
+
+      // Sync gallery images into project_images table
+      if (savedProjectId) {
+        try {
+          await supabase.from('project_images').delete().eq('project_id', savedProjectId)
+          if (galleryImages.length > 0) {
+            const rows = galleryImages.map((img, idx) => ({
+              project_id: savedProjectId,
+              image_url: img.image_url,
+              caption_id: img.caption_id || '',
+              caption_en: img.caption_en || '',
+              sort_order: idx
+            }))
+            await supabase.from('project_images').insert(rows)
+          }
+        } catch (galleryErr) {
+          console.warn('Could not sync project_images:', galleryErr)
+        }
       }
 
       router.push('/admin/projects')
@@ -359,7 +478,108 @@ export default function ProjectForm() {
             </div>
           </div>
 
-          {/* Detail Tambahan & SEO */}
+          {/* Galeri Banyak Foto Proyek (Carousel / Slider) */}
+          <div className="space-y-4 pt-6 border-t border-gray-200 dark:border-white/10">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                  <span>Galeri Foto Proyek (Multi-Photo Slider)</span>
+                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-semibold">
+                    {galleryImages.length} Foto
+                  </span>
+                </h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                  Foto-foto ini akan tampil di slider/carousel halaman detail project dan bisa digeser ke kanan & ke kiri.
+                </p>
+              </div>
+
+              {/* Upload Multiple Photos Button */}
+              <label className="flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold cursor-pointer shadow transition-all hover:shadow-blue-500/30">
+                <FaUpload />
+                <span>{uploadingGallery ? 'Mengupload...' : '+ Upload Banyak Foto Sekaligus'}</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  disabled={uploadingGallery}
+                  onChange={handleMultipleGalleryUpload}
+                  className="hidden"
+                />
+              </label>
+            </div>
+
+            {/* Quick Add By URL */}
+            <div className="flex flex-col sm:flex-row gap-2 bg-gray-50 dark:bg-black/20 p-3 rounded-xl border border-gray-200 dark:border-white/10">
+              <input
+                type="text"
+                value={newGalleryUrl}
+                onChange={(e) => setNewGalleryUrl(e.target.value)}
+                placeholder="Atau masukkan URL foto baru..."
+                className="flex-1 px-3 py-2 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+              />
+              <input
+                type="text"
+                value={newGalleryCaption}
+                onChange={(e) => setNewGalleryCaption(e.target.value)}
+                placeholder="Keterangan foto (opsional)..."
+                className="sm:w-64 px-3 py-2 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+              />
+              <button
+                type="button"
+                onClick={handleAddGalleryUrl}
+                disabled={!newGalleryUrl.trim()}
+                className="px-4 py-2 bg-gray-900 dark:bg-white text-white dark:text-black font-semibold text-xs rounded-lg hover:opacity-90 transition-all disabled:opacity-40"
+              >
+                + Tambahkan
+              </button>
+            </div>
+
+            {/* Grid of gallery photos */}
+            {galleryImages.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 pt-2">
+                {galleryImages.map((img, idx) => (
+                  <div key={idx} className="relative group bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden p-2 flex flex-col gap-2 shadow-sm">
+                    <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100 dark:bg-black/40">
+                      <img src={img.image_url} alt={img.caption_id || `Foto ${idx + 1}`} className="w-full h-full object-cover" />
+                      <div className="absolute top-1 left-1 bg-black/70 backdrop-blur-xs text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+                        #{idx + 1}
+                      </div>
+                    </div>
+                    <input
+                      type="text"
+                      value={img.caption_id || ''}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setGalleryImages(prev => prev.map((item, i) => i === idx ? { ...item, caption_id: val, caption_en: val } : item));
+                      }}
+                      placeholder="Keterangan..."
+                      className="w-full px-2 py-1 text-xs bg-gray-50 dark:bg-black/30 border border-gray-200 dark:border-white/10 rounded text-gray-900 dark:text-white"
+                    />
+                    <div className="flex items-center justify-between pt-1 border-t border-gray-100 dark:border-white/5 text-[11px]">
+                      <button
+                        type="button"
+                        onClick={() => handleSetGalleryAsCover(img.image_url)}
+                        className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+                      >
+                        <FaStar size={10} /> Cover
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveGalleryImage(idx)}
+                        className="text-red-500 hover:text-red-600 flex items-center gap-1"
+                      >
+                        <FaTrash size={10} /> Hapus
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-6 text-center border-2 border-dashed border-gray-200 dark:border-white/10 rounded-xl text-gray-400 text-xs">
+                Belum ada foto tambahan di galeri. Klik &quot;Upload Banyak Foto&quot; atau paste URL di atas.
+              </div>
+            )}
+          </div>
           <div className="space-y-6 pt-4 border-t border-gray-200 dark:border-white/10">
             <h3 className="text-lg font-bold text-gray-900 dark:text-white">Detail Tambahan & SEO</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

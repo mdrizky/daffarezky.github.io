@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { FaGithub, FaExternalLinkAlt, FaArrowLeft, FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
+import ProjectGallerySlider from "@/components/ProjectGallerySlider";
 
 export const dynamic = "force-dynamic";
 
@@ -103,6 +104,16 @@ export default async function ProjectCaseStudy({
   const workflow = project.workflow_id || project.workflow_en;
   const displayStatus = project.status || (project.progress === 100 ? 'Selesai 100%' : 'Tahap Pengembangan (Siap Pakai)');
 
+  // Collect all images for the slider
+  const rawImages = [
+    ...(project.image_url ? [{ id: 'hero-main', image_url: project.image_url, caption_id: title }] : []),
+    ...images,
+  ];
+  // Deduplicate by image_url
+  const allImages = rawImages.filter((img, idx, arr) => 
+    idx === arr.findIndex((item) => item.image_url === img.image_url)
+  );
+
   return (
     <div className="pt-32 pb-24 min-h-screen bg-background transition-colors duration-300">
       <Container>
@@ -111,7 +122,7 @@ export default async function ProjectCaseStudy({
         </Link>
         
         {/* Case Study Header */}
-        <div className="max-w-4xl mb-12 animate-fade-in-up">
+        <div className="max-w-4xl mb-10 animate-fade-in-up">
           <div className="flex flex-wrap gap-2 mb-6">
             {project.category && <Badge variant="secondary">{project.category}</Badge>}
             <Badge 
@@ -163,73 +174,90 @@ export default async function ProjectCaseStudy({
           </div>
         </div>
 
-        {/* Hero Image */}
-        <div className="relative mb-20 w-full aspect-[21/9] overflow-hidden rounded-3xl border border-border shadow-2xl animate-fade-in group">
-          <Image
-            src={project.image_url || "/og-image.jpg"}
-            alt={title}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-            priority
-          />
-        </div>
+        {/* Hero Interactive Gallery Slider (Geser Kiri / Kanan) */}
+        {allImages.length > 0 ? (
+          <ProjectGallerySlider images={allImages} title={title} />
+        ) : (
+          <div className="relative mb-12 w-full aspect-[21/9] overflow-hidden rounded-3xl border border-border shadow-2xl animate-fade-in group bg-muted flex items-center justify-center">
+            <span className="text-muted-foreground font-medium">Gambar Proyek</span>
+          </div>
+        )}
 
-        <div className="grid lg:grid-cols-3 gap-16 animate-fade-in">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-16">
+        <div className="grid lg:grid-cols-3 gap-12 lg:gap-16 animate-fade-in">
+          {/* Main Content (Left Column) */}
+          <div className="lg:col-span-2 space-y-12">
+            {/* Overview / Deskripsi Lengkap Proyek (Selalu tampil di sisi kiri bawah gambar agar tidak kosong) */}
+            <section className="space-y-4">
+              <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground flex items-center gap-3">
+                <span className="w-2.5 h-2.5 bg-primary rounded-full"></span>
+                <span>Tentang Proyek</span>
+              </h2>
+              <div className="p-6 md:p-8 bg-card border border-border rounded-2xl shadow-sm space-y-4">
+                <p className="text-base md:text-lg text-foreground leading-relaxed whitespace-pre-wrap">
+                  {overview || project.description_id || project.description_en || `${title} adalah solusi digital yang dibangun dengan standar teknologi modern, mengutamakan performa optimal, kemudahan penggunaan, dan arsitektur yang andal.`}
+                </p>
+                {project.category && (
+                  <div className="pt-2 flex items-center gap-2 text-sm text-muted-foreground">
+                    <span className="font-semibold text-foreground">Fokus Kategori:</span>
+                    <span>{project.category}</span>
+                  </div>
+                )}
+              </div>
+            </section>
+
             {targetAudience && (
               <section className="space-y-4">
-                <h2 className="text-3xl font-heading font-bold text-foreground flex items-center gap-3">
-                  <span className="w-2 h-2 bg-primary rounded-full"></span>
+                <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground flex items-center gap-3">
+                  <span className="w-2.5 h-2.5 bg-primary rounded-full"></span>
                   <span>Target Pengguna & Sasaran Proyek</span>
                 </h2>
-                <div className="p-6 md:p-8 bg-card border border-border rounded-2xl">
-                  <p className="text-lg text-foreground leading-relaxed whitespace-pre-wrap">{targetAudience}</p>
+                <div className="p-6 md:p-8 bg-card border border-border rounded-2xl shadow-sm">
+                  <p className="text-base md:text-lg text-foreground leading-relaxed whitespace-pre-wrap">{targetAudience}</p>
                 </div>
               </section>
             )}
 
             {problem && (
               <section className="space-y-4">
-                <h2 className="text-3xl font-heading font-bold text-foreground flex items-center gap-3">
-                  <span className="w-2 h-2 bg-destructive rounded-full"></span>
+                <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground flex items-center gap-3">
+                  <span className="w-2.5 h-2.5 bg-destructive rounded-full"></span>
                   <span>Masalah yang Dihadapi</span>
                 </h2>
                 <div className="p-6 md:p-8 bg-destructive/5 border border-destructive/20 rounded-2xl">
-                  <p className="text-lg text-foreground leading-relaxed whitespace-pre-wrap">{problem}</p>
+                  <p className="text-base md:text-lg text-foreground leading-relaxed whitespace-pre-wrap">{problem}</p>
                 </div>
               </section>
             )}
 
             {solution && (
               <section className="space-y-4">
-                <h2 className="text-3xl font-heading font-bold text-foreground flex items-center gap-3">
-                  <span className="w-2 h-2 bg-info rounded-full"></span>
+                <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground flex items-center gap-3">
+                  <span className="w-2.5 h-2.5 bg-info rounded-full"></span>
                   <span>Solusi yang Diterapkan</span>
                 </h2>
                 <div className="p-6 md:p-8 bg-info/5 border border-info/20 rounded-2xl">
-                  <p className="text-lg text-foreground leading-relaxed whitespace-pre-wrap">{solution}</p>
+                  <p className="text-base md:text-lg text-foreground leading-relaxed whitespace-pre-wrap">{solution}</p>
                 </div>
               </section>
             )}
 
             {workflow && (
               <section className="space-y-4">
-                <h2 className="text-3xl font-heading font-bold text-foreground flex items-center gap-3">
-                  <span className="w-2 h-2 bg-primary rounded-full"></span>
+                <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground flex items-center gap-3">
+                  <span className="w-2.5 h-2.5 bg-primary rounded-full"></span>
                   <span>Alur Kerja & Cara Kerja Sistem</span>
                 </h2>
-                <div className="p-6 md:p-8 bg-card border border-border rounded-2xl">
-                  <p className="text-lg text-muted-foreground leading-relaxed whitespace-pre-wrap">{workflow}</p>
+                <div className="p-6 md:p-8 bg-card border border-border rounded-2xl shadow-sm">
+                  <p className="text-base md:text-lg text-muted-foreground leading-relaxed whitespace-pre-wrap">{workflow}</p>
                 </div>
               </section>
             )}
 
             {architecture && (
               <section className="space-y-4">
-                <h2 className="text-3xl font-heading font-bold text-foreground">Arsitektur Teknis</h2>
-                <div className="p-6 md:p-8 bg-card border border-border rounded-2xl">
-                  <p className="text-lg text-muted-foreground leading-relaxed whitespace-pre-wrap">{architecture}</p>
+                <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground">Arsitektur Teknis</h2>
+                <div className="p-6 md:p-8 bg-card border border-border rounded-2xl shadow-sm">
+                  <p className="text-base md:text-lg text-muted-foreground leading-relaxed whitespace-pre-wrap">{architecture}</p>
                 </div>
               </section>
             )}

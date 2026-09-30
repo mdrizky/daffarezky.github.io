@@ -289,19 +289,17 @@ export default function HomeClient({
         </section>
       )}
 
-      {/* 8. Fitur Kontribusi / Partner Slider (Tepat di bawah "Apa Kata Mereka") */}
-      {partners && partners.length > 0 && (
-        <section className="border-b border-border bg-card/60 py-12 overflow-hidden">
-          <Container>
-            <div className="text-center mb-6">
-              <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                {id ? "Kontribusi & Kolaborasi Perusahaan" : "Company Contributions & Collaborations"}
-              </span>
-            </div>
-            <PartnerSlider partners={partners} language={language} />
-          </Container>
-        </section>
-      )}
+      {/* 8. Fitur Kontribusi / Partner Slider (Tepat di bawah "Apa Kata Mereka", Otomatis Bergeser Sendiri & Hanya Logo) */}
+      <section className="border-b border-border bg-card/40 py-10 overflow-hidden">
+        <Container>
+          <div className="text-center mb-4">
+            <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+              {id ? "Kontribusi & Kolaborasi" : "Contributions & Collaborations"}
+            </span>
+          </div>
+          <PartnerSlider partners={partners} language={language} />
+        </Container>
+      </section>
 
       {/* 9. Blog Terbaru (Hanya maksimal 7 hari terakhir) */}
       {recentPosts.length > 0 && (

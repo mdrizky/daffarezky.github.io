@@ -12,11 +12,12 @@ import {
   SiCanva, SiFigma, SiNotion, SiTrello,
   SiOpenai, SiAnthropic, SiN8N, SiNextdotjs, SiLaravel, SiFlutter
 } from "react-icons/si";
-import { FaBullseye, FaPenNib, FaSearchDollar, FaFilter, FaRobot, FaTools, FaFileDownload } from "react-icons/fa";
+import { FaBullseye, FaPenNib, FaSearchDollar, FaFilter, FaRobot, FaTools } from "react-icons/fa";
 import { Container } from "@/components/ui/Container";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { PageSkeleton } from "@/components/ui/Skeleton";
 import { Button } from "@/components/ui/Button";
+import CertificateCard from "@/components/CertificateCard";
 
 export default function KeahlianPage() {
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -129,35 +130,90 @@ export default function KeahlianPage() {
           ))}
         </div>
 
-        {/* Certificates Section */}
-        {certificates.length > 0 && (
-          <div className="animate-fade-in pt-16 border-t border-border">
-            <SectionHeader title={id ? 'Sertifikasi Profesional' : 'Professional Certifications'} />
-            
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {certificates.map((cert) => (
-                <div key={cert.id} className="bg-card border border-border p-6 rounded-2xl flex flex-col items-center text-center group hover:-translate-y-1 transition-all shadow-sm">
-                  <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center mb-6 text-primary group-hover:scale-110 transition-transform shadow-inner">
-                    <FaFileDownload size={24} />
-                  </div>
-                  <h3 className="font-bold text-lg mb-2 text-foreground leading-tight">
-                    {id ? cert.title_id : cert.title_en}
-                  </h3>
-                  <p className="text-xs text-muted-foreground mb-6 font-medium">
-                    {cert.issuer} • {cert.date_issued}
-                  </p>
-                  <Button 
-                    href={cert.file_url}
-                    variant="outline"
-                    className="mt-auto w-full"
-                  >
-                    {id ? 'Lihat Bukti' : 'View Credential'}
-                  </Button>
+        {/* Certificates Section (Tampilan Sertifikat Realistis seperti Permintaan) */}
+        {(() => {
+          const defaultCerts: Certificate[] = [
+            { 
+              id: "cert-dicoding-1", 
+              title_id: "Dasar-Dasar Literasi Keuangan", 
+              title_en: "Financial Literacy Fundamentals", 
+              issuer: "Dicoding", 
+              file_url: "/assets/certificates/Financial Literacy 101.pdf", 
+              date_issued: "2025" 
+            },
+            { 
+              id: "cert-tasheel-1", 
+              title_id: "Sertifikat Tasheel", 
+              title_en: "Tasheel Certification", 
+              issuer: "Tasheel", 
+              file_url: "/assets/certificates/sertifikat-tasheel.pdf", 
+              date_issued: "2024" 
+            },
+            { 
+              id: "cert-tasheel-2", 
+              title_id: "Surat Rekomendasi Tasheel", 
+              title_en: "Tasheel Recommendation Letter", 
+              issuer: "Tasheel", 
+              file_url: "/assets/certificates/surat-rekomendasi-tasheel.pdf", 
+              date_issued: "2024" 
+            },
+            { 
+              id: "cert-digitalent-1", 
+              title_id: "AI Engineer For Milenial", 
+              title_en: "AI Engineer For Milenial", 
+              issuer: "Digitalent", 
+              file_url: "/assets/certificates/ai-engineer-milenial.pdf", 
+              date_issued: "2024" 
+            },
+            { 
+              id: "cert-digitalent-2", 
+              title_id: "Ethical Hacker For Dummies", 
+              title_en: "Ethical Hacker For Dummies", 
+              issuer: "Digitalent", 
+              file_url: "/assets/certificates/ethical-hacker-dummies.pdf", 
+              date_issued: "2024" 
+            },
+            { 
+              id: "cert-digitalent-3", 
+              title_id: "Pengenalan Produk Digital dan Desain Grafis", 
+              title_en: "Introduction to Digital Products & Graphic Design", 
+              issuer: "Digitalent", 
+              file_url: "/assets/certificates/digital-products-graphic-design.pdf", 
+              date_issued: "2024" 
+            },
+          ];
+
+          const displayCerts = certificates.length > 0 ? certificates : defaultCerts;
+
+          return (
+            <div className="animate-fade-in pt-16 border-t border-border">
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-widest text-primary mb-1 block">
+                    {id ? 'Kompetensi & Lisensi' : 'Credentials & Licensing'}
+                  </span>
+                  <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground">
+                    {id ? 'Sertifikasi Profesional' : 'Professional Certifications'}
+                  </h2>
                 </div>
-              ))}
+                <p className="text-sm text-muted-foreground max-w-md">
+                  {id ? 'Klik pada kartu sertifikat untuk melihat pratinjau lengkap dan dokumen PDF aslinya.' : 'Click on any certificate to view high-res preview and original PDF.'}
+                </p>
+              </div>
+              
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {displayCerts.map((cert) => (
+                  <CertificateCard 
+                    key={cert.id} 
+                    certificate={cert} 
+                    language={language}
+                    category={cert.issuer === 'Dicoding' ? 'Literasi Finansial & Tech' : 'Informatika & Pemrograman'} 
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
       </Container>
     </div>
   );
