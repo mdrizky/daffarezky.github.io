@@ -67,7 +67,7 @@ export default function HomeClient({
         <Container className="grid items-center gap-12 lg:grid-cols-2">
           <div className="order-2 flex flex-col gap-6 lg:order-1 animate-fade-in-up">
             {availability && (
-              <Badge variant="secondary" className="w-fit animate-bounce-subtle">
+              <Badge variant="secondary" className="w-fit">
                 <span className="w-2 h-2 bg-success rounded-full mr-2 inline-block"></span>
                 {availability}
               </Badge>
@@ -94,20 +94,14 @@ export default function HomeClient({
             </div>
           </div>
           <div className="order-1 flex justify-center lg:order-2 lg:justify-end animate-fade-in">
-            <div className="relative aspect-square w-full max-w-md overflow-hidden rounded-3xl border-4 border-border bg-muted shadow-2xl">
-              {profile?.photo_url ? (
-                <Image
-                  src={profile.photo_url}
-                  alt={profile.name || "Daffa"}
-                  fill
-                  className="object-cover hover:scale-105 transition-transform duration-500"
-                  priority
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-                  No Image
-                </div>
-              )}
+            <div className="relative aspect-square w-full max-w-md overflow-hidden rounded-3xl border-2 border-border bg-muted shadow-md">
+              <Image
+                src={profile?.photo_url || "/logo.png"}
+                alt={profile?.name || "Daffa"}
+                fill
+                className="object-cover hover:scale-105 transition-transform duration-500"
+                priority
+              />
             </div>
           </div>
         </Container>
@@ -203,15 +197,13 @@ export default function HomeClient({
               </div>
             </div>
             <div className="order-1 md:order-2 flex justify-center md:justify-end">
-              <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-muted border border-border shadow-lg">
-                {profile?.about_photo_url && (
-                  <Image 
-                    src={profile.about_photo_url} 
-                    alt={id ? "Tentang Saya" : "About me"} 
-                    fill 
-                    className="object-cover hover:scale-105 transition-transform duration-500" 
-                  />
-                )}
+              <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-muted border border-border shadow-md">
+                <Image 
+                  src={profile?.about_photo_url || profile?.photo_url || "/logo.png"} 
+                  alt={id ? "Tentang Saya" : "About me"} 
+                  fill 
+                  className="object-cover hover:scale-105 transition-transform duration-500" 
+                />
               </div>
             </div>
           </div>

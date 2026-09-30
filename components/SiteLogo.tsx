@@ -30,7 +30,7 @@ export default function SiteLogo({
   return (
     <Link href={href} className={`flex items-center gap-2 group ${className}`}>
       <div
-        className="relative flex-shrink-0 rounded-xl overflow-hidden shadow-[0_0_15px_rgba(0,255,136,0.4)] transition-transform group-hover:scale-105"
+        className="relative flex-shrink-0 rounded-xl overflow-hidden border border-border/60 shadow-sm transition-transform group-hover:scale-105"
         style={{ width: `${size}px`, height: `${size}px`, maxWidth: `${size}px`, maxHeight: `${size}px`, minWidth: `${size}px`, minHeight: `${size}px`, flexShrink: 0 }}
       >
         <Image
