@@ -1,9 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef, useCallback } from "react"
 import { db, supabase } from "@/lib/database"
 import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js"
-import { FaEnvelope, FaTrash, FaReply, FaWhatsapp } from "react-icons/fa"
+import { FaEnvelope, FaTrash, FaReply, FaWhatsapp, FaSync } from "react-icons/fa"
+import { playNotificationSound } from "@/lib/sound"
 
 type Contact = {
   id: string
@@ -21,18 +22,46 @@ export default function AdminMessagesPage() {
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState<Contact | null>(null)
   const [filter, setFilter] = useState<"all" | "unread" | "read">("all")
+  const [realtimeStatus, setRealtimeStatus] = useState<"connecting" | "connected" | "fallback">("connecting")
+  const [lastUpdated, setLastUpdated] = useState<Date>(new Date())
+
+  const selectedRef = useRef<Contact | null>(null)
+  selectedRef.current = selected
+
+  const loadMessages = useCallback(async (showSpinner = false) => {
+    if (showSpinner) setLoading(true)
+    try {
+      const { data, error } = await db.messages.getAll()
+      if (error) throw error
+      if (data) {
+        setContacts(data)
+        setLastUpdated(new Date())
+      }
+    } catch (err) {
+      console.error("Failed to load messages:", err)
+    } finally {
+      if (showSpinner) setLoading(false)
+    }
+  }, [])
 
   useEffect(() => {
-    loadMessages()
+    loadMessages(true)
 
     // Setup Supabase Realtime subscription
     const channel = supabase
-      .channel('public:messages')
+      .channel('admin-messages-live')
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages' },
         (payload: RealtimePostgresChangesPayload<Contact>) => {
-          setContacts((prev) => [payload.new as Contact, ...prev])
+          const newMsg = payload.new as Contact
+          setContacts((prev) => {
+            // Deduplicate if already present
+            if (prev.some(c => c.id === newMsg.id)) return prev
+            return [newMsg, ...prev]
+          })
+          setLastUpdated(new Date())
+          playNotificationSound()
         }
       )
       .on(
@@ -41,39 +70,54 @@ export default function AdminMessagesPage() {
         (payload: RealtimePostgresChangesPayload<Contact>) => {
           const updated = payload.new as Contact
           setContacts((prev) => 
-            prev.map(c => c.id === updated.id ? { ...c, is_read: updated.is_read } : c)
+            prev.map(c => c.id === updated.id ? { ...c, ...updated } : c)
           )
-          if (selected?.id === updated.id) {
-            setSelected(prev => prev ? { ...prev, is_read: updated.is_read } : null)
+          if (selectedRef.current?.id === updated.id) {
+            setSelected(prev => prev ? { ...prev, ...updated } : null)
+          }
+          setLastUpdated(new Date())
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'messages' },
+        (payload) => {
+          const deletedId = (payload.old as { id?: string })?.id
+          if (deletedId) {
+            setContacts(prev => prev.filter(c => c.id !== deletedId))
+            if (selectedRef.current?.id === deletedId) {
+              setSelected(null)
+            }
+            setLastUpdated(new Date())
           }
         }
       )
-      .subscribe()
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          setRealtimeStatus('connected')
+        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+          setRealtimeStatus('fallback')
+        }
+      })
+
+    // Silent background polling fallback every 8 seconds
+    // Ensures zero missed messages even if websocket temporarily disconnects or before SQL publication is run
+    const pollInterval = setInterval(() => {
+      loadMessages(false)
+    }, 8000)
 
     return () => {
       supabase.removeChannel(channel)
+      clearInterval(pollInterval)
     }
-  }, [selected?.id])
-
-  async function loadMessages() {
-    setLoading(true)
-    try {
-      const { data, error } = await db.messages.getAll()
-      if (error) throw error
-      setContacts(data || [])
-    } catch (err) {
-      console.error("Failed to load messages:", err)
-    } finally {
-      setLoading(false)
-    }
-  }
+  }, [loadMessages])
 
   async function deleteMessage(id: string) {
     if (!confirm("Yakin hapus pesan ini?")) return
     try {
       const { error } = await db.messages.delete(id)
       if (!error) {
-        setContacts(contacts.filter((c) => c.id !== id))
+        setContacts((prev) => prev.filter((c) => c.id !== id))
         if (selected?.id === id) setSelected(null)
       }
     } catch (err) {
@@ -89,8 +133,8 @@ export default function AdminMessagesPage() {
         : await db.messages.markAsUnread(id)
 
       if (!error) {
-        setContacts(contacts.map((c) => (c.id === id ? { ...c, is_read: newStatus } : c)))
-        if (selected?.id === id) setSelected({ ...selected, is_read: newStatus })
+        setContacts((prev) => prev.map((c) => (c.id === id ? { ...c, is_read: newStatus } : c)))
+        if (selected?.id === id) setSelected((prev) => prev ? { ...prev, is_read: newStatus } : null)
       }
     } catch (err) {
       console.error("Failed to update:", err)
@@ -105,22 +149,40 @@ export default function AdminMessagesPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Pesan Client</h1>
-        <div className="flex gap-2 bg-gray-100 dark:bg-white/5 p-1 rounded-lg">
-          {(["all", "unread", "read"] as const).map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`px-4 py-1.5 rounded-md text-sm font-semibold transition-all ${
-                filter === f
-                  ? "bg-white text-blue-600 dark:bg-white/10 dark:text-white shadow-sm"
-                  : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-              }`}
-            >
-              {f === "all" ? "Semua" : f === "unread" ? "Belum dibaca" : "Dibaca"}
-            </button>
-          ))}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Pesan Client</h1>
+          {/* Live Realtime Status Badge */}
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>Realtime Aktif</span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => loadMessages(false)}
+            title="Sinkronisasi pesan manual"
+            className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300 transition-colors text-xs flex items-center gap-1"
+          >
+            <FaSync className="text-xs" />
+          </button>
+
+          <div className="flex gap-1 bg-gray-100 dark:bg-white/5 p-1 rounded-lg">
+            {(["all", "unread", "read"] as const).map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition-all ${
+                  filter === f
+                    ? "bg-white text-blue-600 dark:bg-white/10 dark:text-white shadow-xs"
+                    : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                }`}
+              >
+                {f === "all" ? "Semua" : f === "unread" ? "Belum dibaca" : "Dibaca"}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

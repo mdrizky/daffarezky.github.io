@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
-import { FaProjectDiagram, FaBlog, FaEnvelope, FaCogs, FaGraduationCap, FaTools, FaUserEdit, FaArrowRight, FaBriefcase } from 'react-icons/fa'
+import { FaProjectDiagram, FaBlog, FaEnvelope, FaCogs, FaGraduationCap, FaTools, FaUserEdit, FaArrowRight, FaBriefcase, FaSync } from 'react-icons/fa'
+import { playNotificationSound } from '@/lib/sound'
 
 type RecentMessage = { id: string; name: string; email?: string; message: string; created_at: string; is_read: boolean }
 
@@ -20,58 +21,10 @@ export default function AdminDashboard() {
   })
   const [recentMessages, setRecentMessages] = useState<RecentMessage[]>([])
   const [loading, setLoading] = useState(true)
+  const [realtimeStatus, setRealtimeStatus] = useState<"connecting" | "connected" | "fallback">("connecting")
 
-  useEffect(() => {
-    fetchDashboardData()
-
-    // Setup Supabase Realtime for Messages
-    const channel = supabase
-      .channel('public:messages')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'messages' },
-        (payload) => {
-          // Update stats count
-          setStats(prev => ({
-            ...prev,
-            messages: prev.messages + 1
-          }))
-          // Update recent messages
-          setRecentMessages(prev => {
-            const newArray = [payload.new as RecentMessage, ...prev]
-            return newArray.slice(0, 5) // keep only 5
-          })
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'messages' },
-        (payload) => {
-          // If a message was marked as read/unread, update the count accordingly.
-          // Note: The stats count currently tracks total UNREAD messages.
-          // Wait, actually the fetchDashboardData counts unread messages: .eq('is_read', false)
-          const wasUnread = payload.old?.is_read === false
-          const isNowUnread = payload.new.is_read === false
-
-          if (wasUnread && !isNowUnread) {
-            setStats(prev => ({ ...prev, messages: Math.max(0, prev.messages - 1) }))
-          } else if (!wasUnread && isNowUnread) {
-            setStats(prev => ({ ...prev, messages: prev.messages + 1 }))
-          }
-
-          setRecentMessages(prev => 
-            prev.map(msg => msg.id === payload.new.id ? { ...msg, is_read: payload.new.is_read } : msg)
-          )
-        }
-      )
-      .subscribe()
-
-    return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [])
-
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async (showSpinner = false) => {
+    if (showSpinner) setLoading(true)
     try {
       const [projectsRes, blogsRes, messagesRes, servicesRes, skillsRes, educationRes, learning_journeyRes, certificatesRes] = await Promise.all([
         supabase.from('projects').select('*', { count: 'exact', head: true }),
@@ -97,19 +50,90 @@ export default function AdminDashboard() {
 
       const { data: messagesData } = await supabase
         .from('messages')
-        .select('*')
+        .select('id, name, email, message, created_at, is_read')
         .order('created_at', { ascending: false })
         .limit(5)
 
       if (messagesData) {
         setRecentMessages(messagesData)
       }
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error)
+    } catch (err) {
+      console.error('Error fetching dashboard data:', err)
     } finally {
-      setLoading(false)
+      if (showSpinner) setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchDashboardData(true)
+
+    // Setup Supabase Realtime for Messages & Dashboard
+    const channel = supabase
+      .channel('admin-dashboard-live')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'messages' },
+        (payload) => {
+          const newMsg = payload.new as RecentMessage
+          setStats(prev => ({
+            ...prev,
+            messages: prev.messages + 1
+          }))
+          setRecentMessages(prev => {
+            if (prev.some(m => m.id === newMsg.id)) return prev
+            const newArray = [newMsg, ...prev]
+            return newArray.slice(0, 5)
+          })
+          playNotificationSound()
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'messages' },
+        (payload) => {
+          const wasUnread = payload.old?.is_read === false
+          const isNowUnread = payload.new?.is_read === false
+
+          if (wasUnread && !isNowUnread) {
+            setStats(prev => ({ ...prev, messages: Math.max(0, prev.messages - 1) }))
+          } else if (!wasUnread && isNowUnread) {
+            setStats(prev => ({ ...prev, messages: prev.messages + 1 }))
+          }
+
+          setRecentMessages(prev => 
+            prev.map(msg => msg.id === payload.new.id ? { ...msg, ...payload.new } : msg)
+          )
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'messages' },
+        (payload) => {
+          const deletedId = (payload.old as { id?: string })?.id
+          if (deletedId) {
+            setRecentMessages(prev => prev.filter(msg => msg.id !== deletedId))
+            fetchDashboardData(false)
+          }
+        }
+      )
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          setRealtimeStatus('connected')
+        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+          setRealtimeStatus('fallback')
+        }
+      })
+
+    // Silent background polling fallback every 10 seconds
+    const pollInterval = setInterval(() => {
+      fetchDashboardData(false)
+    }, 10000)
+
+    return () => {
+      supabase.removeChannel(channel)
+      clearInterval(pollInterval)
+    }
+  }, [fetchDashboardData])
 
   const statCards = [
     { title: 'Portfolio', value: stats.projects, icon: FaProjectDiagram, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-500/10', border: 'border-blue-200 dark:border-blue-500/20', href: '/admin/projects' },
@@ -130,9 +154,26 @@ export default function AdminDashboard() {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold font-syne text-gray-900 dark:text-white">Dashboard Overview</h1>
-        <p className="text-gray-500 dark:text-gray-400 mt-1">Selamat datang di panel admin. Berikut ringkasan data terbaru Anda.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div>
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold font-syne text-gray-900 dark:text-white">Dashboard Overview</h1>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Realtime Live</span>
+            </div>
+          </div>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">Selamat datang di panel admin. Data dan pesan baru tersinkronisasi secara otomatis.</p>
+        </div>
+
+        <button
+          onClick={() => fetchDashboardData(false)}
+          title="Segarkan data sekarang"
+          className="self-start sm:self-auto px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300 transition-colors text-xs font-semibold flex items-center gap-2"
+        >
+          <FaSync className="text-xs" />
+          <span>Sync Data</span>
+        </button>
       </div>
 
       {/* Stats Grid */}

@@ -888,6 +888,8 @@ AS $$
     FROM public.admin_users au
     WHERE au.user_id = auth.uid()
       AND au.is_active = true
+  ) OR (
+    auth.jwt() ->> 'email' IN ('mdrizky240708@gmail.com', 'daffarezky99@gmail.com')
   );
 $$;
 
@@ -907,6 +909,8 @@ AS $$
     WHERE au.user_id = auth.uid()
       AND au.is_active = true
       AND au.role = 'super_admin'
+  ) OR (
+    auth.jwt() ->> 'email' IN ('mdrizky240708@gmail.com', 'daffarezky99@gmail.com')
   );
 $$;
 
@@ -1225,7 +1229,59 @@ WHERE lower(email) IN ('mdrizky240708@gmail.com', 'daffarezky99@gmail.com')
    OR (SELECT count(*) FROM auth.users) = 1
 ON CONFLICT (user_id) DO UPDATE SET role = 'super_admin', is_active = true;
 
+
 DROP FUNCTION IF EXISTS public._add_column_if_missing(text, text, text);
+
+-- =============================================================================
+-- SUPABASE REALTIME — Enable real-time notifications for key tables
+-- =============================================================================
+-- The `supabase_realtime` publication is what powers Supabase Realtime.
+-- We need to add tables to it so that INSERT/UPDATE/DELETE events are broadcast.
+
+-- First, ensure the publication exists (it should in any Supabase project)
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'supabase_realtime') THEN
+    CREATE PUBLICATION supabase_realtime;
+  END IF;
+END $$;
+
+-- Set REPLICA IDENTITY FULL for tables with realtime updates
+ALTER TABLE public.messages REPLICA IDENTITY FULL;
+ALTER TABLE public.projects REPLICA IDENTITY FULL;
+ALTER TABLE public.blog_posts REPLICA IDENTITY FULL;
+ALTER TABLE public.testimonials REPLICA IDENTITY FULL;
+ALTER TABLE public.guestbook REPLICA IDENTITY FULL;
+
+-- Add tables to realtime publication safely (idempotent, won't error if already added)
+DO $$
+BEGIN
+  BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.messages;
+  EXCEPTION WHEN duplicate_object THEN
+    NULL;
+  END;
+  BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.projects;
+  EXCEPTION WHEN duplicate_object THEN
+    NULL;
+  END;
+  BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.blog_posts;
+  EXCEPTION WHEN duplicate_object THEN
+    NULL;
+  END;
+  BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.testimonials;
+  EXCEPTION WHEN duplicate_object THEN
+    NULL;
+  END;
+  BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.guestbook;
+  EXCEPTION WHEN duplicate_object THEN
+    NULL;
+  END;
+END $$;
 
 -- =============================================================================
 -- END OF FINAL DATABASE SETUP

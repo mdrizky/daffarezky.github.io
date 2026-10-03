@@ -77,7 +77,7 @@ export default function HomeClient({
               {profile?.name || "Muhammad Daffa Rezky Adyra"} — {title}
             </p>
 
-            <h1 className="font-heading text-3xl font-bold leading-tight text-foreground md:text-5xl lg:text-5xl max-w-2xl">
+            <h1 className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-[40px] font-bold leading-tight text-foreground max-w-2xl">
               {id
                 ? "Membangun identitas digital profesional dan terpercaya."
                 : "Building professional and trustworthy digital identities."}
@@ -119,7 +119,7 @@ export default function HomeClient({
 
           {/* Right Column - Appropriately Sized Photo */}
           <div className="order-1 flex justify-center lg:order-2 lg:col-span-5 lg:justify-end animate-fade-in">
-            <div className="relative aspect-square w-full max-w-[260px] sm:max-w-[290px] md:max-w-[320px] overflow-hidden rounded-2xl border-2 border-border bg-muted shadow-md">
+            <div className="relative aspect-square w-full max-w-[210px] sm:max-w-[240px] md:max-w-[260px] lg:max-w-[280px] overflow-hidden rounded-2xl border-2 border-border bg-muted shadow-md">
               <Image
                 src={profile?.photo_url || "/logo.png"}
                 alt={profile?.name || "Daffa Rizky"}

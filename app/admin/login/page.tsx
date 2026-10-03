@@ -70,9 +70,8 @@ export default function AdminLogin() {
 
       setIsSuccess(true)
       setTimeout(() => {
-        router.refresh()
-        router.push('/admin')
-      }, 1200)
+        window.location.href = '/admin'
+      }, 1000)
     } catch (err: unknown) {
       console.error('Login error:', err)
       setError((err instanceof Error ? err.message : null) || 'Login gagal. Periksa kembali email dan password Anda.')
