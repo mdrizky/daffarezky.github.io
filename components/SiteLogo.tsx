@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 interface SiteLogoProps {
   /** Size of the logo container in pixels (default: 40) */
@@ -23,9 +25,30 @@ export default function SiteLogo({
   className = "",
   textSize = "text-xl",
 }: SiteLogoProps) {
-  const name = "Daffa Rizky";
-  // Cache busting version - increment this number when logo changes
-  const logoUrl = "/logo.png?v=3";
+  const [logoUrl, setLogoUrl] = useState("/logo.png");
+  const [name, setName] = useState("Daffa Rizky");
+
+  useEffect(() => {
+    const fetchLogo = async () => {
+      try {
+        const { data } = await supabase
+          .from("profile")
+          .select("logo_url, name")
+          .limit(1)
+          .single();
+
+        if (data?.logo_url) {
+          setLogoUrl(data.logo_url);
+        }
+        if (data?.name) {
+          setName(data.name);
+        }
+      } catch {
+        // Fallback to default logo
+      }
+    };
+    fetchLogo();
+  }, []);
 
   return (
     <Link href={href} className={`flex items-center gap-2 group ${className}`}>

@@ -1,10 +1,36 @@
 "use client";
 
 import { FaWhatsapp } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 export default function FloatingWA() {
+  const [waNumber, setWaNumber] = useState("6281374936621");
+
+  useEffect(() => {
+    const fetchWA = async () => {
+      try {
+        const { data } = await supabase
+          .from("profile")
+          .select("wa")
+          .limit(1)
+          .single();
+
+        if (data?.wa) {
+          // Normalize: strip +, spaces, dashes
+          const normalized = data.wa.replace(/[\s\-\+]/g, "");
+          // Ensure it starts with country code (e.g. 62 for Indonesia)
+          setWaNumber(normalized.startsWith("0") ? `62${normalized.slice(1)}` : normalized);
+        }
+      } catch {
+        // Fallback to default
+      }
+    };
+    fetchWA();
+  }, []);
+
   const message = encodeURIComponent("Halo Daffa, saya ingin konsultasi");
-  const waUrl = `https://wa.me/6281374936621?text=${message}`;
+  const waUrl = `https://wa.me/${waNumber}?text=${message}`;
 
   return (
     <a

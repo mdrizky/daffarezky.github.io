@@ -71,7 +71,7 @@ export default function AdminFocusAreas() {
           <p className="text-gray-500 dark:text-gray-400 mt-1">Area fokus pengembangan saat ini di halaman Tentang.</p>
         </div>
         <button
-          onClick={() => setEditingItem({ title_id: '', title_en: '', description_id: '', description_en: '', icon: 'layer-group', sort_order: items.length + 1 })}
+          onClick={() => setEditingItem({ title_id: '', title_en: '', description_id: '', description_en: '', icon: 'layer-group', sort_order: items.length + 1, is_published: true })}
           className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all shadow-lg"
         >
           <FaPlus /> Tambah Fokus
@@ -138,6 +138,19 @@ export default function AdminFocusAreas() {
                   <label className="text-sm font-semibold">Urutan</label>
                   <input type="number" value={editingItem.sort_order} onChange={e => setEditingItem({...editingItem, sort_order: parseInt(e.target.value)})} className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl" />
                 </div>
+              </div>
+
+              <div className="flex items-center gap-3 pt-2">
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={editingItem.is_published ?? true}
+                    onChange={e => setEditingItem({...editingItem, is_published: e.target.checked})}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-gray-200 dark:bg-white/10 peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                  <span className="ml-3 text-sm font-semibold text-gray-700 dark:text-gray-300">Tampilkan di website</span>
+                </label>
               </div>
 
               <button type="submit" disabled={saving} className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-all">
