@@ -2,30 +2,37 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { FaPlus, FaEdit, FaTrash, FaCertificate, FaImage, FaFilePdf } from 'react-icons/fa'
+import { FaPlus, FaEdit, FaTrash, FaCertificate, FaImage, FaFilePdf, FaCheck, FaTimes, FaCloudUploadAlt } from 'react-icons/fa'
 import type { Certificate } from '@/types'
 
 export default function AdminCertificates() {
   const [items, setItems] = useState<Certificate[]>([])
   const [loading, setLoading] = useState(true)
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const [uploadingPdf, setUploadingPdf] = useState(false)
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<Certificate | null>(null)
-  const [formData, setFormData] = useState({
+  
+  const initialForm = {
     title_id: '',
     title_en: '',
     issuer: '',
+    image_url: '',
     file_url: '',
-    date_issued: ''
-  })
+    date_issued: '',
+    description_id: '',
+    is_published: true
+  }
+  const [formData, setFormData] = useState(initialForm)
 
   useEffect(() => {
-    const raf = requestAnimationFrame(() => fetchItems())
-    return () => cancelAnimationFrame(raf)
+    fetchItems()
   }, [])
 
   async function fetchItems() {
     try {
+      setLoading(true)
       const { data, error } = await supabase
         .from('certificates')
         .select('*')
@@ -47,25 +54,64 @@ export default function AdminCertificates() {
       const { error } = await supabase.from('certificates').delete().eq('id', id)
       if (error) throw error
       setItems(items.filter((item) => item.id !== id))
-    } catch (error) {
+      alert('Sertifikat berhasil dihapus!')
+    } catch (error: unknown) {
+      const errorMsg = error instanceof Error ? error.message : JSON.stringify(error)
       console.error('Error deleting item:', error)
-      alert('Gagal menghapus item')
+      alert(`Gagal menghapus sertifikat: ${errorMsg}`)
     }
   }
 
+  // Upload preview image (PNG/JPG/SVG/WEBP)
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
+    setUploadingImage(true)
     try {
-      setLoading(true)
-      const fileExt = file.name.split('.').pop()
-      const fileName = `cert-${Math.random()}.${fileExt}`
-      const filePath = `certificates/${fileName}`
+      const fileExt = file.name.split('.').pop() || 'png'
+      const fileName = `cert-img-${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${fileExt}`
+      const filePath = `general/${fileName}`
 
       const { error: uploadError } = await supabase.storage
         .from('portfolio-images')
-        .upload(filePath, file)
+        .upload(filePath, file, { upsert: true })
+
+      if (uploadError) throw uploadError
+
+      const { data } = supabase.storage
+        .from('portfolio-images')
+        .getPublicUrl(filePath)
+
+      setFormData(prev => ({ 
+        ...prev, 
+        image_url: data.publicUrl,
+        file_url: prev.file_url || data.publicUrl 
+      }))
+    } catch (error: unknown) {
+      const errorMsg = error instanceof Error ? error.message : JSON.stringify(error)
+      console.error('Error uploading image:', error)
+      alert(`Gagal mengupload gambar pratinjau: ${errorMsg}`)
+    } finally {
+      setUploadingImage(false)
+      e.target.value = ''
+    }
+  }
+
+  // Upload PDF document
+  const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploadingPdf(true)
+    try {
+      const fileExt = file.name.split('.').pop() || 'pdf'
+      const fileName = `cert-doc-${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${fileExt}`
+      const filePath = `general/${fileName}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('portfolio-images')
+        .upload(filePath, file, { upsert: true })
 
       if (uploadError) throw uploadError
 
@@ -74,39 +120,58 @@ export default function AdminCertificates() {
         .getPublicUrl(filePath)
 
       setFormData(prev => ({ ...prev, file_url: data.publicUrl }))
-    } catch (error) {
-      console.error('Error uploading image:', error)
-      alert('Gagal mengupload file')
+    } catch (error: unknown) {
+      const errorMsg = error instanceof Error ? error.message : JSON.stringify(error)
+      console.error('Error uploading document:', error)
+      alert(`Gagal mengupload dokumen: ${errorMsg}`)
     } finally {
-      setLoading(false)
+      setUploadingPdf(false)
+      e.target.value = ''
     }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
+    if (!formData.title_id?.trim() || !formData.issuer?.trim()) {
+      alert('Judul sertifikat dan penerbit wajib diisi!')
+      return
+    }
 
+    setLoading(true)
     try {
+      const payload = {
+        title_id: formData.title_id.trim(),
+        title_en: formData.title_en?.trim() || formData.title_id.trim(),
+        issuer: formData.issuer.trim(),
+        image_url: formData.image_url?.trim() || null,
+        file_url: formData.file_url?.trim() || formData.image_url?.trim() || '',
+        date_issued: formData.date_issued?.trim() || '2025',
+        description_id: formData.description_id?.trim() || null,
+        is_published: formData.is_published ?? true
+      }
+
       if (editingItem) {
         const { error } = await supabase
           .from('certificates')
-          .update(formData)
+          .update(payload)
           .eq('id', editingItem.id)
         if (error) throw error
       } else {
         const { error } = await supabase
           .from('certificates')
-          .insert([formData])
+          .insert([payload])
         if (error) throw error
       }
 
       setIsModalOpen(false)
       setEditingItem(null)
-      setFormData({ title_id: '', title_en: '', issuer: '', file_url: '', date_issued: '' })
-      fetchItems()
-    } catch (error) {
+      setFormData(initialForm)
+      await fetchItems()
+      alert('Sertifikat berhasil disimpan!')
+    } catch (error: unknown) {
+      const errorMsg = error instanceof Error ? error.message : JSON.stringify(error)
       console.error('Error saving item:', error)
-      alert('Gagal menyimpan data')
+      alert(`Gagal menyimpan sertifikat:\n${errorMsg}`)
     } finally {
       setLoading(false)
     }
@@ -115,11 +180,14 @@ export default function AdminCertificates() {
   const openEdit = (item: Certificate) => {
     setEditingItem(item)
     setFormData({
-      title_id: item.title_id,
-      title_en: item.title_en,
-      issuer: item.issuer,
-      file_url: item.file_url,
-      date_issued: item.date_issued
+      title_id: item.title_id || '',
+      title_en: item.title_en || '',
+      issuer: item.issuer || '',
+      image_url: item.image_url || '',
+      file_url: item.file_url || '',
+      date_issued: item.date_issued || '',
+      description_id: (item as Record<string, unknown>).description_id as string || '',
+      is_published: item.is_published ?? true
     })
     setIsModalOpen(true)
   }
@@ -127,25 +195,25 @@ export default function AdminCertificates() {
   if (loading && items.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     )
   }
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+    <div className="space-y-8 animate-fade-in">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold font-syne text-gray-900 dark:text-white">Sertifikat & Lisensi</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">Kelola bukti kompetensi dan pencapaian akademik Anda.</p>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">Kelola pratinjau sertifikat, dokumen PDF, dan status publikasi.</p>
         </div>
         <button 
           onClick={() => {
             setEditingItem(null)
-            setFormData({ title_id: '', title_en: '', issuer: '', file_url: '', date_issued: '' })
+            setFormData(initialForm)
             setIsModalOpen(true)
           }}
-          className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50"
+          className="flex items-center gap-2 px-5 py-2.5 bg-cyan-500 hover:bg-cyan-600 text-black font-bold rounded-xl shadow-lg shadow-cyan-500/20 transition-all hover:scale-105"
         >
           <FaPlus /> Tambah Sertifikat
         </button>
@@ -153,45 +221,53 @@ export default function AdminCertificates() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {items.length === 0 ? (
-          <div className="col-span-full py-12 text-center text-gray-500 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-3xl shadow-sm">
+          <div className="col-span-full py-16 text-center text-gray-500 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-3xl shadow-sm">
             <div className="flex flex-col items-center justify-center gap-3">
-              <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center text-2xl"><FaCertificate /></div>
-              <p>Belum ada data sertifikat.</p>
+              <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center text-2xl text-cyan-500"><FaCertificate /></div>
+              <p className="font-semibold">Belum ada data sertifikat tersimpan di database.</p>
             </div>
           </div>
         ) : (
           items.map((item) => (
-            <div key={item.id} className="group bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
-              <div className="aspect-[4/3] relative bg-gray-100 dark:bg-black/20 overflow-hidden">
-                {item.file_url ? (
-                  item.file_url.toLowerCase().endsWith('.pdf') ? (
-                    <div className="flex flex-col items-center justify-center h-full bg-red-50 dark:bg-red-950/20 text-red-500">
-                      <FaFilePdf className="text-6xl mb-2" />
-                      <span className="text-xs font-bold uppercase">Dokumen PDF</span>
-                    </div>
-                  ) : (
-                    <img src={item.file_url} alt={item.title_id} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  )
+            <div key={item.id} className="group bg-white dark:bg-[#12141D] border border-gray-200 dark:border-zinc-800 hover:border-cyan-500/40 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+              <div className="aspect-[16/10] relative bg-gray-100 dark:bg-zinc-900 overflow-hidden">
+                {item.image_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={item.image_url} alt={item.title_id} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                ) : item.file_url?.toLowerCase().endsWith('.pdf') ? (
+                  <div className="flex flex-col items-center justify-center h-full bg-red-50 dark:bg-red-950/20 text-red-500">
+                    <FaFilePdf className="text-5xl mb-2" />
+                    <span className="text-xs font-bold uppercase">Dokumen PDF</span>
+                  </div>
+                ) : item.file_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={item.file_url} alt={item.title_id} className="w-full h-full object-cover" />
                 ) : (
                   <div className="flex items-center justify-center h-full text-gray-400"><FaImage className="text-4xl" /></div>
                 )}
+                
+                <div className="absolute top-3 left-3">
+                  <span className="px-2.5 py-1 bg-black/80 text-white text-[11px] font-bold rounded-md uppercase tracking-wider">
+                    {item.issuer}
+                  </span>
+                </div>
+
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                   <button onClick={() => openEdit(item)} className="p-3 bg-white text-blue-600 rounded-full hover:scale-110 transition-transform"><FaEdit /></button>
                   <button onClick={() => handleDelete(item.id)} className="p-3 bg-white text-red-600 rounded-full hover:scale-110 transition-transform"><FaTrash /></button>
                 </div>
               </div>
+
               <div className="p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-[10px] bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-300 px-1.5 py-0.5 rounded uppercase font-bold">ID</span>
-                  <h3 className="font-bold text-gray-900 dark:text-white line-clamp-1">{item.title_id}</h3>
-                </div>
-                <div className="flex items-center gap-2 mb-3 opacity-60">
-                  <span className="text-[10px] bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-300 px-1.5 py-0.5 rounded uppercase font-bold">EN</span>
-                  <h3 className="font-semibold text-sm text-gray-800 dark:text-gray-200 line-clamp-1">{item.title_en}</h3>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">{item.issuer}</p>
-                  <p className="text-[10px] text-gray-400">{item.date_issued}</p>
+                <h3 className="font-bold text-gray-900 dark:text-white line-clamp-1 text-base">{item.title_id}</h3>
+                <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1 line-clamp-1">{item.date_issued || '2024-2025'}</p>
+                <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100 dark:border-zinc-800 text-xs">
+                  <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${item.is_published !== false ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400' : 'bg-yellow-100 text-yellow-800'}`}>
+                    {item.is_published !== false ? 'Published' : 'Draft'}
+                  </span>
+                  <button onClick={() => openEdit(item)} className="text-cyan-500 hover:underline font-bold">
+                    Edit Detail →
+                  </button>
                 </div>
               </div>
             </div>
@@ -199,122 +275,165 @@ export default function AdminCertificates() {
         )}
       </div>
 
+      {/* Modal Editor */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white dark:bg-[#0F0F1A] border border-gray-200 dark:border-white/10 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-            <div className="p-6 border-b border-gray-200 dark:border-white/10 flex justify-between items-center bg-gray-50/50 dark:bg-white/5">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white dark:bg-[#10121A] border border-gray-200 dark:border-zinc-800 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up">
+            <div className="p-6 border-b border-gray-100 dark:border-zinc-800 flex justify-between items-center bg-gray-50/50 dark:bg-white/5">
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">
                 {editingItem ? 'Edit Sertifikat' : 'Tambah Sertifikat Baru'}
               </h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-white">✕</button>
+              <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-white">✕</button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form onSubmit={handleSubmit} className="p-6 space-y-5 max-h-[80vh] overflow-y-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Penerbit (Issuer)</label>
+                  <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5 uppercase">Penerbit (Issuer) *</label>
                   <input
                     type="text"
                     required
                     value={formData.issuer}
                     onChange={(e) => setFormData({ ...formData, issuer: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-blue-500/50 outline-none transition-all text-gray-900 dark:text-white"
-                    placeholder="Contoh: Google, Coursera"
+                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl outline-none focus:ring-2 focus:ring-cyan-500 text-gray-900 dark:text-white"
+                    placeholder="Contoh: Dicoding, Kominfo, Tasheel"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Tanggal Terbit</label>
+                  <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5 uppercase">Tanggal / Waktu Terbit</label>
                   <input
                     type="text"
-                    required
                     value={formData.date_issued}
                     onChange={(e) => setFormData({ ...formData, date_issued: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-blue-500/50 outline-none transition-all text-gray-900 dark:text-white"
-                    placeholder="Contoh: Jan 2024"
+                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl outline-none focus:ring-2 focus:ring-cyan-500 text-gray-900 dark:text-white"
+                    placeholder="Contoh: 23 September 2025"
                   />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Judul Sertifikat (ID)</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.title_id}
-                      onChange={(e) => setFormData({ ...formData, title_id: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-blue-500/50 outline-none transition-all text-gray-900 dark:text-white"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Certificate Title (EN)</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.title_en}
-                      onChange={(e) => setFormData({ ...formData, title_en: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-blue-500/50 outline-none transition-all text-gray-900 dark:text-white"
-                    />
-                  </div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">File / Preview Sertifikat</label>
-                <div className="flex items-center gap-4">
-                  <div className="w-24 h-24 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 overflow-hidden flex items-center justify-center">
-                    {formData.file_url ? (
-                      formData.file_url.toLowerCase().endsWith('.pdf') ? (
-                        <FaFilePdf className="text-4xl text-red-500" />
-                      ) : (
-                        <img src={formData.file_url} className="w-full h-full object-cover" />
-                      )
-                    ) : (
-                      <FaImage className="text-2xl text-gray-400" />
-                    )}
-                  </div>
-                  <div className="flex-grow">
-                    <input
-                      type="file"
-                      accept="image/*,application/pdf"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                      id="cert-upload"
-                    />
-                    <label htmlFor="cert-upload" className="cursor-pointer inline-block px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg text-sm transition-all shadow-md shadow-blue-500/20">
-                      Pilih File
-                    </label>
-                    <p className="text-[10px] text-gray-500 mt-2">Format: JPG, PNG, PDF. Ukuran maks: 2MB.</p>
-                  </div>
-                </div>
+                <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5 uppercase">Judul Sertifikat (ID) *</label>
                 <input
                   type="text"
-                  value={formData.file_url}
-                  onChange={(e) => setFormData({ ...formData, file_url: e.target.value })}
-                  className="w-full mt-4 px-4 py-2 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-xs text-gray-500 outline-none"
-                  placeholder="URL File..."
+                  required
+                  value={formData.title_id}
+                  onChange={(e) => setFormData({ ...formData, title_id: e.target.value })}
+                  className="w-full px-4 py-2.5 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl outline-none focus:ring-2 focus:ring-cyan-500 text-gray-900 dark:text-white"
+                  placeholder="Contoh: Dasar-Dasar Literasi Keuangan"
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-white/10">
+              <div>
+                <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5 uppercase">Judul Sertifikat (EN)</label>
+                <input
+                  type="text"
+                  value={formData.title_en}
+                  onChange={(e) => setFormData({ ...formData, title_en: e.target.value })}
+                  className="w-full px-4 py-2.5 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl outline-none focus:ring-2 focus:ring-cyan-500 text-gray-900 dark:text-white"
+                  placeholder="Contoh: Financial Literacy Fundamentals"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5 uppercase">Deskripsi Singkat</label>
+                <textarea
+                  rows={2}
+                  value={formData.description_id}
+                  onChange={(e) => setFormData({ ...formData, description_id: e.target.value })}
+                  className="w-full px-4 py-2 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl outline-none focus:ring-2 focus:ring-cyan-500 text-gray-900 dark:text-white text-sm"
+                  placeholder="Sertifikat pembelajaran dan kompetensi resmi dari Dicoding Indonesia..."
+                />
+              </div>
+
+              {/* Preview Image Upload & URL */}
+              <div className="space-y-2 pt-2 border-t border-gray-100 dark:border-zinc-800">
+                <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">
+                  1. Foto / Gambar Pratinjau Sertifikat (Tampil di Kartu)
+                </label>
+                <div className="flex items-center gap-4">
+                  <div className="w-20 h-16 rounded-xl bg-gray-100 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 overflow-hidden flex items-center justify-center flex-shrink-0">
+                    {formData.image_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={formData.image_url} alt="Preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <FaImage className="text-gray-400 text-xl" />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <label className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 dark:bg-zinc-900 border border-dashed border-gray-300 dark:border-zinc-700 hover:border-cyan-500 rounded-xl cursor-pointer text-xs font-bold text-gray-700 dark:text-zinc-300 transition">
+                      <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={uploadingImage} />
+                      <FaCloudUploadAlt className="text-base text-cyan-500" />
+                      <span>{uploadingImage ? 'Mengupload...' : 'Pilih Gambar (JPG, PNG, SVG)'}</span>
+                    </label>
+                    <input
+                      type="url"
+                      placeholder="Atau masukkan URL gambar pratinjau..."
+                      value={formData.image_url}
+                      onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                      className="w-full mt-2 px-3 py-1.5 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg text-xs outline-none text-gray-700 dark:text-zinc-300"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Document PDF Upload & URL */}
+              <div className="space-y-2 pt-2 border-t border-gray-100 dark:border-zinc-800">
+                <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">
+                  2. File Dokumen Asli (PDF / Dokumen)
+                </label>
+                <div className="flex items-center gap-4">
+                  <div className="w-20 h-16 rounded-xl bg-gray-100 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 overflow-hidden flex items-center justify-center flex-shrink-0">
+                    {formData.file_url?.toLowerCase().endsWith('.pdf') ? (
+                      <FaFilePdf className="text-red-500 text-2xl" />
+                    ) : (
+                      <FaCertificate className="text-cyan-500 text-2xl" />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <label className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 dark:bg-zinc-900 border border-dashed border-gray-300 dark:border-zinc-700 hover:border-cyan-500 rounded-xl cursor-pointer text-xs font-bold text-gray-700 dark:text-zinc-300 transition">
+                      <input type="file" accept="application/pdf,image/*" onChange={handlePdfUpload} className="hidden" disabled={uploadingPdf} />
+                      <FaFilePdf className="text-base text-red-500" />
+                      <span>{uploadingPdf ? 'Mengupload PDF...' : 'Pilih File Dokumen PDF'}</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Atau masukkan URL link dokumen PDF..."
+                      value={formData.file_url}
+                      onChange={(e) => setFormData({ ...formData, file_url: e.target.value })}
+                      className="w-full mt-2 px-3 py-1.5 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg text-xs outline-none text-gray-700 dark:text-zinc-300"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Publish Toggle */}
+              <div className="pt-2">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.is_published}
+                    onChange={(e) => setFormData({ ...formData, is_published: e.target.checked })}
+                    className="w-5 h-5 accent-cyan-500 rounded"
+                  />
+                  <span className="text-sm font-bold text-gray-800 dark:text-white">Tampilkan di Halaman Sertifikat & Keahlian</span>
+                </label>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-zinc-800">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-6 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-all font-semibold"
+                  className="px-6 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-800 text-gray-600 dark:text-zinc-300 font-semibold text-sm"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
-                  disabled={loading}
-                  className="px-8 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-all flex items-center gap-2"
+                  disabled={loading || uploadingImage || uploadingPdf}
+                  className="px-8 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-black font-bold rounded-xl shadow-lg transition-all text-sm flex items-center gap-2"
                 >
-                  {loading && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>}
-                  Simpan Sertifikat
+                  <FaCheck />
+                  <span>Simpan Sertifikat</span>
                 </button>
               </div>
             </form>

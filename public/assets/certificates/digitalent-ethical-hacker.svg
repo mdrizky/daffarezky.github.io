@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 680" width="1000" height="680">
+  <rect width="1000" height="680" rx="16" fill="#FFFFFF"/>
+  <rect x="24" y="24" width="952" height="632" rx="12" fill="none" stroke="#E2E8F0" stroke-width="2"/>
+  <rect x="36" y="36" width="928" height="608" rx="8" fill="none" stroke="#10B981" stroke-width="1.5"/>
+
+  <rect x="36" y="36" width="928" height="8" fill="#10B981"/>
+
+  <g transform="translate(68, 64)">
+    <circle cx="20" cy="20" r="18" fill="#10B981"/>
+    <text x="48" y="26" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="20" fill="#047857">KOMINFO</text>
+  </g>
+  <g transform="translate(740, 64)">
+    <text font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="24" fill="#10B981">DTA</text>
+    <text x="56" y="18" font-family="'Segoe UI', Roboto, sans-serif" font-weight="600" font-size="10" fill="#64748B">Digital Talent Academy</text>
+  </g>
+
+  <text x="500" y="190" font-family="'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="18" fill="#047857" text-anchor="middle" letter-spacing="4">SERTIFIKAT KELULUSAN PELATIHAN</text>
+  <text x="500" y="215" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" fill="#64748B" text-anchor="middle">Nomor: 204918/DTS/KOMINFO/2024</text>
+  <text x="500" y="250" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" fill="#64748B" text-anchor="middle">Diberikan kepada</text>
+
+  <text x="500" y="305" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="34" fill="#0F172A" text-anchor="middle">Muhammad Daffa Rezky</text>
+  <line x1="280" y1="324" x2="720" y2="324" stroke="#CBD5E1" stroke-width="2"/>
+
+  <text x="500" y="365" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" fill="#64748B" text-anchor="middle">Atas kelulusan dalam pelatihan keamanan siber:</text>
+  <text x="500" y="410" font-family="'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="26" fill="#059669" text-anchor="middle">Ethical Hacker For Dummies</text>
+  <text x="500" y="438" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" fill="#64748B" text-anchor="middle">Cyber Security Specialization • 2024</text>
+
+  <g transform="translate(100, 520)">
+    <rect width="60" height="60" rx="4" fill="#F8FAFC" stroke="#CBD5E1"/>
+    <text x="75" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#334155">Verifikasi Digital Talent</text>
+    <text x="75" y="42" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#10B981" font-weight="700">✓ TERDAFTAR RESMI</text>
+  </g>
+
+  <g transform="translate(720, 520)">
+    <path d="M 10 30 Q 30 10 60 25 T 100 20 T 140 30" fill="none" stroke="#0F172A" stroke-width="2" stroke-linecap="round"/>
+    <line x1="0" y1="45" x2="160" y2="45" stroke="#94A3B8" stroke-width="1"/>
+    <text x="80" y="62" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#0F172A" text-anchor="middle">Badan Litbang SDM</text>
+    <text x="80" y="78" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" fill="#64748B" text-anchor="middle">Kementerian Kominfo RI</text>
+  </g>
+</svg>

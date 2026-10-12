@@ -16,8 +16,8 @@ import { FaBullseye, FaPenNib, FaSearchDollar, FaFilter, FaRobot, FaTools } from
 import { Container } from "@/components/ui/Container";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { PageSkeleton } from "@/components/ui/Skeleton";
-import { Button } from "@/components/ui/Button";
 import CertificateCard from "@/components/CertificateCard";
+import { defaultCertificatesList } from "@/lib/certificates-data";
 
 export default function KeahlianPage() {
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -132,58 +132,7 @@ export default function KeahlianPage() {
 
         {/* Certificates Section (Tampilan Sertifikat Realistis seperti Permintaan) */}
         {(() => {
-          const defaultCerts: Certificate[] = [
-            { 
-              id: "cert-dicoding-1", 
-              title_id: "Dasar-Dasar Literasi Keuangan", 
-              title_en: "Financial Literacy Fundamentals", 
-              issuer: "Dicoding", 
-              file_url: "/assets/certificates/Financial Literacy 101.pdf", 
-              date_issued: "2025" 
-            },
-            { 
-              id: "cert-tasheel-1", 
-              title_id: "Sertifikat Tasheel", 
-              title_en: "Tasheel Certification", 
-              issuer: "Tasheel", 
-              file_url: "/assets/certificates/sertifikat-tasheel.pdf", 
-              date_issued: "2024" 
-            },
-            { 
-              id: "cert-tasheel-2", 
-              title_id: "Surat Rekomendasi Tasheel", 
-              title_en: "Tasheel Recommendation Letter", 
-              issuer: "Tasheel", 
-              file_url: "/assets/certificates/surat-rekomendasi-tasheel.pdf", 
-              date_issued: "2024" 
-            },
-            { 
-              id: "cert-digitalent-1", 
-              title_id: "AI Engineer For Milenial", 
-              title_en: "AI Engineer For Milenial", 
-              issuer: "Digitalent", 
-              file_url: "/assets/certificates/ai-engineer-milenial.pdf", 
-              date_issued: "2024" 
-            },
-            { 
-              id: "cert-digitalent-2", 
-              title_id: "Ethical Hacker For Dummies", 
-              title_en: "Ethical Hacker For Dummies", 
-              issuer: "Digitalent", 
-              file_url: "/assets/certificates/ethical-hacker-dummies.pdf", 
-              date_issued: "2024" 
-            },
-            { 
-              id: "cert-digitalent-3", 
-              title_id: "Pengenalan Produk Digital dan Desain Grafis", 
-              title_en: "Introduction to Digital Products & Graphic Design", 
-              issuer: "Digitalent", 
-              file_url: "/assets/certificates/digital-products-graphic-design.pdf", 
-              date_issued: "2024" 
-            },
-          ];
-
-          const displayCerts = certificates.length > 0 ? certificates : defaultCerts;
+          const displayCerts = certificates.length > 0 ? certificates : defaultCertificatesList;
 
           return (
             <div className="animate-fade-in pt-16 border-t border-border">

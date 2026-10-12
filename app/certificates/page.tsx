@@ -7,6 +7,7 @@ import { PageSkeleton } from "@/components/ui/Skeleton"
 import { Container } from "@/components/ui/Container"
 import type { Certificate } from "@/types"
 import CertificateCard from "@/components/CertificateCard"
+import { defaultCertificatesList } from "@/lib/certificates-data"
 
 export default function CertificatesPage() {
   const { language } = useLanguage()
@@ -19,10 +20,21 @@ export default function CertificatesPage() {
         const { data, error } = await supabase
           .from("certificates")
           .select("*")
+          .eq("is_published", true)
           .order("date_issued", { ascending: false })
 
-        if (error) throw error
-        if (data) setCertificates(data)
+        if (error) {
+          // If RLS or error, try fetching without is_published filter
+          const fallback = await supabase
+            .from("certificates")
+            .select("*")
+            .order("date_issued", { ascending: false })
+          if (fallback.data && fallback.data.length > 0) {
+            setCertificates(fallback.data)
+          }
+        } else if (data && data.length > 0) {
+          setCertificates(data)
+        }
       } catch (error) {
         console.error("Error loading certificates:", error)
       } finally {
@@ -33,70 +45,20 @@ export default function CertificatesPage() {
     loadCertificates()
   }, [])
 
-  const defaultCerts: Certificate[] = [
-    { 
-      id: "cert-dicoding-1", 
-      title_id: "Dasar-Dasar Literasi Keuangan", 
-      title_en: "Financial Literacy Fundamentals", 
-      issuer: "Dicoding", 
-      file_url: "/assets/certificates/Financial Literacy 101.pdf", 
-      date_issued: "2025" 
-    },
-    { 
-      id: "cert-tasheel-1", 
-      title_id: "Sertifikat Tasheel", 
-      title_en: "Tasheel Certification", 
-      issuer: "Tasheel", 
-      file_url: "/assets/certificates/sertifikat-tasheel.pdf", 
-      date_issued: "2024" 
-    },
-    { 
-      id: "cert-tasheel-2", 
-      title_id: "Surat Rekomendasi Tasheel", 
-      title_en: "Tasheel Recommendation Letter", 
-      issuer: "Tasheel", 
-      file_url: "/assets/certificates/surat-rekomendasi-tasheel.pdf", 
-      date_issued: "2024" 
-    },
-    { 
-      id: "cert-digitalent-1", 
-      title_id: "AI Engineer For Milenial", 
-      title_en: "AI Engineer For Milenial", 
-      issuer: "Digitalent", 
-      file_url: "/assets/certificates/ai-engineer-milenial.pdf", 
-      date_issued: "2024" 
-    },
-    { 
-      id: "cert-digitalent-2", 
-      title_id: "Ethical Hacker For Dummies", 
-      title_en: "Ethical Hacker For Dummies", 
-      issuer: "Digitalent", 
-      file_url: "/assets/certificates/ethical-hacker-dummies.pdf", 
-      date_issued: "2024" 
-    },
-    { 
-      id: "cert-digitalent-3", 
-      title_id: "Pengenalan Produk Digital dan Desain Grafis", 
-      title_en: "Introduction to Digital Products & Graphic Design", 
-      issuer: "Digitalent", 
-      file_url: "/assets/certificates/digital-products-graphic-design.pdf", 
-      date_issued: "2024" 
-    },
-  ]
-
-  const displayCerts = certificates.length > 0 ? certificates : defaultCerts
+  // If DB items exist, merge with defaults or use DB items
+  const displayCerts = certificates.length > 0 ? certificates : defaultCertificatesList
 
   return (
     <div className="pt-32 pb-24 min-h-screen bg-background transition-colors duration-300">
       <Container>
-        <div className="text-left mb-16 animate-fade-in">
-          <span className="text-xs font-bold uppercase tracking-widest text-primary mb-2 block">
+        <div className="text-left mb-14 animate-fade-in">
+          <span className="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-2 block">
             {language === 'id' ? 'Kompetensi & Lisensi' : 'Verified Credentials'}
           </span>
-          <h1 className="text-4xl md:text-6xl font-heading font-bold mb-4 text-foreground">
-            {language === 'id' ? 'Sertifikat' : 'Certificates'} <span className="text-gradient">{language === 'id' ? 'Keahlian' : 'Achievements'}</span>
+          <h1 className="text-4xl md:text-5xl font-heading font-bold mb-3 text-white">
+            {language === 'id' ? 'Sertifikat' : 'Certificates'} <span className="text-cyan-400">{language === 'id' ? 'Kompetensi' : 'Competency'}</span>
           </h1>
-          <p className="text-muted-foreground max-w-2xl text-lg">
+          <p className="text-zinc-400 max-w-2xl text-base leading-relaxed">
             {language === 'id'
               ? 'Koleksi sertifikasi dan bukti kompetensi profesional saya di bidang teknologi, pemrograman, dan literasi digital.'
               : 'Collection of my certifications and professional competencies in technology, programming, and digital literacy.'}
@@ -106,13 +68,12 @@ export default function CertificatesPage() {
         {loading ? (
           <PageSkeleton />
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {displayCerts.map((cert) => (
               <CertificateCard 
                 key={cert.id} 
                 certificate={cert} 
                 language={language}
-                category={cert.issuer === 'Dicoding' ? 'Literasi Finansial & Tech' : 'Informatika & Pemrograman'}
               />
             ))}
           </div>
