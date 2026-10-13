@@ -6,11 +6,31 @@ import { supabase } from '@/lib/supabase'
 import { useLanguage } from '@/components/LanguageProvider'
 import { Container } from '@/components/ui/Container'
 import { PageSkeleton } from '@/components/ui/Skeleton'
-import { Card, CardContent } from '@/components/ui/Card'
-import { Badge } from '@/components/ui/Badge'
-import { Timeline } from '@/components/ui/Timeline'
 import type { Education } from '@/types'
-import { FaGraduationCap, FaCalendarAlt, FaMapMarkerAlt, FaAward } from 'react-icons/fa'
+import { FaGraduationCap } from 'react-icons/fa'
+
+// Badge color mapping per education level
+function getLevelBadge(level?: string): { bg: string; text: string; glow: string } {
+  switch (level?.toUpperCase()) {
+    case 'SD':
+      return { bg: 'bg-green-500/20 border-green-500/40', text: 'text-green-400', glow: 'shadow-green-500/20' }
+    case 'SMP':
+      return { bg: 'bg-blue-500/20 border-blue-500/40', text: 'text-blue-400', glow: 'shadow-blue-500/20' }
+    case 'SMA':
+    case 'MA':
+    case 'SMK':
+      return { bg: 'bg-amber-500/20 border-amber-500/40', text: 'text-amber-400', glow: 'shadow-amber-500/20' }
+    case 'KULIAH':
+      return { bg: 'bg-cyan-500/20 border-cyan-500/40', text: 'text-cyan-400', glow: 'shadow-cyan-500/20' }
+    case 'TAHFIDZ':
+    case 'PESANTREN':
+      return { bg: 'bg-emerald-500/20 border-emerald-500/40', text: 'text-emerald-400', glow: 'shadow-emerald-500/20' }
+    case 'KURSUS':
+      return { bg: 'bg-purple-500/20 border-purple-500/40', text: 'text-purple-400', glow: 'shadow-purple-500/20' }
+    default:
+      return { bg: 'bg-zinc-500/20 border-zinc-500/40', text: 'text-zinc-400', glow: 'shadow-zinc-500/20' }
+  }
+}
 
 export default function PendidikanPage() {
   const { language } = useLanguage()
@@ -26,10 +46,18 @@ export default function PendidikanPage() {
           .from('education')
           .select('*')
           .eq('is_published', true)
-          .order('start_year', { ascending: false })
+          .order('sort_order', { ascending: true })
 
-        if (error) throw error
-        if (data) setEducation(data)
+        if (error) {
+          // Fallback without is_published filter
+          const fallback = await supabase
+            .from('education')
+            .select('*')
+            .order('start_year', { ascending: false })
+          if (fallback.data) setEducation(fallback.data)
+        } else if (data) {
+          setEducation(data)
+        }
       } catch (error) {
         console.error('Error fetching education:', error)
       } finally {
@@ -42,14 +70,10 @@ export default function PendidikanPage() {
 
   const t = {
     pageTitle: id ? 'Pendidikan' : 'Education',
+    pageSubtitle: id ? 'Riwayat Akademik' : 'Academic History',
     pageDesc: id
       ? 'Perjalanan akademik dan pengembangan pengetahuan formal yang menjadi fondasi keahlian saya.'
       : 'Academic journey and formal education that shaped my expertise and skills.',
-    institution: id ? 'Institusi' : 'Institution',
-    degree: id ? 'Gelar' : 'Degree',
-    field: id ? 'Bidang Studi' : 'Field of Study',
-    location: id ? 'Lokasi' : 'Location',
-    achievements: id ? 'Pencapaian' : 'Achievements',
     present: id ? 'Sekarang' : 'Present',
     noData: id
       ? 'Belum ada data pendidikan yang dipublikasikan.'
@@ -66,188 +90,145 @@ export default function PendidikanPage() {
     )
   }
 
-  // Convert to timeline items
-  const timelineItems = education.map((edu) => ({
-    id: edu.id,
-    title: id ? edu.degree_id : edu.degree_en,
-    description: edu.institution,
-    date: edu.is_current
-      ? `${edu.start_year} - ${t.present}`
-      : `${edu.start_year} - ${edu.end_year}`,
-    status: edu.is_current ? ('current' as const) : ('completed' as const),
-    icon: <FaGraduationCap className="w-4 h-4" />,
-  }))
-
   return (
     <div className="pt-32 pb-24 min-h-screen bg-background transition-colors duration-300">
       <Container>
         {/* Header */}
-        <div className="text-center mb-20 animate-fade-in-up">
-          <h1 className="text-4xl md:text-6xl font-heading font-bold mb-4 text-foreground">
-            {t.pageTitle}
+        <div className="text-center mb-16 animate-fade-in-up">
+          <span className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-400 mb-3 block">
+            {t.pageSubtitle}
+          </span>
+          <h1 className="text-4xl md:text-6xl font-heading font-bold mb-5 text-foreground">
+            {id ? 'Riwayat ' : 'Education '}
+            <span className="text-gradient">{id ? 'Pendidikan' : 'Journey'}</span>
           </h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">{t.pageDesc}</p>
+          <p className="text-muted-foreground max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
+            {t.pageDesc}
+          </p>
         </div>
 
-        {/* Content */}
+        {/* Timeline Content */}
         {education.length > 0 ? (
-          <div className="grid lg:grid-cols-3 gap-12 animate-fade-in">
-            {/* Timeline Column */}
-            <div className="lg:col-span-1">
-              <div className="sticky top-32">
-                <h2 className="text-2xl font-bold text-foreground mb-6">{id ? 'Riwayat' : 'Timeline'}</h2>
-                <Timeline items={timelineItems} orientation="vertical" variant="compact" />
-              </div>
-            </div>
+          <div className="max-w-3xl mx-auto">
+            <div className="relative">
+              {/* Vertical Timeline Line */}
+              <div className="absolute left-[39px] md:left-[55px] top-0 bottom-0 w-[3px] bg-gradient-to-b from-cyan-500/60 via-cyan-500/20 to-transparent rounded-full" />
 
-            {/* Details Column */}
-            <div className="lg:col-span-2 space-y-6">
-              {education.map((edu) => (
-                <Card key={edu.id} className="overflow-hidden hover:border-border/80 transition-all">
-                  <CardContent className="p-8">
-                    {/* Header */}
-                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6 pb-6 border-b border-border">
-                      <div className="flex-1">
-                        <div className="flex items-start gap-3 mb-3">
-                          <div className="p-2.5 bg-primary/10 rounded-lg text-primary flex-shrink-0 mt-1">
-                            <FaGraduationCap className="w-5 h-5" />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="text-2xl font-bold text-foreground">
-                              {id ? edu.degree_id : edu.degree_en}
-                            </h3>
-                            <p className="text-lg text-primary font-semibold mt-1">
-                              {edu.institution}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      {edu.is_current && (
-                        <Badge variant="default" className="flex-shrink-0">
-                          {t.present}
-                        </Badge>
-                      )}
-                    </div>
+              {/* Timeline Items */}
+              <div className="space-y-0">
+                {education.map((edu, index) => {
+                  const badge = getLevelBadge(edu.education_level)
+                  const yearText = edu.is_current
+                    ? `${edu.start_year} - ${t.present}`
+                    : `${edu.start_year} - ${edu.end_year || '?'}`
 
-                    {/* Main Info Grid */}
-                    <div className="grid sm:grid-cols-2 gap-6 mb-8">
-                      {/* Duration */}
-                      <div className="flex gap-3">
-                        <FaCalendarAlt className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
-                        <div>
-                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-                            {id ? 'Periode' : 'Period'}
-                          </p>
-                          <p className="text-foreground font-medium">
-                            {edu.start_year} -{' '}
-                            {edu.is_current ? (
-                              <span className="text-primary font-bold">{t.present}</span>
-                            ) : (
-                              edu.end_year
-                            )}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Location */}
-                      {edu.location && (
-                        <div className="flex gap-3">
-                          <FaMapMarkerAlt className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
-                          <div>
-                            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-                              {t.location}
-                            </p>
-                            <p className="text-foreground font-medium">{edu.location}</p>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Field of Study */}
-                      {edu.field_of_study && (
-                        <div className="flex gap-3">
-                          <FaGraduationCap className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
-                          <div>
-                            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-                              {t.field}
-                            </p>
-                            <p className="text-foreground font-medium">{edu.field_of_study}</p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Description */}
-                    {(id ? edu.description_id : edu.description_en) && (
-                      <div className="mb-8 pb-8 border-b border-border">
-                        <h4 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3">
-                          {id ? 'Deskripsi' : 'Description'}
-                        </h4>
-                        <p className="text-foreground leading-relaxed">
-                          {id ? edu.description_id : edu.description_en}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Achievement */}
-                    {edu.achievement && (
-                      <div className="mb-6">
-                        <div className="flex items-start gap-3">
-                          <FaAward className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
-                          <div>
-                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
-                              {t.achievements}
-                            </p>
-                            <p className="text-foreground font-medium">{edu.achievement}</p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Gallery */}
-                    {edu.gallery && edu.gallery.length > 0 && (
-                      <div>
-                        <h4 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-4">
-                          {id ? 'Galeri' : 'Gallery'}
-                        </h4>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                          {edu.gallery.map((image, idx) => (
-                            <div
-                              key={idx}
-                              className="relative aspect-square rounded-lg overflow-hidden bg-muted border border-border hover:border-border/80 transition-all"
-                            >
+                  return (
+                    <div
+                      key={edu.id}
+                      className="relative group animate-fade-in-up"
+                      style={{ animationDelay: `${index * 150}ms` }}
+                    >
+                      {/* Timeline Item Container */}
+                      <div className="flex items-start gap-5 md:gap-7 py-6 md:py-8">
+                        {/* Circular Logo Container */}
+                        <div className="relative z-10 flex-shrink-0">
+                          <div className={`
+                            w-[80px] h-[80px] md:w-[112px] md:h-[112px]
+                            rounded-full bg-white dark:bg-zinc-900
+                            border-[3px] border-zinc-200 dark:border-zinc-700
+                            group-hover:border-cyan-500/60
+                            shadow-xl ${badge.glow}
+                            flex items-center justify-center
+                            overflow-hidden p-3 md:p-4
+                            transition-all duration-500
+                            group-hover:scale-105 group-hover:shadow-2xl group-hover:shadow-cyan-500/10
+                          `}>
+                            {edu.logo_url ? (
                               <Image
-                                src={image}
-                                alt={`${edu.institution} gallery ${idx + 1}`}
-                                fill
-                                className="object-cover hover:scale-105 transition-transform duration-300"
+                                src={edu.logo_url}
+                                alt={edu.institution}
+                                width={80}
+                                height={80}
+                                className="w-full h-full object-contain rounded-full"
+                                unoptimized
                               />
-                            </div>
-                          ))}
+                            ) : (
+                              <FaGraduationCap className="text-2xl md:text-4xl text-zinc-400 dark:text-zinc-500" />
+                            )}
+                          </div>
+
+                          {/* Glowing dot on timeline line */}
+                          {edu.is_current && (
+                            <div className="absolute -right-[9px] md:-right-[11px] top-1/2 -translate-y-1/2 w-3 h-3 bg-cyan-400 rounded-full shadow-lg shadow-cyan-500/50 animate-pulse" />
+                          )}
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex-1 pt-1 md:pt-3">
+                          {/* Year Range */}
+                          <p className="text-sm md:text-base text-zinc-400 dark:text-zinc-500 font-medium mb-1 tracking-wide">
+                            {yearText}
+                          </p>
+
+                          {/* Institution Name */}
+                          <h3 className="text-xl md:text-2xl lg:text-3xl font-heading font-extrabold text-foreground leading-tight mb-3 group-hover:text-cyan-400 transition-colors duration-300">
+                            {edu.institution}
+                          </h3>
+
+                          {/* Education Level Badge */}
+                          {edu.education_level && (
+                            <span className={`
+                              inline-block px-4 py-1.5 rounded-lg
+                              text-[11px] md:text-xs font-extrabold uppercase tracking-[0.15em]
+                              border ${badge.bg} ${badge.text}
+                              shadow-md ${badge.glow}
+                              transition-all duration-300 group-hover:scale-105
+                            `}>
+                              {edu.education_level}
+                            </span>
+                          )}
+
+                          {/* Degree / Jurusan */}
+                          {(id ? edu.degree_id : edu.degree_en) && (
+                            <p className="text-sm md:text-base text-zinc-400 dark:text-zinc-500 mt-3 font-medium">
+                              {id ? edu.degree_id : edu.degree_en}
+                            </p>
+                          )}
+
+                          {/* Description - appears on hover / always visible on mobile */}
+                          {(id ? edu.description_id : edu.description_en) && (
+                            <p className="text-sm text-zinc-500 dark:text-zinc-600 mt-2 leading-relaxed max-w-xl opacity-70 group-hover:opacity-100 transition-opacity duration-500">
+                              {id ? edu.description_id : edu.description_en}
+                            </p>
+                          )}
+
+                          {/* Location */}
+                          {edu.location && (
+                            <p className="text-xs text-zinc-500 dark:text-zinc-600 mt-2 flex items-center gap-1.5">
+                              <span className="inline-block w-1 h-1 bg-zinc-400 rounded-full" />
+                              {edu.location}
+                            </p>
+                          )}
                         </div>
                       </div>
-                    )}
 
-                    {/* Certificate */}
-                    {edu.certificate_url && (
-                      <div className="mt-8 pt-6 border-t border-border">
-                        <a
-                          href={edu.certificate_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 transition-all active:scale-95"
-                        >
-                          <FaAward className="w-4 h-4" />
-                          {id ? 'Lihat Sertifikat' : 'View Certificate'}
-                        </a>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
+                      {/* Separator line between items (not on last) */}
+                      {index < education.length - 1 && (
+                        <div className="ml-[80px] md:ml-[112px] pl-5 md:pl-7">
+                          <div className="h-px bg-gradient-to-r from-zinc-800/50 via-zinc-800/20 to-transparent" />
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+
+              {/* Timeline End Dot */}
+              <div className="absolute left-[37px] md:left-[53px] bottom-0 w-[7px] h-[7px] bg-zinc-700 rounded-full border-2 border-zinc-600" />
             </div>
           </div>
         ) : (
-          <div className="text-center py-20 bg-card border border-border rounded-3xl animate-fade-in">
+          <div className="text-center py-20 bg-card border border-border rounded-3xl animate-fade-in max-w-xl mx-auto">
             <FaGraduationCap className="w-16 h-16 text-muted-foreground/20 mx-auto mb-4" />
             <p className="text-muted-foreground text-lg">{t.noData}</p>
           </div>

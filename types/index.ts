@@ -315,6 +315,7 @@ export type Education = {
   certificate_url?: string
   created_at: string
   field_of_study?: string
+  education_level?: string
   sort_order?: number
   is_published?: boolean
 }

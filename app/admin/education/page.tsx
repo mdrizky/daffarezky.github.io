@@ -22,6 +22,7 @@ export default function AdminEducation() {
     description_en: "",
     is_current: false,
     logo_url: "",
+    education_level: "",
     is_published: true,
   }
   const [formData, setFormData] = useState<Partial<Education>>(initialFormState)
@@ -113,6 +114,7 @@ export default function AdminEducation() {
         description_en: formData.description_en?.trim() || null,
         is_current: formData.is_current ?? false,
         logo_url: formData.logo_url?.trim() || null,
+        education_level: formData.education_level?.trim() || null,
         is_published: formData.is_published ?? true,
       }
 
@@ -286,6 +288,30 @@ export default function AdminEducation() {
                     className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-cyan-500 outline-none text-sm"
                   />
                 </div>
+              </div>
+
+              {/* 3. Tingkatan Pendidikan */}
+              <div>
+                <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1.5 uppercase tracking-wider">
+                  Tingkatan Pendidikan
+                </label>
+                <select
+                  value={formData.education_level || ""}
+                  onChange={(e) => setFormData({ ...formData, education_level: e.target.value })}
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-cyan-500 outline-none text-sm"
+                >
+                  <option value="">Pilih Tingkatan...</option>
+                  <option value="SD">SD (Sekolah Dasar)</option>
+                  <option value="SMP">SMP (Sekolah Menengah Pertama)</option>
+                  <option value="SMA">SMA (Sekolah Menengah Atas)</option>
+                  <option value="SMK">SMK (Sekolah Menengah Kejuruan)</option>
+                  <option value="MA">MA (Madrasah Aliyah)</option>
+                  <option value="KULIAH">KULIAH (Perguruan Tinggi)</option>
+                  <option value="TAHFIDZ">TAHFIDZ (Program Tahfidz)</option>
+                  <option value="PESANTREN">PESANTREN</option>
+                  <option value="KURSUS">KURSUS / BOOTCAMP</option>
+                  <option value="LAINNYA">LAINNYA</option>
+                </select>
               </div>
 
               {/* 3. Tahun Mulai & Tahun Selesai */}

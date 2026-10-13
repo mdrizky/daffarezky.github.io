@@ -205,6 +205,7 @@ CREATE TABLE IF NOT EXISTS public.education (
   achievement TEXT,
   gallery TEXT[] DEFAULT '{}',
   certificate_url TEXT,
+  education_level TEXT,
   sort_order INTEGER DEFAULT 0,
   is_published BOOLEAN DEFAULT true
 );
@@ -613,6 +614,7 @@ SELECT public._add_column_if_missing('education','field_of_study','TEXT');
 SELECT public._add_column_if_missing('education','achievement','TEXT');
 SELECT public._add_column_if_missing('education','gallery','TEXT[] DEFAULT ''{}''');
 SELECT public._add_column_if_missing('education','certificate_url','TEXT');
+SELECT public._add_column_if_missing('education','education_level','TEXT');
 
 -- Services: tambahkan SEMUA kolom yang mungkin belum ada di DB lama
 SELECT public._add_column_if_missing('services','created_at','TIMESTAMPTZ DEFAULT now()');
@@ -909,7 +911,7 @@ END $$;
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM public.education LIMIT 1) THEN
-    INSERT INTO public.education (institution, degree_id, degree_en, start_year, end_year, is_current, field_of_study, location, description_id, description_en, sort_order, is_published)
+    INSERT INTO public.education (institution, degree_id, degree_en, start_year, end_year, is_current, field_of_study, location, description_id, description_en, education_level, sort_order, is_published)
     VALUES
     (
       'STDI Imam Syafi''i Jember',
@@ -922,6 +924,7 @@ BEGIN
       'Jember, Jawa Timur',
       'Menempuh pendidikan tinggi studi Islam, bahasa Arab, dan metodologi riset ilmiah untuk membentuk integritas moral dan intelektual.',
       'Pursuing higher education in Islamic studies, classical Arabic, and research methodology to build strong ethical and intellectual integrity.',
+      'KULIAH',
       1,
       true
     ),
@@ -936,6 +939,7 @@ BEGIN
       'Indonesia',
       'Program intensif penghafalan Al-Qur''an dan penguasaan bahasa Arab formal, melatih kedisiplinan dan daya ingat tinggi.',
       'Intensive Qur''an memorization and classical Arabic language mastery, honing high discipline and focus.',
+      'TAHFIDZ',
       2,
       true
     ),
@@ -950,6 +954,7 @@ BEGIN
       'Indonesia',
       'Pendidikan menengah dengan penguatan fondasi sains, teknologi informasi dasar, dan ilmu keagamaan.',
       'Secondary education with foundational studies in science, IT basics, and humanities.',
+      'SMA',
       3,
       true
     );
