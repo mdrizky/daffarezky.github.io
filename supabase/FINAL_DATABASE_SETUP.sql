@@ -643,6 +643,54 @@ SELECT public._add_column_if_missing('islamic','is_published','BOOLEAN DEFAULT t
 SELECT public._add_column_if_missing('uses_items','is_published','BOOLEAN DEFAULT true');
 
 -- =============================================================================
+-- 3B. DROP NOT NULL CONSTRAINTS DARI SCHEMA LAMA
+-- =============================================================================
+-- Schema lama (setup.sql) membuat banyak kolom NOT NULL yang sekarang nullable.
+-- CREATE TABLE IF NOT EXISTS tidak mengubah constraint yang sudah ada.
+
+-- Education: end_year harus nullable (untuk mahasiswa aktif / is_current = true)
+ALTER TABLE public.education ALTER COLUMN end_year DROP NOT NULL;
+ALTER TABLE public.education ALTER COLUMN degree_id DROP NOT NULL;
+ALTER TABLE public.education ALTER COLUMN degree_en DROP NOT NULL;
+ALTER TABLE public.education ALTER COLUMN description_id DROP NOT NULL;
+ALTER TABLE public.education ALTER COLUMN description_en DROP NOT NULL;
+
+-- Services: price, description nullable di schema baru
+ALTER TABLE public.services ALTER COLUMN price DROP NOT NULL;
+ALTER TABLE public.services ALTER COLUMN description_id DROP NOT NULL;
+ALTER TABLE public.services ALTER COLUMN description_en DROP NOT NULL;
+
+-- Certificates: file_url dan date_issued nullable di schema baru
+ALTER TABLE public.certificates ALTER COLUMN file_url DROP NOT NULL;
+ALTER TABLE public.certificates ALTER COLUMN date_issued DROP NOT NULL;
+
+-- Blog Posts: beberapa kolom sekarang nullable
+ALTER TABLE public.blog_posts ALTER COLUMN content_id DROP NOT NULL;
+ALTER TABLE public.blog_posts ALTER COLUMN content_en DROP NOT NULL;
+ALTER TABLE public.blog_posts ALTER COLUMN thumbnail DROP NOT NULL;
+ALTER TABLE public.blog_posts ALTER COLUMN category DROP NOT NULL;
+ALTER TABLE public.blog_posts ALTER COLUMN excerpt_id DROP NOT NULL;
+ALTER TABLE public.blog_posts ALTER COLUMN excerpt_en DROP NOT NULL;
+
+-- Skills: icon, category, level sekarang punya default
+ALTER TABLE public.skills ALTER COLUMN icon DROP NOT NULL;
+ALTER TABLE public.skills ALTER COLUMN category DROP NOT NULL;
+ALTER TABLE public.skills ALTER COLUMN level DROP NOT NULL;
+
+-- Profile: banyak field sekarang punya default, bukan NOT NULL
+ALTER TABLE public.profile ALTER COLUMN name DROP NOT NULL;
+ALTER TABLE public.profile ALTER COLUMN title_id DROP NOT NULL;
+ALTER TABLE public.profile ALTER COLUMN title_en DROP NOT NULL;
+ALTER TABLE public.profile ALTER COLUMN bio_id DROP NOT NULL;
+ALTER TABLE public.profile ALTER COLUMN bio_en DROP NOT NULL;
+ALTER TABLE public.profile ALTER COLUMN photo_url DROP NOT NULL;
+
+-- Projects: description bisa nullable
+ALTER TABLE public.projects ALTER COLUMN description_id DROP NOT NULL;
+ALTER TABLE public.projects ALTER COLUMN description_en DROP NOT NULL;
+ALTER TABLE public.projects ALTER COLUMN image_url DROP NOT NULL;
+
+-- =============================================================================
 -- 4. AUTHORIZATION HELPERS
 -- =============================================================================
 CREATE OR REPLACE FUNCTION public.is_admin()
