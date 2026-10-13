@@ -80,7 +80,7 @@ export default function AdminEducation() {
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : JSON.stringify(err)
       console.error("Error uploading logo:", err)
-      alert(`Gagal upload logo: ${errorMsg}\n\nTip: Pastikan sudah menjalankan script FIX_STORAGE_AND_EDUCATION.sql di Supabase SQL Editor. Anda juga bisa mengisi URL logo secara manual di bawah.`)
+      alert(`Gagal upload logo: ${errorMsg}\n\nTip: Pastikan sudah menjalankan script FINAL_DATABASE_SETUP.sql di Supabase SQL Editor. Anda juga bisa mengisi URL logo secara manual di bawah.`)
     } finally {
       setUploading(false)
       // reset file input
@@ -143,7 +143,7 @@ export default function AdminEducation() {
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : JSON.stringify(err)
       console.error("Error saving education:", err)
-      alert(`Gagal menyimpan data pendidikan:\n${errorMsg}\n\nSilakan periksa izin database Supabase Anda atau jalankan FIX_STORAGE_AND_EDUCATION.sql.`)
+      alert(`Gagal menyimpan data pendidikan:\n${errorMsg}\n\nSilakan periksa izin database Supabase Anda atau jalankan FINAL_DATABASE_SETUP.sql.`)
     } finally {
       setSaving(false)
     }

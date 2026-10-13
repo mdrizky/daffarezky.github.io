@@ -178,7 +178,7 @@ export default function AdminProfile() {
     } catch (error: unknown) {
       const errorMsg = error instanceof Error ? error.message : JSON.stringify(error)
       console.error('Error uploading image:', error)
-      alert(`Gagal mengupload gambar: ${errorMsg}\n\nTip: Pastikan Anda sudah menjalankan script SQL DAFFA_PORTFOLIO_V2_FINAL_MASTER.sql di Supabase SQL Editor.`)
+      alert(`Gagal mengupload gambar: ${errorMsg}\n\nTip: Pastikan Anda sudah menjalankan script SQL FINAL_DATABASE_SETUP.sql di Supabase SQL Editor.`)
     } finally {
       setUploadingField(null)
       e.target.value = ''
@@ -288,7 +288,7 @@ export default function AdminProfile() {
     } catch (error: unknown) {
       const errorMsg = error instanceof Error ? error.message : JSON.stringify(error)
       console.error('Error saving profile:', error)
-      alert(`Gagal menyimpan profile: ${errorMsg}\n\nPeriksa izin database atau jalankan DAFFA_PORTFOLIO_V2_FINAL_MASTER.sql di Supabase.`)
+      alert(`Gagal menyimpan profile: ${errorMsg}\n\nPeriksa izin database atau jalankan FINAL_DATABASE_SETUP.sql di Supabase.`)
     } finally {
       setSaving(false)
     }
