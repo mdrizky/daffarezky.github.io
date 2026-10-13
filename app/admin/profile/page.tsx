@@ -2,12 +2,26 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import { FaSave, FaImage, FaInstagram, FaGithub, FaLinkedin, FaWhatsapp, FaEnvelope } from 'react-icons/fa'
+import { 
+  FaSave, 
+  FaImage, 
+  FaInstagram, 
+  FaGithub, 
+  FaLinkedin, 
+  FaWhatsapp, 
+  FaEnvelope, 
+  FaCloudUploadAlt,
+  FaCheck,
+  FaLink
+} from 'react-icons/fa'
 import { Profile } from '@/types'
 
 export default function AdminProfile() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [uploadingField, setUploadingField] = useState<string | null>(null)
+  const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null)
+
   const [profile, setProfile] = useState<Partial<Profile>>({
     name: '',
     title_id: '',
@@ -16,6 +30,7 @@ export default function AdminProfile() {
     bio_en: '',
     photo_url: '',
     about_photo_url: '',
+    logo_url: '',
     wa: '',
     email: '',
     instagram: '',
@@ -53,12 +68,17 @@ export default function AdminProfile() {
         .from('profile')
         .select('*')
         .limit(1)
-        .single()
+        .maybeSingle()
 
       if (error && error.code !== 'PGRST116') throw error
       
       if (data) {
-        setProfile(data)
+        // Format birth_date if present
+        const formattedData = {
+          ...data,
+          birth_date: data.birth_date ? String(data.birth_date).split('T')[0] : ''
+        }
+        setProfile(formattedData)
         setProfileId(data.id)
       }
     } catch (error) {
@@ -73,57 +93,202 @@ export default function AdminProfile() {
     setProfile(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+  // Upload handler with INSTANT AUTO-SAVE to database
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: 'photo_url' | 'about_photo_url' | 'logo_url') => {
     const file = e.target.files?.[0]
     if (!file) return
 
+    setUploadingField(field)
     try {
-      setSaving(true)
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${field}-${Math.random()}.${fileExt}`
-      const filePath = `profile/${fileName}`
+      const fileExt = file.name.split('.').pop() || 'png'
+      const cleanFileName = `${field}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${fileExt}`
+      
+      // Upload to storage
+      const filePath = `profile/${cleanFileName}`
+      let finalPath = filePath
 
       const { error: uploadError } = await supabase.storage
         .from('portfolio-images')
-        .upload(filePath, file)
+        .upload(filePath, file, { 
+          upsert: true,
+          cacheControl: '3600'
+        })
 
-      if (uploadError) throw uploadError
+      if (uploadError) {
+        // Fallback to general/ folder if profile/ is restricted
+        const fallbackPath = `general/${cleanFileName}`
+        const { error: fallbackError } = await supabase.storage
+          .from('portfolio-images')
+          .upload(fallbackPath, file, { upsert: true })
 
-      const { data } = supabase.storage
+        if (fallbackError) {
+          throw new Error(uploadError.message || fallbackError.message)
+        }
+        finalPath = fallbackPath
+      }
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
         .from('portfolio-images')
-        .getPublicUrl(filePath)
+        .getPublicUrl(finalPath)
 
-      setProfile(prev => ({ ...prev, [field]: data.publicUrl }))
-    } catch (error) {
+      const newPublicUrl = urlData.publicUrl
+
+      // 1. Update React state immediately
+      setProfile(prev => ({ ...prev, [field]: newPublicUrl }))
+
+      // 2. AUTO-SAVE IMMEDIATELY TO SUPABASE DATABASE
+      let activeId = profileId
+      if (!activeId) {
+        const { data: existing } = await supabase.from('profile').select('id').limit(1).maybeSingle()
+        if (existing?.id) {
+          activeId = existing.id
+          setProfileId(existing.id)
+        }
+      }
+
+      if (activeId) {
+        const { error: updateError } = await supabase
+          .from('profile')
+          .update({ 
+            [field]: newPublicUrl,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', activeId)
+
+        if (updateError) throw updateError
+      } else {
+        const { data: inserted, error: insertError } = await supabase
+          .from('profile')
+          .insert([{
+            [field]: newPublicUrl,
+            name: profile.name || 'Muhammad Daffa Rezky Adyra',
+            email: profile.email || 'daffarezky99@gmail.com',
+            updated_at: new Date().toISOString()
+          }])
+          .select('id')
+          .single()
+
+        if (insertError) throw insertError
+        if (inserted?.id) setProfileId(inserted.id)
+      }
+
+      setSaveSuccessMsg(`Gambar ${field === 'photo_url' ? 'Foto Beranda' : field === 'about_photo_url' ? 'Foto Tentang' : 'Logo Site'} berhasil diupload dan disimpan ke database!`)
+      setTimeout(() => setSaveSuccessMsg(null), 4000)
+    } catch (error: unknown) {
+      const errorMsg = error instanceof Error ? error.message : JSON.stringify(error)
       console.error('Error uploading image:', error)
-      alert('Gagal mengupload gambar')
+      alert(`Gagal mengupload gambar: ${errorMsg}\n\nTip: Pastikan Anda sudah menjalankan script SQL DAFFA_PORTFOLIO_V2_FINAL_MASTER.sql di Supabase SQL Editor.`)
+    } finally {
+      setUploadingField(null)
+      e.target.value = ''
+    }
+  }
+
+  // Save single image URL manually
+  const handleSaveImageUrl = async (field: 'photo_url' | 'about_photo_url' | 'logo_url') => {
+    const url = profile[field]?.trim()
+    if (!url) return
+
+    setSaving(true)
+    try {
+      let activeId = profileId
+      if (!activeId) {
+        const { data: existing } = await supabase.from('profile').select('id').limit(1).maybeSingle()
+        if (existing?.id) {
+          activeId = existing.id
+          setProfileId(existing.id)
+        }
+      }
+
+      if (activeId) {
+        const { error } = await supabase
+          .from('profile')
+          .update({ 
+            [field]: url,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', activeId)
+
+        if (error) throw error
+      } else {
+        const { data: inserted, error: insertError } = await supabase
+          .from('profile')
+          .insert([{
+            [field]: url,
+            name: profile.name || 'Muhammad Daffa Rezky Adyra',
+            email: profile.email || 'daffarezky99@gmail.com',
+            updated_at: new Date().toISOString()
+          }])
+          .select('id')
+          .single()
+
+        if (insertError) throw insertError
+        if (inserted?.id) setProfileId(inserted.id)
+      }
+
+      setSaveSuccessMsg(`URL ${field === 'photo_url' ? 'Foto Beranda' : field === 'about_photo_url' ? 'Foto Tentang' : 'Logo Site'} berhasil disimpan ke database!`)
+      setTimeout(() => setSaveSuccessMsg(null), 3000)
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : JSON.stringify(err)
+      alert(`Gagal menyimpan URL: ${errorMsg}`)
     } finally {
       setSaving(false)
     }
   }
 
+  // Full form submit handler with proper data sanitization
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
 
     try {
-      if (profileId) {
+      // Data sanitization
+      const payload: Record<string, unknown> = { ...profile }
+      delete payload.id
+      delete payload.created_at
+
+      // Clean birth_date (PostgreSQL DATE cannot receive empty string)
+      if (!payload.birth_date || payload.birth_date === '' || typeof payload.birth_date !== 'string') {
+        payload.birth_date = null
+      } else {
+        payload.birth_date = String(payload.birth_date).split('T')[0]
+      }
+
+      payload.updated_at = new Date().toISOString()
+
+      let activeId = profileId
+      if (!activeId) {
+        const { data: existing } = await supabase.from('profile').select('id').limit(1).maybeSingle()
+        if (existing?.id) {
+          activeId = existing.id
+          setProfileId(existing.id)
+        }
+      }
+
+      if (activeId) {
         const { error } = await supabase
           .from('profile')
-          .update(profile)
-          .eq('id', profileId)
+          .update(payload)
+          .eq('id', activeId)
         if (error) throw error
       } else {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('profile')
-          .insert([profile])
+          .insert([payload])
+          .select('id')
+          .single()
         if (error) throw error
+        if (data) setProfileId(data.id)
       }
       
+      setSaveSuccessMsg('Seluruh data profile berhasil disimpan ke database!')
+      setTimeout(() => setSaveSuccessMsg(null), 4000)
       alert('Profile berhasil disimpan!')
-    } catch (error) {
+    } catch (error: unknown) {
+      const errorMsg = error instanceof Error ? error.message : JSON.stringify(error)
       console.error('Error saving profile:', error)
-      alert('Gagal menyimpan profile')
+      alert(`Gagal menyimpan profile: ${errorMsg}\n\nPeriksa izin database atau jalankan DAFFA_PORTFOLIO_V2_FINAL_MASTER.sql di Supabase.`)
     } finally {
       setSaving(false)
     }
@@ -132,193 +297,335 @@ export default function AdminProfile() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     )
   }
 
   return (
-    <div className="max-w-5xl pb-20 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="max-w-5xl pb-20 animate-fade-in">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Full Admin Control - Profile</h1>
-        <p className="text-gray-500 dark:text-gray-400">Kelola semua informasi portfolio Anda dari satu tempat.</p>
+        <h1 className="text-3xl font-bold font-syne text-gray-900 dark:text-white mb-2">Profil & Identitas Situs</h1>
+        <p className="text-gray-500 dark:text-gray-400">
+          Kelola foto beranda, foto tentang, logo situs, biodata, dan kontak. Foto yang diupload akan otomatis tersimpan langsung ke database.
+        </p>
       </div>
+
+      {saveSuccessMsg && (
+        <div className="mb-6 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 flex items-center gap-3 text-sm font-semibold animate-fade-in">
+          <FaCheck className="text-emerald-500" />
+          <span>{saveSuccessMsg}</span>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Images Section */}
-        <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm">
-          <h2 className="text-xl font-bold mb-6 border-b border-gray-200 dark:border-white/10 pb-4 text-gray-900 dark:text-white">Media & Foto</h2>
+        <div className="bg-white dark:bg-zinc-900/60 border border-gray-200 dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-sm">
+          <h2 className="text-xl font-bold mb-6 border-b border-gray-100 dark:border-zinc-800 pb-4 text-gray-900 dark:text-white flex items-center justify-between">
+            <span>Media & Foto</span>
+            <span className="text-xs font-normal text-cyan-500">Auto-save aktif</span>
+          </h2>
+          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Profile Photo */}
-            <div className="text-center">
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Foto Beranda</label>
-              <div className="relative aspect-square w-full max-w-[200px] mx-auto mb-4 rounded-full overflow-hidden border-4 border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-black/20">
-                {profile.photo_url ? (
-                  <img src={profile.photo_url} alt="Profile" className="w-full h-full object-cover" />
+            {/* 1. Profile Photo (Foto Beranda) */}
+            <div className="text-center flex flex-col items-center">
+              <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">Foto Beranda (Hero)</label>
+              <div className="relative aspect-square w-full max-w-[200px] mb-4 rounded-full overflow-hidden border-4 border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-black/30 shadow-md">
+                {uploadingField === 'photo_url' ? (
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-black/60 text-white">
+                    <div className="w-8 h-8 border-3 border-cyan-400 border-t-transparent rounded-full animate-spin mb-2"></div>
+                    <span className="text-xs font-bold">Mengupload...</span>
+                  </div>
+                ) : profile.photo_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={profile.photo_url} alt="Foto Beranda" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-300"><FaImage size={40} /></div>
+                  <div className="w-full h-full flex items-center justify-center text-gray-400"><FaImage size={44} /></div>
                 )}
               </div>
-              <input type="file" id="photo_url" className="hidden" onChange={(e) => handleFileUpload(e, 'photo_url')} />
-              <label htmlFor="photo_url" className="cursor-pointer inline-block px-4 py-2 bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white rounded-lg text-xs font-bold transition-colors">Ganti Foto Beranda</label>
+
+              <input 
+                type="file" 
+                id="photo_url" 
+                accept="image/*"
+                className="hidden" 
+                onChange={(e) => handleFileUpload(e, 'photo_url')} 
+                disabled={uploadingField !== null}
+              />
+              <label 
+                htmlFor="photo_url" 
+                className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-black rounded-xl text-xs font-bold transition-all shadow-md shadow-cyan-500/20 hover:scale-105"
+              >
+                <FaCloudUploadAlt />
+                <span>Ganti Foto Beranda</span>
+              </label>
+
+              {/* Direct URL input */}
+              <div className="w-full mt-3 flex items-center gap-1.5">
+                <input
+                  type="url"
+                  name="photo_url"
+                  placeholder="Atau tempel URL foto..."
+                  value={profile.photo_url || ''}
+                  onChange={handleChange}
+                  className="w-full px-2.5 py-1.5 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-xs text-gray-800 dark:text-zinc-200 outline-none"
+                />
+                <button
+                  type="button"
+                  title="Simpan URL langsung"
+                  onClick={() => handleSaveImageUrl('photo_url')}
+                  className="px-2.5 py-1.5 bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 rounded-lg text-xs font-bold text-gray-800 dark:text-white"
+                >
+                  <FaLink />
+                </button>
+              </div>
             </div>
 
-            {/* About Photo */}
-            <div className="text-center">
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Foto Tentang</label>
-              <div className="relative aspect-square w-full max-w-[200px] mx-auto mb-4 rounded-2xl overflow-hidden border-4 border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-black/20">
-                {profile.about_photo_url ? (
-                  <img src={profile.about_photo_url} alt="About" className="w-full h-full object-cover" />
+            {/* 2. About Photo (Foto Tentang) */}
+            <div className="text-center flex flex-col items-center">
+              <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">Foto Tentang (About)</label>
+              <div className="relative aspect-square w-full max-w-[200px] mb-4 rounded-2xl overflow-hidden border-4 border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-black/30 shadow-md">
+                {uploadingField === 'about_photo_url' ? (
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-black/60 text-white">
+                    <div className="w-8 h-8 border-3 border-cyan-400 border-t-transparent rounded-full animate-spin mb-2"></div>
+                    <span className="text-xs font-bold">Mengupload...</span>
+                  </div>
+                ) : profile.about_photo_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={profile.about_photo_url} alt="Foto Tentang" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-300"><FaImage size={40} /></div>
+                  <div className="w-full h-full flex items-center justify-center text-gray-400"><FaImage size={44} /></div>
                 )}
               </div>
-              <input type="file" id="about_photo_url" className="hidden" onChange={(e) => handleFileUpload(e, 'about_photo_url')} />
-              <label htmlFor="about_photo_url" className="cursor-pointer inline-block px-4 py-2 bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white rounded-lg text-xs font-bold transition-colors">Ganti Foto Tentang</label>
+
+              <input 
+                type="file" 
+                id="about_photo_url" 
+                accept="image/*"
+                className="hidden" 
+                onChange={(e) => handleFileUpload(e, 'about_photo_url')} 
+                disabled={uploadingField !== null}
+              />
+              <label 
+                htmlFor="about_photo_url" 
+                className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-black rounded-xl text-xs font-bold transition-all shadow-md shadow-cyan-500/20 hover:scale-105"
+              >
+                <FaCloudUploadAlt />
+                <span>Ganti Foto Tentang</span>
+              </label>
+
+              {/* Direct URL input */}
+              <div className="w-full mt-3 flex items-center gap-1.5">
+                <input
+                  type="url"
+                  name="about_photo_url"
+                  placeholder="Atau tempel URL foto..."
+                  value={profile.about_photo_url || ''}
+                  onChange={handleChange}
+                  className="w-full px-2.5 py-1.5 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-xs text-gray-800 dark:text-zinc-200 outline-none"
+                />
+                <button
+                  type="button"
+                  title="Simpan URL langsung"
+                  onClick={() => handleSaveImageUrl('about_photo_url')}
+                  className="px-2.5 py-1.5 bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 rounded-lg text-xs font-bold text-gray-800 dark:text-white"
+                >
+                  <FaLink />
+                </button>
+              </div>
             </div>
 
-            {/* Logo */}
-            <div className="text-center">
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Logo Site</label>
-              <div className="relative aspect-square w-full max-w-[200px] mx-auto mb-4 rounded-2xl overflow-hidden border-4 border-gray-100 dark:border-white/10 bg-gray-900 flex items-center justify-center">
-                {profile.logo_url ? (
-                  <img src={profile.logo_url} alt="Logo" className="w-full h-full object-contain p-4" />
+            {/* 3. Logo Site (Logo Situs) */}
+            <div className="text-center flex flex-col items-center">
+              <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">Logo Site (Navbar/Header)</label>
+              <div className="relative aspect-square w-full max-w-[200px] mb-4 rounded-2xl overflow-hidden border-4 border-gray-200 dark:border-zinc-700 bg-gray-900 flex items-center justify-center shadow-md p-3">
+                {uploadingField === 'logo_url' ? (
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-black/60 text-white">
+                    <div className="w-8 h-8 border-3 border-cyan-400 border-t-transparent rounded-full animate-spin mb-2"></div>
+                    <span className="text-xs font-bold">Mengupload...</span>
+                  </div>
+                ) : profile.logo_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={profile.logo_url} alt="Logo Site" className="w-full h-full object-contain" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-300"><FaImage size={40} /></div>
+                  <div className="w-full h-full flex items-center justify-center text-gray-400"><FaImage size={44} /></div>
                 )}
               </div>
-              <input type="file" id="logo_url" className="hidden" onChange={(e) => handleFileUpload(e, 'logo_url')} />
-              <label htmlFor="logo_url" className="cursor-pointer inline-block px-4 py-2 bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white rounded-lg text-xs font-bold transition-colors">Ganti Logo</label>
+
+              <input 
+                type="file" 
+                id="logo_url" 
+                accept="image/*"
+                className="hidden" 
+                onChange={(e) => handleFileUpload(e, 'logo_url')} 
+                disabled={uploadingField !== null}
+              />
+              <label 
+                htmlFor="logo_url" 
+                className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-black rounded-xl text-xs font-bold transition-all shadow-md shadow-cyan-500/20 hover:scale-105"
+              >
+                <FaCloudUploadAlt />
+                <span>Ganti Logo Site</span>
+              </label>
+
+              {/* Direct URL input */}
+              <div className="w-full mt-3 flex items-center gap-1.5">
+                <input
+                  type="url"
+                  name="logo_url"
+                  placeholder="Atau tempel URL logo..."
+                  value={profile.logo_url || ''}
+                  onChange={handleChange}
+                  className="w-full px-2.5 py-1.5 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg text-xs text-gray-800 dark:text-zinc-200 outline-none"
+                />
+                <button
+                  type="button"
+                  title="Simpan URL langsung"
+                  onClick={() => handleSaveImageUrl('logo_url')}
+                  className="px-2.5 py-1.5 bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 rounded-lg text-xs font-bold text-gray-800 dark:text-white"
+                >
+                  <FaLink />
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Basic Info */}
-        <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm">
-          <h2 className="text-xl font-bold mb-6 border-b border-gray-200 dark:border-white/10 pb-4 text-gray-900 dark:text-white">Identitas Utama</h2>
+        <div className="bg-white dark:bg-zinc-900/60 border border-gray-200 dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-sm">
+          <h2 className="text-xl font-bold mb-6 border-b border-gray-100 dark:border-zinc-800 pb-4 text-gray-900 dark:text-white">Identitas Utama</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Nama Lengkap</label>
-              <input type="text" name="name" value={profile.name} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+              <input type="text" name="name" value={profile.name || ''} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Gelar / Title (ID)</label>
+              <input type="text" name="title_id" value={profile.title_id || ''} onChange={handleChange} placeholder="Web & Mobile Developer" className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Title (EN)</label>
+              <input type="text" name="title_en" value={profile.title_en || ''} onChange={handleChange} placeholder="Web & Mobile Developer" className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Tempat Lahir</label>
-              <input type="text" name="birth_place" value={profile.birth_place} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+              <input type="text" name="birth_place" value={profile.birth_place || ''} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Tanggal Lahir</label>
-              <input type="date" name="birth_date" value={profile.birth_date} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+              <input type="date" name="birth_date" value={profile.birth_date || ''} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Kota Saat Ini</label>
-              <input type="text" name="current_city" value={profile.current_city} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+              <input type="text" name="current_city" value={profile.current_city || ''} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Jam Kerja</label>
-              <input type="text" name="work_hours" value={profile.work_hours} onChange={handleChange} placeholder="Contoh: 08:00 - 17:00" className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+              <input type="text" name="work_hours" value={profile.work_hours || ''} onChange={handleChange} placeholder="Contoh: 08:00 - 17:00" className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Status (ID)</label>
-              <input type="text" name="availability_status_id" value={profile.availability_status_id} onChange={handleChange} placeholder="Contoh: Tersedia untuk Bekerja" className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Status Ketersediaan (ID)</label>
+              <input type="text" name="availability_status_id" value={profile.availability_status_id || ''} onChange={handleChange} placeholder="Tersedia untuk proyek freelance terpilih" className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Status (EN)</label>
-              <input type="text" name="availability_status_en" value={profile.availability_status_en} onChange={handleChange} placeholder="Contoh: Available for Work" className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Availability Status (EN)</label>
+              <input type="text" name="availability_status_en" value={profile.availability_status_en || ''} onChange={handleChange} placeholder="Available for selected freelance projects" className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
             </div>
           </div>
         </div>
 
-        {/* Bio & Vision */}
-        <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm">
-          <h2 className="text-xl font-bold mb-6 border-b border-gray-200 dark:border-white/10 pb-4 text-gray-900 dark:text-white">Bio, Visi & Kata-kata</h2>
+        {/* Bio, Vision, Motto */}
+        <div className="bg-white dark:bg-zinc-900/60 border border-gray-200 dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-sm">
+          <h2 className="text-xl font-bold mb-6 border-b border-gray-100 dark:border-zinc-800 pb-4 text-gray-900 dark:text-white">Bio, Visi & Nilai</h2>
           <div className="space-y-6">
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Bio (ID)</label>
-                <textarea name="bio_id" rows={4} value={profile.bio_id} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Bio Singkat (ID)</label>
+                <textarea name="bio_id" rows={4} value={profile.bio_id || ''} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Bio (EN)</label>
-                <textarea name="bio_en" rows={4} value={profile.bio_en} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Short Bio (EN)</label>
+                <textarea name="bio_en" rows={4} value={profile.bio_en || ''} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
               </div>
             </div>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Visi (ID)</label>
-                <textarea name="vision_id" rows={3} value={profile.vision_id} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+                <textarea name="vision_id" rows={3} value={profile.vision_id || ''} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Visi (EN)</label>
-                <textarea name="vision_en" rows={3} value={profile.vision_en} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Vision (EN)</label>
+                <textarea name="vision_en" rows={3} value={profile.vision_en || ''} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
               </div>
             </div>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Motto / Quote (ID)</label>
-                <input type="text" name="motto_id" value={profile.motto_id} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+                <input type="text" name="motto_id" value={profile.motto_id || ''} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Motto / Quote (EN)</label>
-                <input type="text" name="motto_en" value={profile.motto_en} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+                <input type="text" name="motto_en" value={profile.motto_en || ''} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Stats */}
-        <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm">
-          <h2 className="text-xl font-bold mb-6 border-b border-gray-200 dark:border-white/10 pb-4 text-gray-900 dark:text-white">Statistik</h2>
+        <div className="bg-white dark:bg-zinc-900/60 border border-gray-200 dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-sm">
+          <h2 className="text-xl font-bold mb-6 border-b border-gray-100 dark:border-zinc-800 pb-4 text-gray-900 dark:text-white">Statistik Angka</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Project Count</label>
-              <input type="text" name="stats_projects" value={profile.stats_projects} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Jumlah Proyek</label>
+              <input type="text" name="stats_projects" value={profile.stats_projects || '0'} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Tools Count</label>
-              <input type="text" name="stats_tools" value={profile.stats_tools} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Jumlah Tools / Teknologi</label>
+              <input type="text" name="stats_tools" value={profile.stats_tools || '0'} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Passion Stat</label>
-              <input type="text" name="stats_passion" value={profile.stats_passion} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+              <input type="text" name="stats_passion" value={profile.stats_passion || '∞'} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
             </div>
           </div>
         </div>
 
         {/* Social & Contact */}
-        <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm">
-          <h2 className="text-xl font-bold mb-6 border-b border-gray-200 dark:border-white/10 pb-4 text-gray-900 dark:text-white">Kontak & Sosmed</h2>
+        <div className="bg-white dark:bg-zinc-900/60 border border-gray-200 dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-sm">
+          <h2 className="text-xl font-bold mb-6 border-b border-gray-100 dark:border-zinc-800 pb-4 text-gray-900 dark:text-white">Kontak & Media Sosial</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2"><FaWhatsapp className="text-green-500" /> WhatsApp</label>
-              <input type="text" name="wa" value={profile.wa} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2"><FaWhatsapp className="text-emerald-500" /> WhatsApp (Nomor HP)</label>
+              <input type="text" name="wa" value={profile.wa || ''} onChange={handleChange} placeholder="08xxxxxxxxxx" className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2"><FaEnvelope className="text-red-500" /> Email</label>
-              <input type="email" name="email" value={profile.email} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+              <input type="email" name="email" value={profile.email || ''} onChange={handleChange} placeholder="daffarezky99@gmail.com" className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2"><FaInstagram className="text-pink-500" /> Instagram</label>
-              <input type="text" name="instagram" value={profile.instagram} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+              <input type="text" name="instagram" value={profile.instagram || ''} onChange={handleChange} placeholder="https://instagram.com/..." className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2"><FaGithub /> GitHub</label>
-              <input type="text" name="github" value={profile.github} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+              <input type="text" name="github" value={profile.github || ''} onChange={handleChange} placeholder="https://github.com/..." className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2"><FaLinkedin className="text-blue-600" /> LinkedIn</label>
-              <input type="text" name="linkedin" value={profile.linkedin} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white" />
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2"><FaLinkedin className="text-blue-500" /> LinkedIn</label>
+              <input type="text" name="linkedin" value={profile.linkedin || ''} onChange={handleChange} placeholder="https://linkedin.com/in/..." className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
             </div>
           </div>
         </div>
 
-        <div className="flex justify-end">
+        {/* Submit Button */}
+        <div className="flex justify-end pt-4">
           <button
             type="submit"
-            disabled={saving}
-            className="flex items-center gap-3 px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-xl shadow-blue-500/30 transition-all disabled:opacity-50"
+            disabled={saving || uploadingField !== null}
+            className="flex items-center gap-3 px-10 py-4 bg-cyan-500 hover:bg-cyan-400 text-black font-bold rounded-2xl shadow-xl shadow-cyan-500/20 transition-all hover:scale-105 disabled:opacity-50"
           >
-            {saving ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : <FaSave />}
-            Simpan Semua Perubahan
+            {saving ? <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div> : <FaSave />}
+            <span>Simpan Semua Perubahan</span>
           </button>
         </div>
       </form>
