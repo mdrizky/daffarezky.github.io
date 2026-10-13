@@ -910,10 +910,13 @@ END $$;
 -- [2] PENDIDIKAN (EDUCATION)
 DO $$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM public.education LIMIT 1) THEN
+  -- Bersihkan dummy testing yang acak jika ada
+  DELETE FROM public.education WHERE institution ILIKE '%fajsb%' OR institution ILIKE '%erfaerfaerf%';
+
+  -- 1. Institut IMSYA Indonesia
+  IF NOT EXISTS (SELECT 1 FROM public.education WHERE institution ILIKE '%IMSYA%') THEN
     INSERT INTO public.education (institution, degree_id, degree_en, start_year, end_year, is_current, field_of_study, location, description_id, description_en, education_level, sort_order, is_published)
-    VALUES
-    (
+    VALUES (
       'Institut IMSYA Indonesia',
       'Perguruan Tinggi',
       'Higher Education',
@@ -927,8 +930,13 @@ BEGIN
       'KULIAH',
       1,
       true
-    ),
-    (
+    );
+  END IF;
+
+  -- 2. Ma'had Dar El Ilmi Sumatera Barat
+  IF NOT EXISTS (SELECT 1 FROM public.education WHERE institution ILIKE '%Dar El Ilmi%') THEN
+    INSERT INTO public.education (institution, degree_id, degree_en, start_year, end_year, is_current, field_of_study, location, description_id, description_en, education_level, sort_order, is_published)
+    VALUES (
       'Ma''had Dar El Ilmi Sumatera Barat',
       'Madrasah Aliyah / SMA / SMK',
       'Senior High School / Islamic Boarding',
@@ -942,8 +950,13 @@ BEGIN
       'SMA',
       2,
       true
-    ),
-    (
+    );
+  END IF;
+
+  -- 3. SMPN 1 Batusangkar, Sumatera Barat
+  IF NOT EXISTS (SELECT 1 FROM public.education WHERE institution ILIKE '%Batusangkar%' OR institution ILIKE '%SMPN 1%') THEN
+    INSERT INTO public.education (institution, degree_id, degree_en, start_year, end_year, is_current, field_of_study, location, description_id, description_en, education_level, sort_order, is_published)
+    VALUES (
       'SMPN 1 Batusangkar, Sumatera Barat',
       'Sekolah Menengah Pertama',
       'Junior High School',
@@ -979,725 +992,742 @@ BEGIN
 END $$;
 
 -- [3] SERTIFIKAT RESMI (9 SERTIFIKAT DAFFA)
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM public.certificates LIMIT 1) THEN
-    INSERT INTO public.certificates (title_id, title_en, issuer, date_issued, image_url, file_url, description_id, description_en, sort_order, is_published)
-    VALUES
-    (
-      'Dicoding — Dasar-Dasar Literasi Keuangan',
-      'Dicoding — Financial Literacy Fundamentals',
-      'Dicoding',
-      '23 September 2025',
-      '/assets/certificates/dicoding-financial-literacy.svg',
-      '/assets/certificates/Financial Literacy 101.pdf',
-      'Sertifikat kelulusan kompetensi literasi finansial dan teknologi dari Dicoding Indonesia.',
-      'Official financial and tech literacy competence certification from Dicoding Indonesia.',
-      1,
-      true
-    ),
-    (
-      'Tasheel — Uji Kemampuan Bahasa Arab',
-      'Tasheel — Arabic Proficiency Test',
-      'Tasheel',
-      '03 Januari 2026',
-      '/assets/certificates/sertifikat-tasheel.jpg',
-      '/assets/certificates/sertifikat-tasheel.pdf',
-      'Sertifikat uji kemampuan Bahasa Arab dengan skor sempurna 100/100 untuk beasiswa Timur Tengah.',
-      'Arabic proficiency certification with a perfect score 100/100 for Middle East scholarships.',
-      2,
-      true
-    ),
-    (
-      'Surat Rekomendasi Tasheel Timur Tengah',
-      'Tasheel Middle East Recommendation Letter',
-      'Tasheel',
-      '03 Januari 2026',
-      '/assets/certificates/surat-rekomendasi-tasheel.jpg',
-      '/assets/certificates/surat-rekomendasi-tasheel.pdf',
-      'Surat rekomendasi akademik resmi dari Asrama Tahfidz Yumna dan Platform Tasheel.',
-      'Official academic recommendation letter from Tahfidz Yumna and Tasheel Platform.',
-      3,
-      true
-    ),
-    (
-      'Juara 1 Musabaqah Tahfidz Qur''an 3 Juz',
-      '1st Place 3 Juz Qur''an Memorization Contest',
-      'Ashabul Qur''an',
-      '15 Sya''ban 1445 H',
-      '/assets/certificates/sertifikat-tahfidz-quran.jpg',
-      '/assets/certificates/Document 15.pdf',
-      'Syahadah Syukr wa Taqdir Juara I lomba Tahfidz Al-Qur''an 3 Juz Ma''had Ashabul Qur''an.',
-      '1st Place certificate in 3 Juz Qur''an memorization competition at Ashabul Qur''an Institute.',
-      4,
-      true
-    ),
-    (
-      'Digitalent — AI Engineer For Milenial',
-      'Digitalent — AI Engineer For Milenial',
-      'Kominfo',
-      '2024',
-      '/assets/certificates/digitalent-ai-engineer.svg',
-      '/assets/certificates/ai-engineer-milenial.pdf',
-      'Sertifikat pelatihan kecerdasan buatan dari Digital Talent Scholarship Kementerian Kominfo RI.',
-      'AI Engineer training certification from Ministry of Communications and Informatics (Kominfo).',
-      5,
-      true
-    ),
-    (
-      'Digitalent — Ethical Hacker For Dummies',
-      'Digitalent — Ethical Hacker For Dummies',
-      'Kominfo',
-      '2024',
-      '/assets/certificates/digitalent-ethical-hacker.svg',
-      '/assets/certificates/ethical-hacker-dummies.pdf',
-      'Sertifikasi keahlian keamanan siber dan penetration testing dasar dari Kominfo DTS.',
-      'Cyber security & foundational ethical hacking certification from Kominfo DTS.',
-      6,
-      true
-    ),
-    (
-      'Produk Digital dan Desain Grafis',
-      'Digital Products & Graphic Design',
-      'Kominfo',
-      '2024',
-      '/assets/certificates/digitalent-digital-products.svg',
-      '/assets/certificates/digital-products-graphic-design.pdf',
-      'Pelatihan pengembangan produk digital dan fondasi desain grafis interaktif dari Kominfo.',
-      'Digital product development and graphic design training from Kominfo.',
-      7,
-      true
-    );
-  END IF;
-END $$;
+-- [3] SERTIFIKAT RESMI (9 SERTIFIKAT DAFFA)
+INSERT INTO public.certificates (title_id, title_en, issuer, date_issued, image_url, file_url, description_id, description_en, sort_order, is_published)
+SELECT v.title_id, v.title_en, v.issuer, v.date_issued, v.image_url, v.file_url, v.description_id, v.description_en, v.sort_order, v.is_published
+FROM (VALUES
+  (
+    'Dicoding — Dasar-Dasar Literasi Keuangan',
+    'Dicoding — Financial Literacy Fundamentals',
+    'Dicoding',
+    '23 September 2025',
+    '/assets/certificates/dicoding-financial-literacy.svg',
+    '/assets/certificates/Financial Literacy 101.pdf',
+    'Sertifikat kelulusan kompetensi literasi finansial dan teknologi dari Dicoding Indonesia.',
+    'Official financial and tech literacy competence certification from Dicoding Indonesia.',
+    1,
+    true
+  ),
+  (
+    'Tasheel — Uji Kemampuan Bahasa Arab',
+    'Tasheel — Arabic Proficiency Test',
+    'Tasheel',
+    '03 Januari 2026',
+    '/assets/certificates/sertifikat-tasheel.jpg',
+    '/assets/certificates/sertifikat-tasheel.pdf',
+    'Sertifikat uji kemampuan Bahasa Arab dengan skor sempurna 100/100 untuk beasiswa Timur Tengah.',
+    'Arabic proficiency certification with a perfect score 100/100 for Middle East scholarships.',
+    2,
+    true
+  ),
+  (
+    'Surat Rekomendasi Tasheel Timur Tengah',
+    'Tasheel Middle East Recommendation Letter',
+    'Tasheel',
+    '03 Januari 2026',
+    '/assets/certificates/surat-rekomendasi-tasheel.jpg',
+    '/assets/certificates/surat-rekomendasi-tasheel.pdf',
+    'Surat rekomendasi akademik resmi dari Asrama Tahfidz Yumna dan Platform Tasheel.',
+    'Official academic recommendation letter from Tahfidz Yumna and Tasheel Platform.',
+    3,
+    true
+  ),
+  (
+    'Juara 1 Musabaqah Tahfidz Qur''an 3 Juz',
+    '1st Place 3 Juz Qur''an Memorization Contest',
+    'Ashabul Qur''an',
+    '15 Sya''ban 1445 H',
+    '/assets/certificates/sertifikat-tahfidz-quran.jpg',
+    '/assets/certificates/Document 15.pdf',
+    'Syahadah Syukr wa Taqdir Juara I lomba Tahfidz Al-Qur''an 3 Juz Ma''had Ashabul Qur''an.',
+    '1st Place certificate in 3 Juz Qur''an memorization competition at Ashabul Qur''an Institute.',
+    4,
+    true
+  ),
+  (
+    'Digitalent — AI Engineer For Milenial',
+    'Digitalent — AI Engineer For Milenial',
+    'Kominfo',
+    '2024',
+    '/assets/certificates/digitalent-ai-engineer.svg',
+    '/assets/certificates/ai-engineer-milenial.pdf',
+    'Sertifikat pelatihan kecerdasan buatan dari Digital Talent Scholarship Kementerian Kominfo RI.',
+    'AI Engineer training certification from Ministry of Communications and Informatics (Kominfo).',
+    5,
+    true
+  ),
+  (
+    'Digitalent — Ethical Hacker For Dummies',
+    'Digitalent — Ethical Hacker For Dummies',
+    'Kominfo',
+    '2024',
+    '/assets/certificates/digitalent-ethical-hacker.svg',
+    '/assets/certificates/ethical-hacker-dummies.pdf',
+    'Sertifikasi keahlian keamanan siber dan penetration testing dasar dari Kominfo DTS.',
+    'Cyber security & foundational ethical hacking certification from Kominfo DTS.',
+    6,
+    true
+  ),
+  (
+    'Produk Digital dan Desain Grafis',
+    'Digital Products & Graphic Design',
+    'Kominfo',
+    '2024',
+    '/assets/certificates/digitalent-digital-products.svg',
+    '/assets/certificates/digital-products-graphic-design.pdf',
+    'Pelatihan pengembangan produk digital dan fondasi desain grafis interaktif dari Kominfo.',
+    'Digital product development and graphic design training from Kominfo.',
+    7,
+    true
+  )
+) AS v(title_id, title_en, issuer, date_issued, image_url, file_url, description_id, description_en, sort_order, is_published)
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.certificates c WHERE c.title_id = v.title_id
+);
 
 -- [4] KEAHLIAN TEKNOLOGI (SKILLS)
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM public.skills LIMIT 1) THEN
-    INSERT INTO public.skills (name, category, level, icon, show_on_home, sort_order, is_published)
-    VALUES
-    ('React.js', 'Frontend', 'Advanced', 'react', true, 1, true),
-    ('Next.js', 'Frontend', 'Advanced', 'nextjs', true, 2, true),
-    ('TypeScript', 'Frontend', 'Advanced', 'js', true, 3, true),
-    ('Tailwind CSS', 'Frontend', 'Advanced', 'css', true, 4, true),
-    ('HTML5 & CSS3', 'Frontend', 'Expert', 'html', true, 5, true),
-    ('JavaScript (ES6+)', 'Frontend', 'Advanced', 'js', true, 6, true),
-    ('Node.js', 'Backend', 'Intermediate', 'js', true, 7, true),
-    ('PostgreSQL', 'Backend', 'Advanced', 'tools', true, 8, true),
-    ('Supabase', 'Backend', 'Advanced', 'tools', true, 9, true),
-    ('Laravel', 'Backend', 'Intermediate', 'laravel', false, 10, true),
-    ('Flutter', 'Mobile', 'Intermediate', 'flutter', true, 11, true),
-    ('Git & GitHub', 'Tools', 'Advanced', 'tools', true, 12, true),
-    ('Figma', 'Design', 'Intermediate', 'figma', true, 13, true),
-    ('Canva', 'Design', 'Advanced', 'canva', false, 14, true),
-    ('Prompt Engineering', 'AI & Automation', 'Advanced', 'chatgpt', true, 15, true),
-    ('OpenAI / Gemini API', 'AI & Automation', 'Advanced', 'claude', true, 16, true),
-    ('N8N Workflow Automation', 'AI & Automation', 'Intermediate', 'n8n', false, 17, true),
-    ('Google Analytics', 'Data & Analytics', 'Intermediate', 'analytics', false, 18, true),
-    ('Looker Studio', 'Data & Analytics', 'Intermediate', 'looker', false, 19, true),
-    ('Bahasa Arab Fushah', 'Language & Islamic', 'Advanced', 'tools', true, 20, true);
-  END IF;
-END $$;
+INSERT INTO public.skills (name, category, level, icon, show_on_home, sort_order, is_published)
+SELECT v.name, v.category, v.level, v.icon, v.show_on_home, v.sort_order, v.is_published
+FROM (VALUES
+  ('React.js', 'Frontend', 'Advanced', 'react', true, 1, true),
+  ('Next.js', 'Frontend', 'Advanced', 'nextjs', true, 2, true),
+  ('TypeScript', 'Frontend', 'Advanced', 'js', true, 3, true),
+  ('Tailwind CSS', 'Frontend', 'Advanced', 'css', true, 4, true),
+  ('HTML5 & CSS3', 'Frontend', 'Expert', 'html', true, 5, true),
+  ('JavaScript (ES6+)', 'Frontend', 'Advanced', 'js', true, 6, true),
+  ('Node.js', 'Backend', 'Intermediate', 'js', true, 7, true),
+  ('PostgreSQL', 'Backend', 'Advanced', 'tools', true, 8, true),
+  ('Supabase', 'Backend', 'Advanced', 'tools', true, 9, true),
+  ('Laravel', 'Backend', 'Intermediate', 'laravel', false, 10, true),
+  ('Flutter', 'Mobile', 'Intermediate', 'flutter', true, 11, true),
+  ('Git & GitHub', 'Tools', 'Advanced', 'tools', true, 12, true),
+  ('Figma', 'Design', 'Intermediate', 'figma', true, 13, true),
+  ('Canva', 'Design', 'Advanced', 'canva', false, 14, true),
+  ('Prompt Engineering', 'AI & Automation', 'Advanced', 'chatgpt', true, 15, true),
+  ('OpenAI / Gemini API', 'AI & Automation', 'Advanced', 'claude', true, 16, true),
+  ('N8N Workflow Automation', 'AI & Automation', 'Intermediate', 'n8n', false, 17, true),
+  ('Google Analytics', 'Data & Analytics', 'Intermediate', 'analytics', false, 18, true),
+  ('Looker Studio', 'Data & Analytics', 'Intermediate', 'looker', false, 19, true),
+  ('Bahasa Arab Fushah', 'Language & Islamic', 'Advanced', 'tools', true, 20, true)
+) AS v(name, category, level, icon, show_on_home, sort_order, is_published)
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.skills s WHERE s.name = v.name
+);
 
 -- [5] PROYEK PORTOFOLIO (PROJECTS)
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM public.projects LIMIT 1) THEN
-    INSERT INTO public.projects (
-      title_id, title_en, description_id, description_en,
-      image_url, tech_stack, demo_url, github_url,
-      featured, category, progress, status, year,
-      problem_id, problem_en, solution_id, solution_en,
-      sort_order, is_published
-    ) VALUES
-    (
-      'Daffa Portfolio V2 Platform',
-      'Daffa Portfolio V2 Platform',
-      'Platform website portofolio interaktif dengan integrasi CMS panel admin mandiri, sistem autentikasi aman, upload media real-time, dan optimasi performa tinggi.',
-      'Interactive personal portfolio platform integrated with headless CMS admin dashboard, secure auth, real-time media upload, and high Core Web Vitals performance.',
-      '/og-image.jpg',
-      ARRAY['Next.js 15', 'TypeScript', 'Tailwind CSS', 'Supabase', 'PostgreSQL'],
-      'https://portofolio-daffarezky.vercel.app',
-      'https://github.com/daffarezky/portofolio-v2',
-      true,
-      'Web Development',
-      100,
-      'Completed',
-      2025,
-      'Kebutuhan akan platform showcase yang tidak hanya statis, melainkan dapat diperbarui dinamis langsung dari perangkat mana saja melalui dashboard admin terintegrasi.',
-      'The need for a personal showcase that is dynamic, editable anytime via an integrated headless admin portal without touching source code.',
-      'Membangun sistem modular Next.js berbasis SSR dan Supabase Database + Storage, lengkap dengan RBAC dan sanitasi data otomatis.',
-      'Engineered a modular SSR Next.js stack with Supabase Database and Storage, incorporating RBAC policies and automated data sanitization.',
-      1,
-      true
-    ),
-    (
-      'Sistem Informasi & Manajemen Akademik',
-      'Academic Information & Management System',
-      'Aplikasi web manajemen pencatatan data santri, evaluasi hafalan Qur''an, rekap kehadiran, dan laporan progres akademik terpusat.',
-      'Web application for student data management, Qur''an memorization evaluation, attendance tracking, and centralized academic reports.',
-      '/assets/projects/academic-system.jpg',
-      ARRAY['Next.js', 'React', 'PostgreSQL', 'Tailwind CSS'],
-      '#',
-      '#',
-      true,
-      'Web Application',
-      100,
-      'Completed',
-      2024,
-      'Pencatatan evaluasi santri yang masih manual berbasis kertas seringkali memicu kehilangan data dan lambatnya pembuatan rekap bulanan.',
-      'Manual paper-based evaluations caused data loss and slowed down monthly progress reports for parents.',
-      'Membangun portal dashboard berbasis cloud dengan fitur input nilai instan, filter kelas, dan ekspor laporan berkala.',
-      'Built a cloud dashboard featuring instant grade submission, class filtering, and automated report generation.',
-      2,
-      true
-    ),
-    (
-      'Tasheel Arabic Learning Platform',
-      'Tasheel Arabic Learning Platform',
-      'Platform edukasi interaktif untuk evaluasi dan pembelajaran tata bahasa Arab (Nahwu & Sharaf) dengan modul kuis otomatis.',
-      'Interactive education platform for Arabic grammar evaluation (Nahwu & Sharaf) featuring automated quiz modules.',
-      '/assets/projects/tasheel-app.jpg',
-      ARRAY['Flutter', 'Dart', 'Supabase', 'REST API'],
-      '#',
-      '#',
-      true,
-      'Mobile Development',
-      90,
-      'Ongoing',
-      2025,
-      'Minimnya sarana evaluasi mandiri yang terstruktur bagi pelajar bahasa Arab pemula di Indonesia.',
-      'Scarcity of structured self-evaluation tools for beginner Arabic learners in Indonesia.',
-      'Mengembangkan aplikasi mobile interaktif dengan bank soal bertingkat dan analitik hasil belajar.',
-      'Developing an interactive mobile app featuring tiered question banks and learning analytics.',
-      3,
-      true
-    ),
-    (
-      'Islamic Insights & Hadis Hub',
-      'Islamic Insights & Hadis Hub',
-      'Portal publikasi artikel keislaman, kumpulan hadis tematik, dan kutipan mutiara dengan pencarian instan dan tampilan responsif.',
-      'Portal publishing Islamic insights, thematic hadith collections, and wisdom quotes with instant search and responsive UI.',
-      '/assets/projects/islamic-hub.jpg',
-      ARRAY['Next.js', 'TypeScript', 'Supabase'],
-      '#',
-      '#',
-      false,
-      'Web Application',
-      100,
-      'Completed',
-      2024,
-      'Kebutuhan referensi bacaan Islam yang bersih, bebas iklan mengganggu, dan nyaman dibaca di smartphone.',
-      'The need for clean, ad-free Islamic reading references tailored for smartphone readability.',
-      'Mendesain tata letak berbasis tipografi elegan dengan sistem penanda bacaan dan kategori terstruktur.',
-      'Designed an elegant typography-focused layout with bookmarking features and categorized taxonomy.',
-      4,
-      true
-    );
-  END IF;
-END $$;
+-- [5] PROYEK PORTOFOLIO (PROJECTS)
+INSERT INTO public.projects (
+  title_id, title_en, description_id, description_en,
+  image_url, tech_stack, demo_url, github_url,
+  featured, category, progress, status, year,
+  problem_id, problem_en, solution_id, solution_en,
+  sort_order, is_published
+)
+SELECT v.title_id, v.title_en, v.description_id, v.description_en,
+  v.image_url, v.tech_stack, v.demo_url, v.github_url,
+  v.featured, v.category, v.progress, v.status, v.year,
+  v.problem_id, v.problem_en, v.solution_id, v.solution_en,
+  v.sort_order, v.is_published
+FROM (VALUES
+  (
+    'Daffa Portfolio V2 Platform',
+    'Daffa Portfolio V2 Platform',
+    'Platform website portofolio interaktif dengan integrasi CMS panel admin mandiri, sistem autentikasi aman, upload media real-time, dan optimasi performa tinggi.',
+    'Interactive personal portfolio platform integrated with headless CMS admin dashboard, secure auth, real-time media upload, and high Core Web Vitals performance.',
+    '/og-image.jpg',
+    ARRAY['Next.js 15', 'TypeScript', 'Tailwind CSS', 'Supabase', 'PostgreSQL'],
+    'https://portofolio-daffarezky.vercel.app',
+    'https://github.com/daffarezky/portofolio-v2',
+    true,
+    'Web Development',
+    100,
+    'Completed',
+    2025,
+    'Kebutuhan akan platform showcase yang tidak hanya statis, melainkan dapat diperbarui dinamis langsung dari perangkat mana saja melalui dashboard admin terintegrasi.',
+    'The need for a personal showcase that is dynamic, editable anytime via an integrated headless admin portal without touching source code.',
+    'Membangun sistem modular Next.js berbasis SSR dan Supabase Database + Storage, lengkap dengan RBAC dan sanitasi data otomatis.',
+    'Engineered a modular SSR Next.js stack with Supabase Database and Storage, incorporating RBAC policies and automated data sanitization.',
+    1,
+    true
+  ),
+  (
+    'Sistem Informasi & Manajemen Akademik',
+    'Academic Information & Management System',
+    'Aplikasi web manajemen pencatatan data santri, evaluasi hafalan Qur''an, rekap kehadiran, dan laporan progres akademik terpusat.',
+    'Web application for student data management, Qur''an memorization evaluation, attendance tracking, and centralized academic reports.',
+    '/assets/projects/academic-system.jpg',
+    ARRAY['Next.js', 'React', 'PostgreSQL', 'Tailwind CSS'],
+    '#',
+    '#',
+    true,
+    'Web Application',
+    100,
+    'Completed',
+    2024,
+    'Pencatatan evaluasi santri yang masih manual berbasis kertas seringkali memicu kehilangan data dan lambatnya pembuatan rekap bulanan.',
+    'Manual paper-based evaluations caused data loss and slowed down monthly progress reports for parents.',
+    'Membangun portal dashboard berbasis cloud dengan fitur input nilai instan, filter kelas, dan ekspor laporan berkala.',
+    'Built a cloud dashboard featuring instant grade submission, class filtering, and automated report generation.',
+    2,
+    true
+  ),
+  (
+    'Tasheel Arabic Learning Platform',
+    'Tasheel Arabic Learning Platform',
+    'Platform edukasi interaktif untuk evaluasi dan pembelajaran tata bahasa Arab (Nahwu & Sharaf) dengan modul kuis otomatis.',
+    'Interactive education platform for Arabic grammar evaluation (Nahwu & Sharaf) featuring automated quiz modules.',
+    '/assets/projects/tasheel-app.jpg',
+    ARRAY['Flutter', 'Dart', 'Supabase', 'REST API'],
+    '#',
+    '#',
+    true,
+    'Mobile Development',
+    90,
+    'Ongoing',
+    2025,
+    'Minimnya sarana evaluasi mandiri yang terstruktur bagi pelajar bahasa Arab pemula di Indonesia.',
+    'Scarcity of structured self-evaluation tools for beginner Arabic learners in Indonesia.',
+    'Mengembangkan aplikasi mobile interaktif dengan bank soal bertingkat dan analitik hasil belajar.',
+    'Developing an interactive mobile app featuring tiered question banks and learning analytics.',
+    3,
+    true
+  ),
+  (
+    'Islamic Insights & Hadis Hub',
+    'Islamic Insights & Hadis Hub',
+    'Portal publikasi artikel keislaman, kumpulan hadis tematik, dan kutipan mutiara dengan pencarian instan dan tampilan responsif.',
+    'Portal publishing Islamic insights, thematic hadith collections, and wisdom quotes with instant search and responsive UI.',
+    '/assets/projects/islamic-hub.jpg',
+    ARRAY['Next.js', 'TypeScript', 'Supabase'],
+    '#',
+    '#',
+    false,
+    'Web Application',
+    100,
+    'Completed',
+    2024,
+    'Kebutuhan referensi bacaan Islam yang bersih, bebas iklan mengganggu, dan nyaman dibaca di smartphone.',
+    'The need for clean, ad-free Islamic reading references tailored for smartphone readability.',
+    'Mendesain tata letak berbasis tipografi elegan dengan sistem penanda bacaan dan kategori terstruktur.',
+    'Designed an elegant typography-focused layout with bookmarking features and categorized taxonomy.',
+    4,
+    true
+  )
+) AS v(
+  title_id, title_en, description_id, description_en,
+  image_url, tech_stack, demo_url, github_url,
+  featured, category, progress, status, year,
+  problem_id, problem_en, solution_id, solution_en,
+  sort_order, is_published
+)
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.projects p WHERE p.title_id = v.title_id
+);
 
 -- [6] PENGALAMAN (EXPERIENCE)
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM public.experience LIMIT 1) THEN
-    INSERT INTO public.experience (title_id, title_en, organization, role, start_date, end_date, is_current, category, description_id, description_en, sort_order, is_published)
-    VALUES
-    (
-      'Frontend & Fullstack Web Developer',
-      'Frontend & Fullstack Web Developer',
-      'Freelance / Independent',
-      'Lead Developer',
-      '2023',
-      'Sekarang',
-      true,
-      'Freelance',
-      'Merancang dan membangun aplikasi web, landing page UMKM, dashboard internal, dan integrasi API untuk berbagai klien lokal.',
-      'Designing and building custom web applications, business landing pages, internal dashboards, and API integrations for various clients.',
-      1,
-      true
-    ),
-    (
-      'Pengajar Tahfidz & Bahasa Arab',
-      'Tahfidz & Arabic Tutor',
-      'Lembaga Pendidikan & Privat',
-      'Tutor / Pengajar',
-      '2023',
-      'Sekarang',
-      true,
-      'Pendidikan',
-      'Membimbing santri dalam tahsin tilawah, setoran hafalan Al-Qur''an, dan dasar-dasar percakapan bahasa Arab fushah.',
-      'Mentoring students in proper Quranic recitation, memorization, and foundational spoken classical Arabic.',
-      2,
-      true
-    ),
-    (
-      'Divisi Media & Publikasi Organisasi',
-      'Media & Publication Division',
-      'Organisasi Mahasiswa & Santri',
-      'Koordinator Media',
-      '2023',
-      '2024',
-      false,
-      'Organisasi',
-      'Bertanggung jawab mengelola publikasi media sosial, desain materi visual dakwah, dokumentasi kegiatan, dan siaran pers digital.',
-      'Managed social media publications, visual branding materials, event documentation, and digital announcements.',
-      3,
-      true
-    );
-  END IF;
-END $$;
+INSERT INTO public.experience (title_id, title_en, organization, role, start_date, end_date, is_current, category, description_id, description_en, sort_order, is_published)
+SELECT v.title_id, v.title_en, v.organization, v.role, v.start_date, v.end_date, v.is_current, v.category, v.description_id, v.description_en, v.sort_order, v.is_published
+FROM (VALUES
+  (
+    'Frontend & Fullstack Web Developer',
+    'Frontend & Fullstack Web Developer',
+    'Freelance / Independent',
+    'Lead Developer',
+    '2023',
+    'Sekarang',
+    true,
+    'Freelance',
+    'Merancang dan membangun aplikasi web, landing page UMKM, dashboard internal, dan integrasi API untuk berbagai klien lokal.',
+    'Designing and building custom web applications, business landing pages, internal dashboards, and API integrations for various clients.',
+    1,
+    true
+  ),
+  (
+    'Pengajar Tahfidz & Bahasa Arab',
+    'Tahfidz & Arabic Tutor',
+    'Lembaga Pendidikan & Privat',
+    'Tutor / Pengajar',
+    '2023',
+    'Sekarang',
+    true,
+    'Pendidikan',
+    'Membimbing santri dalam tahsin tilawah, setoran hafalan Al-Qur''an, dan dasar-dasar percakapan bahasa Arab fushah.',
+    'Mentoring students in proper Quranic recitation, memorization, and foundational spoken classical Arabic.',
+    2,
+    true
+  ),
+  (
+    'Divisi Media & Publikasi Organisasi',
+    'Media & Publication Division',
+    'Organisasi Mahasiswa & Santri',
+    'Koordinator Media',
+    '2023',
+    '2024',
+    false,
+    'Organisasi',
+    'Bertanggung jawab mengelola publikasi media sosial, desain materi visual dakwah, dokumentasi kegiatan, dan siaran pers digital.',
+    'Managed social media publications, visual branding materials, event documentation, and digital announcements.',
+    3,
+    true
+  )
+) AS v(title_id, title_en, organization, role, start_date, end_date, is_current, category, description_id, description_en, sort_order, is_published)
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.experience e WHERE e.title_id = v.title_id AND e.organization = v.organization
+);
 
 -- [7] PAKET LAYANAN (SERVICES)
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM public.services LIMIT 1) THEN
-    INSERT INTO public.services (
-      name_id, name_en, price, timeline,
-      target_client_id, target_client_en,
-      description_id, description_en,
-      features_id, features_en,
-      is_popular, badge_text, sort_order, is_published
-    ) VALUES
-    (
-      'Paket Website Modern & Landing Page',
-      'Modern Website & Landing Page Package',
-      'Mulai dari Rp 1.500.000',
-      '3 – 5 Hari',
-      'UMKM, bisnis lokal, retail, atau personal branding yang ingin tampil kredibel dan profesional di Google.',
-      'MSMEs, local businesses, retail shops, or personal branding looking to establish a professional digital presence.',
-      'Website modern, estetik, berkecepatan tinggi, dan responsif sempurna di semua perangkat smartphone maupun PC.',
-      'Modern, aesthetic, ultra-fast, and fully responsive across all smartphone and desktop devices.',
-      ARRAY[
-        'Desain Landing Page / Company Profile yang modern, estetik, dan responsif (HP, tablet, PC)',
-        'Struktur kode optimal menggunakan teknologi modern (Next.js / Tailwind CSS)',
-        'Optimasi kecepatan muat (Core Web Vitals) dan dasar SEO agar mudah terindeks Google',
-        'Integrasi tombol aksi cepat (WhatsApp chat, formulir kontak, dan media sosial)',
-        'Gratis setup deployment domain & hosting (Vercel / Cloud pilihan klien)',
-        'Bonus: 1x sesi revisi minor setelah preview pertama'
-      ],
-      ARRAY[
-        'Modern, aesthetic, and responsive Landing Page / Company Profile design (mobile, tablet, PC)',
-        'Clean code architecture with modern web tech (Next.js / Tailwind CSS)',
-        'Core Web Vitals & basic SEO optimization for Google indexing',
-        'Quick action integration (WhatsApp chat, contact form, or social links)',
-        'Free initial domain/hosting deployment (Vercel/Cloud)',
-        'Bonus: 1x minor revision session after initial preview'
-      ],
-      true,
-      'Paling Laku / Best Seller',
-      1,
-      true
-    ),
-    (
-      'Paket Aplikasi Web & Dashboard Admin',
-      'Web App & Admin Dashboard Package',
-      'Mulai dari Rp 3.500.000',
-      '1 – 2 Minggu',
-      'Bisnis yang membutuhkan sistem operasional internal, manajemen inventaris barang, atau portal pencatatan transaksi khusus.',
-      'Businesses requiring internal operational systems, inventory management, transaction portals, or dedicated data workflows.',
-      'Sistem kustom terstruktur untuk mengelola operasional, database interaktif real-time, dan visualisasi grafik.',
-      'Custom structured system for operational control, interactive real-time databases, and data visual analytics.',
-      ARRAY[
-        'Sistem Otentikasi Aman (Login berjenjang Role-Based Access Control Admin & Pengguna)',
-        'Database Interaktif (CRUD lengkap kelola data produk, pesanan, atau user real-time)',
-        'Dashboard Analitik dengan visualisasi grafik data interaktif',
-        'Backend kuat dan aman dengan database PostgreSQL / Supabase terstruktur',
-        'Fitur ekspor laporan penting (format Excel / PDF)',
-        'Bonus: Akses live staging link eksklusif untuk memantau progres langsung'
-      ],
-      ARRAY[
-        'Secure Auth System (Role-Based Access Control for Admins & Users)',
-        'Interactive Database (Full CRUD to manage products, orders, or users in real-time)',
-        'Interactive Analytics Dashboard with data charts & tables',
-        'Robust & secure backend with structured PostgreSQL / Supabase database',
-        'Crucial report exports (Excel / PDF format)',
-        'Bonus: Exclusive live staging link to track real-time dev progress'
-      ],
-      false,
-      NULL,
-      2,
-      true
-    ),
-    (
-      'Paket Solusi AI & Integrasi Sistem Cerdas',
-      'AI Solutions & Smart System Integration',
-      'Mulai dari Rp 4.500.000+',
-      '1 – 2 Minggu',
-      'Perusahaan atau klien progresif yang ingin mengintegrasikan teknologi kecerdasan buatan, otomasi alur kerja, atau chatbot cerdas.',
-      'Forward-thinking companies looking to integrate AI technology, workflow automation, or intelligent chatbots.',
-      'Next-gen solution dengan implementasi LLM (OpenAI / Gemini), otomasi alur kerja digital, dan pemrosesan data kilat.',
-      'Next-gen solution featuring LLM integration, digital workflow automation, and fast data processing pipelines.',
-      ARRAY[
-        'Integrasi API Kecerdasan Buatan (OpenAI GPT, Gemini API, atau Smart Chatbot RAG)',
-        'Sistem otomasi alur kerja digital untuk efisiensi bisnis',
-        'Pipeline pemrosesan data kilat dan aman',
-        'Dokumentasi teknis lengkap dan panduan pengoperasian bagi admin klien',
-        'Garansi pemeliharaan dan bug fixing pasca-peluncuran selama 1 bulan penuh'
-      ],
-      ARRAY[
-        'AI API Integration (OpenAI GPT, Gemini API, or RAG-based Smart Chatbot)',
-        'Digital workflow automation systems for operational efficiency',
-        'Ultra-fast and secure data processing pipelines',
-        'Comprehensive technical documentation and client user guide',
-        'Full 1-month post-launch warranty and bug-fixing support'
-      ],
-      false,
-      NULL,
-      3,
-      true
-    );
-  END IF;
-END $$;
+INSERT INTO public.services (
+  name_id, name_en, price, timeline,
+  target_client_id, target_client_en,
+  description_id, description_en,
+  features_id, features_en,
+  is_popular, badge_text, sort_order, is_published
+)
+SELECT v.name_id, v.name_en, v.price, v.timeline,
+  v.target_client_id, v.target_client_en,
+  v.description_id, v.description_en,
+  v.features_id, v.features_en,
+  v.is_popular, v.badge_text, v.sort_order, v.is_published
+FROM (VALUES
+  (
+    'Paket Website Modern & Landing Page',
+    'Modern Website & Landing Page Package',
+    'Mulai dari Rp 1.500.000',
+    '3 – 5 Hari',
+    'UMKM, bisnis lokal, retail, atau personal branding yang ingin tampil kredibel dan profesional di Google.',
+    'MSMEs, local businesses, retail shops, or personal branding looking to establish a professional digital presence.',
+    'Website modern, estetik, berkecepatan tinggi, dan responsif sempurna di semua perangkat smartphone maupun PC.',
+    'Modern, aesthetic, ultra-fast, and fully responsive across all smartphone and desktop devices.',
+    ARRAY[
+      'Desain Landing Page / Company Profile yang modern, estetik, dan responsif (HP, tablet, PC)',
+      'Struktur kode optimal menggunakan teknologi modern (Next.js / Tailwind CSS)',
+      'Optimasi kecepatan muat (Core Web Vitals) dan dasar SEO agar mudah terindeks Google',
+      'Integrasi tombol aksi cepat (WhatsApp chat, formulir kontak, dan media sosial)',
+      'Gratis setup deployment domain & hosting (Vercel / Cloud pilihan klien)',
+      'Bonus: 1x sesi revisi minor setelah preview pertama'
+    ],
+    ARRAY[
+      'Modern, aesthetic, and responsive Landing Page / Company Profile design (mobile, tablet, PC)',
+      'Clean code architecture with modern web tech (Next.js / Tailwind CSS)',
+      'Core Web Vitals & basic SEO optimization for Google indexing',
+      'Quick action integration (WhatsApp chat, contact form, or social links)',
+      'Free initial domain/hosting deployment (Vercel/Cloud)',
+      'Bonus: 1x minor revision session after initial preview'
+    ],
+    true,
+    'Paling Laku / Best Seller',
+    1,
+    true
+  ),
+  (
+    'Paket Aplikasi Web & Dashboard Admin',
+    'Web App & Admin Dashboard Package',
+    'Mulai dari Rp 3.500.000',
+    '1 – 2 Minggu',
+    'Bisnis yang membutuhkan sistem operasional internal, manajemen inventaris barang, atau portal pencatatan transaksi khusus.',
+    'Businesses requiring internal operational systems, inventory management, transaction portals, or dedicated data workflows.',
+    'Sistem kustom terstruktur untuk mengelola operasional, database interaktif real-time, dan visualisasi grafik.',
+    'Custom structured system for operational control, interactive real-time databases, and data visual analytics.',
+    ARRAY[
+      'Sistem Otentikasi Aman (Login berjenjang Role-Based Access Control Admin & Pengguna)',
+      'Database Interaktif (CRUD lengkap kelola data produk, pesanan, atau user real-time)',
+      'Dashboard Analitik dengan visualisasi grafik data interaktif',
+      'Backend kuat dan aman dengan database PostgreSQL / Supabase terstruktur',
+      'Fitur ekspor laporan penting (format Excel / PDF)',
+      'Bonus: Akses live staging link eksklusif untuk memantau progres langsung'
+    ],
+    ARRAY[
+      'Secure Auth System (Role-Based Access Control for Admins & Users)',
+      'Interactive Database (Full CRUD to manage products, orders, or users in real-time)',
+      'Interactive Analytics Dashboard with data charts & tables',
+      'Robust & secure backend with structured PostgreSQL / Supabase database',
+      'Crucial report exports (Excel / PDF format)',
+      'Bonus: Exclusive live staging link to track real-time dev progress'
+    ],
+    false,
+    NULL,
+    2,
+    true
+  ),
+  (
+    'Paket Solusi AI & Integrasi Sistem Cerdas',
+    'AI Solutions & Smart System Integration',
+    'Mulai dari Rp 4.500.000+',
+    '1 – 2 Minggu',
+    'Perusahaan atau klien progresif yang ingin mengintegrasikan teknologi kecerdasan buatan, otomasi alur kerja, atau chatbot cerdas.',
+    'Forward-thinking companies looking to integrate AI technology, workflow automation, or intelligent chatbots.',
+    'Next-gen solution dengan implementasi LLM (OpenAI / Gemini), otomasi alur kerja digital, dan pemrosesan data kilat.',
+    'Next-gen solution featuring LLM integration, digital workflow automation, and fast data processing pipelines.',
+    ARRAY[
+      'Integrasi API Kecerdasan Buatan (OpenAI GPT, Gemini API, atau Smart Chatbot RAG)',
+      'Sistem otomasi alur kerja digital untuk efisiensi bisnis',
+      'Pipeline pemrosesan data kilat dan aman',
+      'Dokumentasi teknis lengkap dan panduan pengoperasian bagi admin klien',
+      'Garansi pemeliharaan dan bug fixing pasca-peluncuran selama 1 bulan penuh'
+    ],
+    ARRAY[
+      'AI API Integration (OpenAI GPT, Gemini API, or RAG-based Smart Chatbot)',
+      'Digital workflow automation systems for operational efficiency',
+      'Ultra-fast and secure data processing pipelines',
+      'Comprehensive technical documentation and client user guide',
+      'Full 1-month post-launch warranty and bug-fixing support'
+    ],
+    false,
+    NULL,
+    3,
+    true
+  )
+) AS v(
+  name_id, name_en, price, timeline,
+  target_client_id, target_client_en,
+  description_id, description_en,
+  features_id, features_en,
+  is_popular, badge_text, sort_order, is_published
+)
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.services s WHERE s.name_id = v.name_id
+);
 
 -- [8] MILESTONES (LEARNING JOURNEY)
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM public.learning_journey LIMIT 1) THEN
-    INSERT INTO public.learning_journey (year, title_id, title_en, description_id, description_en, icon, sort_order, is_published)
-    VALUES
-    (
-      '2026',
-      'Ekspansi Solusi AI & Portofolio V2',
-      'AI Solutions Expansion & Portfolio V2',
-      'Mengembangkan arsitektur aplikasi cerdas berbasis LLM, integrasi database Supabase SSR, dan memperdalam studi keislaman serta bahasa Arab fushah tingkat lanjut.',
-      'Developing LLM-powered smart apps, advanced Supabase SSR architectures, and deepening Arabic classical studies.',
-      'rocket',
-      1,
-      true
-    ),
-    (
-      '2025',
-      'Pendalaman Fullstack & Ekosistem Next.js',
-      'Fullstack Deep Dive & Next.js Ecosystem',
-      'Mendalami Next.js 15 App Router, TypeScript tingkat lanjut, optimasi database PostgreSQL, dan perancangan REST API terstruktur.',
-      'Mastering Next.js 15 App Router, advanced TypeScript, PostgreSQL database optimization, and structured REST APIs.',
-      'code',
-      2,
-      true
-    ),
-    (
-      '2024',
-      'Pendidikan Tinggi STDI & Sertifikasi Kominfo',
-      'STDI Higher Education & Kominfo Certifications',
-      'Memulai studi sarjana di STDI Imam Syafi''i Jember serta menyelesaikan pelatihan AI Engineer dan Ethical Hacking Kominfo.',
-      'Commenced undergraduate studies at STDI Imam Syafi''i Jember and completed Kominfo certifications in AI and Cybersecurity.',
-      'graduation-cap',
-      3,
-      true
-    ),
-    (
-      '2023',
-      'Fondasi Web Modern & Tahfidz Al-Qur''an',
-      'Modern Web Foundations & Qur''an Memorization',
-      'Membangun fondasi kuat dalam HTML, CSS, JavaScript, React, serta menyelesaikan program intensif tahfidz Al-Qur''an.',
-      'Built strong foundations in HTML, CSS, JavaScript, React, and accomplished intensive Qur''an memorization milestones.',
-      'book',
-      4,
-      true
-    );
-  END IF;
-END $$;
+INSERT INTO public.learning_journey (year, title_id, title_en, description_id, description_en, icon, sort_order, is_published)
+SELECT v.year, v.title_id, v.title_en, v.description_id, v.description_en, v.icon, v.sort_order, v.is_published
+FROM (VALUES
+  (
+    '2026',
+    'Ekspansi Solusi AI & Portofolio V2',
+    'AI Solutions Expansion & Portfolio V2',
+    'Mengembangkan arsitektur aplikasi cerdas berbasis LLM, integrasi database Supabase SSR, dan memperdalam studi keislaman serta bahasa Arab fushah tingkat lanjut.',
+    'Developing LLM-powered smart apps, advanced Supabase SSR architectures, and deepening Arabic classical studies.',
+    'rocket',
+    1,
+    true
+  ),
+  (
+    '2025',
+    'Pendalaman Fullstack & Ekosistem Next.js',
+    'Fullstack Deep Dive & Next.js Ecosystem',
+    'Mendalami Next.js 15 App Router, TypeScript tingkat lanjut, optimasi database PostgreSQL, dan perancangan REST API terstruktur.',
+    'Mastering Next.js 15 App Router, advanced TypeScript, PostgreSQL database optimization, and structured REST APIs.',
+    'code',
+    2,
+    true
+  ),
+  (
+    '2024',
+    'Pendidikan Tinggi STDI & Sertifikasi Kominfo',
+    'STDI Higher Education & Kominfo Certifications',
+    'Memulai studi sarjana di STDI Imam Syafi''i Jember serta menyelesaikan pelatihan AI Engineer dan Ethical Hacking Kominfo.',
+    'Commenced undergraduate studies at STDI Imam Syafi''i Jember and completed Kominfo certifications in AI and Cybersecurity.',
+    'graduation-cap',
+    3,
+    true
+  ),
+  (
+    '2023',
+    'Fondasi Web Modern & Tahfidz Al-Qur''an',
+    'Modern Web Foundations & Qur''an Memorization',
+    'Membangun fondasi kuat dalam HTML, CSS, JavaScript, React, serta menyelesaikan program intensif tahfidz Al-Qur''an.',
+    'Built strong foundations in HTML, CSS, JavaScript, React, and accomplished intensive Qur''an memorization milestones.',
+    'book',
+    4,
+    true
+  )
+) AS v(year, title_id, title_en, description_id, description_en, icon, sort_order, is_published)
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.learning_journey l WHERE l.title_id = v.title_id AND l.year = v.year
+);
 
 -- [9] FOKUS PENGEMBANGAN (FOCUS AREAS)
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM public.focus_areas LIMIT 1) THEN
-    INSERT INTO public.focus_areas (title_id, title_en, description_id, description_en, icon, sort_order, is_published)
-    VALUES
-    (
-      'Modern Web Development',
-      'Modern Web Development',
-      'Membangun antarmuka web berkinerja tinggi, responsif, dan ramah SEO dengan Next.js, React, dan Tailwind CSS.',
-      'Building high-performance, responsive, and SEO-optimized web interfaces using Next.js, React, and Tailwind CSS.',
-      'code',
-      1,
-      true
-    ),
-    (
-      'Backend & Database Management',
-      'Backend & Database Management',
-      'Merancang skema database relasional PostgreSQL dan Supabase yang aman, cepat, dan siap menampung skala trafik tinggi.',
-      'Designing relational PostgreSQL and Supabase database schemas that are secure, fast, and ready for high traffic.',
-      'database',
-      2,
-      true
-    ),
-    (
-      'Solusi AI & Otomasi Digital',
-      'AI Solutions & Automation',
-      'Mengintegrasikan API kecerdasan buatan modern (LLM) untuk mengotomasi alur kerja bisnis dan mempercepat produktivitas.',
-      'Integrating cutting-edge AI APIs (LLMs) to automate business workflows and accelerate productivity.',
-      'cpu',
-      3,
-      true
-    ),
-    (
-      'Pengembangan Berorientasi Nilai',
-      'Value-Driven Development',
-      'Mengutamakan kejujuran, kejelasan komunikasi, dan integritas dalam setiap proyek untuk memberikan kebermanfaatan maksimal.',
-      'Prioritizing honesty, clear communication, and integrity in every project to deliver maximum meaningful impact.',
-      'heart',
-      4,
-      true
-    );
-  END IF;
-END $$;
+INSERT INTO public.focus_areas (title_id, title_en, description_id, description_en, icon, sort_order, is_published)
+SELECT v.title_id, v.title_en, v.description_id, v.description_en, v.icon, v.sort_order, v.is_published
+FROM (VALUES
+  (
+    'Modern Web Development',
+    'Modern Web Development',
+    'Membangun antarmuka web berkinerja tinggi, responsif, dan ramah SEO dengan Next.js, React, dan Tailwind CSS.',
+    'Building high-performance, responsive, and SEO-optimized web interfaces using Next.js, React, and Tailwind CSS.',
+    'code',
+    1,
+    true
+  ),
+  (
+    'Backend & Database Management',
+    'Backend & Database Management',
+    'Merancang skema database relasional PostgreSQL dan Supabase yang aman, cepat, dan siap menampung skala trafik tinggi.',
+    'Designing relational PostgreSQL and Supabase database schemas that are secure, fast, and ready for high traffic.',
+    'database',
+    2,
+    true
+  ),
+  (
+    'Solusi AI & Otomasi Digital',
+    'AI Solutions & Automation',
+    'Mengintegrasikan API kecerdasan buatan modern (LLM) untuk mengotomasi alur kerja bisnis dan mempercepat produktivitas.',
+    'Integrating cutting-edge AI APIs (LLMs) to automate business workflows and accelerate productivity.',
+    'cpu',
+    3,
+    true
+  ),
+  (
+    'Pengembangan Berorientasi Nilai',
+    'Value-Driven Development',
+    'Mengutamakan kejujuran, kejelasan komunikasi, dan integritas dalam setiap proyek untuk memberikan kebermanfaatan maksimal.',
+    'Prioritizing honesty, clear communication, and integrity in every project to deliver maximum meaningful impact.',
+    'heart',
+    4,
+    true
+  )
+) AS v(title_id, title_en, description_id, description_en, icon, sort_order, is_published)
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.focus_areas f WHERE f.title_id = v.title_id
+);
 
 -- [10] NILAI-NILAI YANG DIPEGANG (CORE VALUES)
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM public.core_values LIMIT 1) THEN
-    INSERT INTO public.core_values (title_id, title_en, description_id, description_en, icon, sort_order, is_published)
-    VALUES
-    (
-      'Amanah (Integritas)',
-      'Amanah (Integrity)',
-      'Menjaga setiap kepercayaan klien dan rekan kerja dengan penuh tanggung jawab, kerahasiaan data, dan ketepatan janji.',
-      'Safeguarding every client and team trust with utmost accountability, data confidentiality, and timely commitments.',
-      'shield',
-      1,
-      true
-    ),
-    (
-      'Itqan (Kualitas Maksimal)',
-      'Itqan (Pursuit of Excellence)',
-      'Bekerja dengan cermat, teliti, dan mengutamakan kualitas kode terbaik serta desain yang rapi tanpa jalan pintas.',
-      'Crafting every line of code and UI component with meticulous precision and highest quality standards.',
-      'star',
-      2,
-      true
-    ),
-    (
-      'Pembelajaran Berkelanjutan',
-      'Continuous Learning',
-      'Selalu haus akan ilmu baru, adaptif terhadap inovasi teknologi, dan tidak berhenti mengasah kemampuan diri.',
-      'Always eager to learn, highly adaptable to technological shifts, and continuously sharpening skills.',
-      'book-open',
-      3,
-      true
-    ),
-    (
-      'Kemanfaatan Nyata',
-      'Real Meaningful Impact',
-      'Berorientasi menghasilkan karya yang benar-benar menyelesaikan masalah nyata dan membawa kebaikan bagi sesama.',
-      'Committed to building digital solutions that truly resolve real-world problems and benefit the community.',
-      'smile',
-      4,
-      true
-    );
-  END IF;
-END $$;
+INSERT INTO public.core_values (title_id, title_en, description_id, description_en, icon, sort_order, is_published)
+SELECT v.title_id, v.title_en, v.description_id, v.description_en, v.icon, v.sort_order, v.is_published
+FROM (VALUES
+  (
+    'Amanah (Integritas)',
+    'Amanah (Integrity)',
+    'Menjaga setiap kepercayaan klien dan rekan kerja dengan penuh tanggung jawab, kerahasiaan data, dan ketepatan janji.',
+    'Safeguarding every client and team trust with utmost accountability, data confidentiality, and timely commitments.',
+    'shield',
+    1,
+    true
+  ),
+  (
+    'Itqan (Kualitas Maksimal)',
+    'Itqan (Pursuit of Excellence)',
+    'Bekerja dengan cermat, teliti, dan mengutamakan kualitas kode terbaik serta desain yang rapi tanpa jalan pintas.',
+    'Crafting every line of code and UI component with meticulous precision and highest quality standards.',
+    'star',
+    2,
+    true
+  ),
+  (
+    'Pembelajaran Berkelanjutan',
+    'Continuous Learning',
+    'Selalu haus akan ilmu baru, adaptif terhadap inovasi teknologi, dan tidak berhenti mengasah kemampuan diri.',
+    'Always eager to learn, highly adaptable to technological shifts, and continuously sharpening skills.',
+    'book-open',
+    3,
+    true
+  ),
+  (
+    'Kemanfaatan Nyata',
+    'Real Meaningful Impact',
+    'Berorientasi menghasilkan karya yang benar-benar menyelesaikan masalah nyata dan membawa kebaikan bagi sesama.',
+    'Committed to building digital solutions that truly resolve real-world problems and benefit the community.',
+    'smile',
+    4,
+    true
+  )
+) AS v(title_id, title_en, description_id, description_en, icon, sort_order, is_published)
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.core_values c WHERE c.title_id = v.title_id
+);
 
 -- [11] ALASAN MEMILIH (REASONS TO HIRE)
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM public.reasons_to_hire LIMIT 1) THEN
-    INSERT INTO public.reasons_to_hire (title_id, title_en, description_id, description_en, icon, sort_order, is_published)
-    VALUES
-    (
-      'Arsitektur Kode Bersih & Cepat',
-      'Clean Code & Fast Performance',
-      'Dibangun dengan standar kode modern yang ringan, mudah dikembangkan, dan mendapatkan skor Core Web Vitals tinggi.',
-      'Built with modern coding standards that are maintainable, lightweight, and achieve top Core Web Vitals scores.',
-      'zap',
-      1,
-      true
-    ),
-    (
-      'Pengerjaan Tepat Waktu',
-      'Timely Delivery',
-      'Disiplin dalam mematuhi milestone dan jadwal kesepakatan proyek tanpa mengorbankan kualitas akhir.',
-      'Disciplined in adhering to agreed project milestones and timelines without compromising final quality.',
-      'clock',
-      2,
-      true
-    ),
-    (
-      'Komunikasi Aktif & Ramah',
-      'Active & Transparent Communication',
-      'Memberikan pembaruan progres berkala, tanggap berdiskusi, dan terbuka terhadap ide serta masukan klien.',
-      'Providing regular progress updates, responsive in discussions, and welcoming to client ideas and feedback.',
-      'message-circle',
-      3,
-      true
-    ),
-    (
-      'Hasil Estetik & User-Friendly',
-      'Aesthetic & User-Friendly Design',
-      'Desain modern dengan sentuhan visual profesional yang nyaman digunakan dan meningkatkan konversi pengunjung.',
-      'Modern design with a polished aesthetic touch that enhances user experience and drives visitor conversion.',
-      'layout',
-      4,
-      true
-    );
-  END IF;
-END $$;
+INSERT INTO public.reasons_to_hire (title_id, title_en, description_id, description_en, icon, sort_order, is_published)
+SELECT v.title_id, v.title_en, v.description_id, v.description_en, v.icon, v.sort_order, v.is_published
+FROM (VALUES
+  (
+    'Arsitektur Kode Bersih & Cepat',
+    'Clean Code & Fast Performance',
+    'Dibangun dengan standar kode modern yang ringan, mudah dikembangkan, dan mendapatkan skor Core Web Vitals tinggi.',
+    'Built with modern coding standards that are maintainable, lightweight, and achieve top Core Web Vitals scores.',
+    'zap',
+    1,
+    true
+  ),
+  (
+    'Pengerjaan Tepat Waktu',
+    'Timely Delivery',
+    'Disiplin dalam mematuhi milestone dan jadwal kesepakatan proyek tanpa mengorbankan kualitas akhir.',
+    'Disciplined in adhering to agreed project milestones and timelines without compromising final quality.',
+    'clock',
+    2,
+    true
+  ),
+  (
+    'Komunikasi Aktif & Ramah',
+    'Active & Transparent Communication',
+    'Memberikan pembaruan progres berkala, tanggap berdiskusi, dan terbuka terhadap ide serta masukan klien.',
+    'Providing regular progress updates, responsive in discussions, and welcoming to client ideas and feedback.',
+    'message-circle',
+    3,
+    true
+  ),
+  (
+    'Hasil Estetik & User-Friendly',
+    'Aesthetic & User-Friendly Design',
+    'Desain modern dengan sentuhan visual profesional yang nyaman digunakan dan meningkatkan konversi pengunjung.',
+    'Modern design with a polished aesthetic touch that enhances user experience and drives visitor conversion.',
+    'layout',
+    4,
+    true
+  )
+) AS v(title_id, title_en, description_id, description_en, icon, sort_order, is_published)
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.reasons_to_hire r WHERE r.title_id = v.title_id
+);
 
 -- [12] KUTIPAN & MOTTO (QUOTES)
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM public.quotes LIMIT 1) THEN
-    INSERT INTO public.quotes (text_id, text_en, author, is_personal, sort_order, is_published)
-    VALUES
-    (
-      'Khairunnas anfa''uhum linnas — Sebaik-baik manusia adalah yang paling bermanfaat bagi orang lain.',
-      'The best of people are those that bring the most benefit to the rest of mankind.',
-      'Hadits Riwayat Thabrani',
-      false,
-      1,
-      true
-    ),
-    (
-      'Barangsiapa menempuh jalan untuk menuntut ilmu, maka Allah akan memudahkan baginya jalan menuju surga.',
-      'Whoever travels a path in search of knowledge, Allah will make easy for him a path to Paradise.',
-      'Hadits Riwayat Muslim',
-      false,
-      2,
-      true
-    ),
-    (
-      'Teknologi adalah sarana pengabdian; nilai sejatinya diukur dari seberapa besar manfaat yang ia tinggalkan bagi umat manusia.',
-      'Technology is a vehicle for service; its true worth is measured by the genuine value it leaves for humanity.',
-      'Muhammad Daffa Rezky Adyra',
-      true,
-      3,
-      true
-    );
-  END IF;
-END $$;
+INSERT INTO public.quotes (text_id, text_en, author, is_personal, sort_order, is_published)
+SELECT v.text_id, v.text_en, v.author, v.is_personal, v.sort_order, v.is_published
+FROM (VALUES
+  (
+    'Khairunnas anfa''uhum linnas — Sebaik-baik manusia adalah yang paling bermanfaat bagi orang lain.',
+    'The best of people are those that bring the most benefit to the rest of mankind.',
+    'Hadits Riwayat Thabrani',
+    false,
+    1,
+    true
+  ),
+  (
+    'Barangsiapa menempuh jalan untuk menuntut ilmu, maka Allah akan memudahkan baginya jalan menuju surga.',
+    'Whoever travels a path in search of knowledge, Allah will make easy for him a path to Paradise.',
+    'Hadits Riwayat Muslim',
+    false,
+    2,
+    true
+  ),
+  (
+    'Teknologi adalah sarana pengabdian; nilai sejatinya diukur dari seberapa besar manfaat yang ia tinggalkan bagi umat manusia.',
+    'Technology is a vehicle for service; its true worth is measured by the genuine value it leaves for humanity.',
+    'Muhammad Daffa Rezky Adyra',
+    true,
+    3,
+    true
+  )
+) AS v(text_id, text_en, author, is_personal, sort_order, is_published)
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.quotes q WHERE q.text_id = v.text_id
+);
 
 -- [13] KAJIAN & FAEDAH ISLAM (ISLAMIC CONTENT)
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM public.islamic LIMIT 1) THEN
-    INSERT INTO public.islamic (title_id, title_en, subtitle_id, subtitle_en, description_id, description_en, category, reference, order_index, is_published)
-    VALUES
-    (
-      'Keutamaan Menuntut Ilmu di Era Digital',
-      'The Virtue of Seeking Knowledge in the Digital Era',
-      'Ilmu adalah pelita bagi setiap amal perbuatan.',
-      'Knowledge is a beacon guiding every deed.',
-      'Menuntut ilmu syar''i maupun ilmu yang bermanfaat bagi umat adalah kewajiban yang mendatangkan kemudahan menuju surga. Kemudahan teknologi saat ini hendaknya menjadi sarana mendekatkan diri kepada Allah, bukan melalaikan.',
-      'Seeking beneficial knowledge is a noble obligation leading to Paradise. Digital tools should be utilized to draw closer to Allah and serve society.',
-      'Kajian',
-      'HR. Muslim no. 2699',
-      1,
-      true
-    ),
-    (
-      'Menjaga Amanah dalam Bekerja',
-      'Preserving Integrity and Trust in Work',
-      'Sifat dasar seorang mukmin sejati.',
-      'A fundamental trait of a true believer.',
-      'Amanah dalam setiap kesepakatan kerja, kejujuran dalam menyampaikan progres, serta tidak mengambil hak orang lain adalah bagian dari ibadah seorang profesional muslim.',
-      'Integrity in professional contracts, transparency in project progress, and respecting clients rights are acts of worship for a Muslim.',
-      'Faedah',
-      'QS. Al-Mu''minun: 8',
-      2,
-      true
-    ),
-    (
-      'Adab Sebelum Ilmu',
-      'Manners Before Knowledge',
-      'Fondasi utama para penuntut ilmu salaf.',
-      'The core foundation of classical scholars.',
-      'Imam Malik rahimahullah berkata: "Pelajarilah adab sebelum engkau mempelajari ilmu." Keterampilan teknologi yang tinggi tanpa akhlak mulia tidak akan membuahkan keberkahan.',
-      'Imam Malik said: "Learn manners before acquiring knowledge." High technical proficiency without refined character will lack divine blessing.',
-      'Kajian',
-      'Hilyatul Auliya',
-      3,
-      true
-    );
-  END IF;
-END $$;
+INSERT INTO public.islamic (title_id, title_en, subtitle_id, subtitle_en, description_id, description_en, category, reference, order_index, is_published)
+SELECT v.title_id, v.title_en, v.subtitle_id, v.subtitle_en, v.description_id, v.description_en, v.category, v.reference, v.order_index, v.is_published
+FROM (VALUES
+  (
+    'Keutamaan Menuntut Ilmu di Era Digital',
+    'The Virtue of Seeking Knowledge in the Digital Era',
+    'Ilmu adalah pelita bagi setiap amal perbuatan.',
+    'Knowledge is a beacon guiding every deed.',
+    'Menuntut ilmu syar''i maupun ilmu yang bermanfaat bagi umat adalah kewajiban yang mendatangkan kemudahan menuju surga. Kemudahan teknologi saat ini hendaknya menjadi sarana mendekatkan diri kepada Allah, bukan melalaikan.',
+    'Seeking beneficial knowledge is a noble obligation leading to Paradise. Digital tools should be utilized to draw closer to Allah and serve society.',
+    'Kajian',
+    'HR. Muslim no. 2699',
+    1,
+    true
+  ),
+  (
+    'Menjaga Amanah dalam Bekerja',
+    'Preserving Integrity and Trust in Work',
+    'Sifat dasar seorang mukmin sejati.',
+    'A fundamental trait of a true believer.',
+    'Amanah dalam setiap kesepakatan kerja, kejujuran dalam menyampaikan progres, serta tidak mengambil hak orang lain adalah bagian dari ibadah seorang profesional muslim.',
+    'Integrity in professional contracts, transparency in project progress, and respecting clients rights are acts of worship for a Muslim.',
+    'Faedah',
+    'QS. Al-Mu''minun: 8',
+    2,
+    true
+  ),
+  (
+    'Adab Sebelum Ilmu',
+    'Manners Before Knowledge',
+    'Fondasi utama para penuntut ilmu salaf.',
+    'The core foundation of classical scholars.',
+    'Imam Malik rahimahullah berkata: "Pelajarilah adab sebelum engkau mempelajari ilmu." Keterampilan teknologi yang tinggi tanpa akhlak mulia tidak akan membuahkan keberkahan.',
+    'Imam Malik said: "Learn manners before acquiring knowledge." High technical proficiency without refined character will lack divine blessing.',
+    'Kajian',
+    'Hilyatul Auliya',
+    3,
+    true
+  )
+) AS v(title_id, title_en, subtitle_id, subtitle_en, description_id, description_en, category, reference, order_index, is_published)
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.islamic i WHERE i.title_id = v.title_id
+);
 
 -- [14] SETUP PERANGKAT & ALAT (USES ITEMS)
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM public.uses_items LIMIT 1) THEN
-    INSERT INTO public.uses_items (category, name, description_id, description_en, link, sort_order, is_published)
-    VALUES
-    ('Hardware', 'Workstation Laptop', 'Laptop bertenaga tinggi untuk coding, kompilasi Next.js, dan multitasking lancar.', 'High performance development machine for coding, Next.js build workflows, and multitasking.', '', 1, true),
-    ('Hardware', 'Smartphone Tester', 'Perangkat mobile untuk pengujian responsivitas UI dan integrasi live aplikasi.', 'Mobile testing device for UI responsiveness and live app testing.', '', 2, true),
-    ('Software', 'Visual Studio Code & Cursor', 'Editor kode utama dengan konfigurasi ekstensi produktivitas dan AI linting.', 'Primary code editor equipped with modern productivity and AI development extensions.', 'https://code.visualstudio.com', 3, true),
-    ('Software', 'Supabase & PostgreSQL', 'Platform backend cloud serverless dan database relasional terpercaya.', 'Trusted serverless backend platform and relational database.', 'https://supabase.com', 4, true),
-    ('Software', 'Vercel Deployment', 'Platform CI/CD dan hosting otomatis dengan edge network kilat di seluruh dunia.', 'Automated CI/CD and hosting platform with ultra-fast edge delivery.', 'https://vercel.com', 5, true),
-    ('Daily Apps', 'Notion & Trello', 'Aplikasi harian untuk pencatatan ide, dokumentasi arsitektur, dan manajemen task.', 'Daily apps for ideation, architecture documentation, and sprint task tracking.', 'https://notion.so', 6, true),
-    ('Daily Apps', 'Figma', 'Alat perancangan antarmuka pengguna (UI/UX) dan mockup interaktif.', 'Design tool for user interfaces, wireframing, and interactive mockups.', 'https://figma.com', 7, true);
-  END IF;
-END $$;
+INSERT INTO public.uses_items (category, name, description_id, description_en, link, sort_order, is_published)
+SELECT v.category, v.name, v.description_id, v.description_en, v.link, v.sort_order, v.is_published
+FROM (VALUES
+  ('Hardware', 'Workstation Laptop', 'Laptop bertenaga tinggi untuk coding, kompilasi Next.js, dan multitasking lancar.', 'High performance development machine for coding, Next.js build workflows, and multitasking.', '', 1, true),
+  ('Hardware', 'Smartphone Tester', 'Perangkat mobile untuk pengujian responsivitas UI dan integrasi live aplikasi.', 'Mobile testing device for UI responsiveness and live app testing.', '', 2, true),
+  ('Software', 'Visual Studio Code & Cursor', 'Editor kode utama dengan konfigurasi ekstensi produktivitas dan AI linting.', 'Primary code editor equipped with modern productivity and AI development extensions.', 'https://code.visualstudio.com', 3, true),
+  ('Software', 'Supabase & PostgreSQL', 'Platform backend cloud serverless dan database relasional terpercaya.', 'Trusted serverless backend platform and relational database.', 'https://supabase.com', 4, true),
+  ('Software', 'Vercel Deployment', 'Platform CI/CD dan hosting otomatis dengan edge network kilat di seluruh dunia.', 'Automated CI/CD and hosting platform with ultra-fast edge delivery.', 'https://vercel.com', 5, true),
+  ('Daily Apps', 'Notion & Trello', 'Aplikasi harian untuk pencatatan ide, dokumentasi arsitektur, dan manajemen task.', 'Daily apps for ideation, architecture documentation, and sprint task tracking.', 'https://notion.so', 6, true),
+  ('Daily Apps', 'Figma', 'Alat perancangan antarmuka pengguna (UI/UX) dan mockup interaktif.', 'Design tool for user interfaces, wireframing, and interactive mockups.', 'https://figma.com', 7, true)
+) AS v(category, name, description_id, description_en, link, sort_order, is_published)
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.uses_items u WHERE u.name = v.name
+);
 
 -- [15] TESTIMONIALS (ULASAN KLIEN)
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM public.testimonials LIMIT 1) THEN
-    INSERT INTO public.testimonials (name, role, content_id, content_en, client_name, client_company, rating, featured, sort_order, is_published)
-    VALUES
-    (
-      'Ahmad Fauzan',
-      'Founder Digital Agency',
-      'Mas Daffa sangat responsif dan memahami kebutuhan teknis kami dengan sangat cepat. Hasil website rapi, loading sangat cepat, dan mudah diedit lewat admin.',
-      'Daffa was highly responsive and grasped our technical needs swiftly. The resulting website is clean, loads blazing fast, and is easy to maintain.',
-      'Ahmad Fauzan',
-      'Founder Digital Agency',
-      5,
-      true,
-      1,
-      true
-    ),
-    (
-      'Ustadz Salman',
-      'Koordinator Lembaga Pendidikan',
-      'Pengerjaan sistem informasi sangat amanah, teliti, dan komunikasi selalu terbuka. Sangat bersyukur bisa bekerjasama dengan beliau.',
-      'The information system development was handled with high integrity and transparent communication. Truly grateful for this partnership.',
-      'Ustadz Salman',
-      'Koordinator Lembaga Pendidikan',
-      5,
-      true,
-      2,
-      true
-    ),
-    (
-      'Rian Hidayat',
-      'Owner Bisnis Retail',
-      'Website landing page yang dibuatkan modern sekali. Desainnya elegan dan konversi penjualan kami meningkat sejak peluncuran.',
-      'The landing page designed was exceptionally modern and elegant. Our business conversion visibly improved after launch.',
-      'Rian Hidayat',
-      'Owner Bisnis Retail',
-      5,
-      true,
-      3,
-      true
-    );
-  END IF;
-END $$;
+INSERT INTO public.testimonials (name, role, content_id, content_en, client_name, client_company, rating, featured, sort_order, is_published)
+SELECT v.name, v.role, v.content_id, v.content_en, v.client_name, v.client_company, v.rating, v.featured, v.sort_order, v.is_published
+FROM (VALUES
+  (
+    'Ahmad Fauzan',
+    'Founder Digital Agency',
+    'Mas Daffa sangat responsif dan memahami kebutuhan teknis kami dengan sangat cepat. Hasil website rapi, loading sangat cepat, dan mudah diedit lewat admin.',
+    'Daffa was highly responsive and grasped our technical needs swiftly. The resulting website is clean, loads blazing fast, and is easy to maintain.',
+    'Ahmad Fauzan',
+    'Founder Digital Agency',
+    5,
+    true,
+    1,
+    true
+  ),
+  (
+    'Ustadz Salman',
+    'Koordinator Lembaga Pendidikan',
+    'Pengerjaan sistem informasi sangat amanah, teliti, dan komunikasi selalu terbuka. Sangat bersyukur bisa bekerjasama dengan beliau.',
+    'The information system development was handled with high integrity and transparent communication. Truly grateful for this partnership.',
+    'Ustadz Salman',
+    'Koordinator Lembaga Pendidikan',
+    5,
+    true,
+    2,
+    true
+  ),
+  (
+    'Rian Hidayat',
+    'Owner Bisnis Retail',
+    'Website landing page yang dibuatkan modern sekali. Desainnya elegan dan konversi penjualan kami meningkat sejak peluncuran.',
+    'The landing page designed was exceptionally modern and elegant. Our business conversion visibly improved after launch.',
+    'Rian Hidayat',
+    'Owner Bisnis Retail',
+    5,
+    true,
+    3,
+    true
+  )
+) AS v(name, role, content_id, content_en, client_name, client_company, rating, featured, sort_order, is_published)
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.testimonials t WHERE t.client_name = v.client_name
+);
 
 -- [16] MITRA & PARTNER
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM public.partners LIMIT 1) THEN
-    INSERT INTO public.partners (name, logo_url, website_url, order_index, is_published)
-    VALUES
-    ('Dicoding Indonesia', '/assets/certificates/dicoding-financial-literacy.svg', 'https://dicoding.com', 1, true),
-    ('Kominfo Digitalent', '/assets/certificates/digitalent-ai-engineer.svg', 'https://digitalent.kominfo.go.id', 2, true),
-    ('STDI Imam Syafi''i Jember', '/logo.png', 'https://stdiis.ac.id', 3, true),
-    ('Tasheel Platform', '/assets/certificates/sertifikat-tasheel.jpg', 'https://tasheel.id', 4, true);
-  END IF;
-END $$;
+INSERT INTO public.partners (name, logo_url, website_url, order_index, is_published)
+SELECT v.name, v.logo_url, v.website_url, v.order_index, v.is_published
+FROM (VALUES
+  ('Dicoding Indonesia', '/assets/certificates/dicoding-financial-literacy.svg', 'https://dicoding.com', 1, true),
+  ('Kominfo Digitalent', '/assets/certificates/digitalent-ai-engineer.svg', 'https://digitalent.kominfo.go.id', 2, true),
+  ('STDI Imam Syafi''i Jember', '/logo.png', 'https://stdiis.ac.id', 3, true),
+  ('Tasheel Platform', '/assets/certificates/sertifikat-tasheel.jpg', 'https://tasheel.id', 4, true)
+) AS v(name, logo_url, website_url, order_index, is_published)
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.partners p WHERE p.name = v.name
+);
 
 -- [17] PENGATURAN SITUS (SETTINGS)
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM public.settings LIMIT 1) THEN
-    INSERT INTO public.settings (site_title, site_description)
-    VALUES (
-      'Muhammad Daffa Rezky Adyra — Portfolio',
-      'Personal portfolio website of Muhammad Daffa Rezky Adyra — Web & Mobile Developer'
-    );
-  END IF;
-END $$;
+INSERT INTO public.settings (site_title, site_description)
+SELECT 'Muhammad Daffa Rezky Adyra — Portfolio', 'Personal portfolio website of Muhammad Daffa Rezky Adyra — Web & Mobile Developer'
+WHERE NOT EXISTS (SELECT 1 FROM public.settings LIMIT 1);
 
 -- [18] BOOTSTRAP ADMIN USER DARI AUTH.USERS
 INSERT INTO public.admin_users (user_id, role, is_active)
