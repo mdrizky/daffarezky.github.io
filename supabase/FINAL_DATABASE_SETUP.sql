@@ -608,11 +608,30 @@ SELECT public._add_column_if_missing('education','logo_url','TEXT');
 SELECT public._add_column_if_missing('education','is_current','BOOLEAN DEFAULT false');
 SELECT public._add_column_if_missing('education','is_published','BOOLEAN DEFAULT true');
 SELECT public._add_column_if_missing('education','sort_order','INTEGER DEFAULT 0');
+SELECT public._add_column_if_missing('education','location','TEXT');
+SELECT public._add_column_if_missing('education','field_of_study','TEXT');
+SELECT public._add_column_if_missing('education','achievement','TEXT');
+SELECT public._add_column_if_missing('education','gallery','TEXT[] DEFAULT ''{}''');
+SELECT public._add_column_if_missing('education','certificate_url','TEXT');
+
+-- Services: tambahkan SEMUA kolom yang mungkin belum ada di DB lama
+SELECT public._add_column_if_missing('services','created_at','TIMESTAMPTZ DEFAULT now()');
+SELECT public._add_column_if_missing('services','price','TEXT');
+SELECT public._add_column_if_missing('services','timeline','TEXT');
+SELECT public._add_column_if_missing('services','target_client_id','TEXT');
+SELECT public._add_column_if_missing('services','target_client_en','TEXT');
+SELECT public._add_column_if_missing('services','description_id','TEXT');
+SELECT public._add_column_if_missing('services','description_en','TEXT');
+SELECT public._add_column_if_missing('services','features_id','TEXT[] DEFAULT ''{}''');
+SELECT public._add_column_if_missing('services','features_en','TEXT[] DEFAULT ''{}''');
+SELECT public._add_column_if_missing('services','is_popular','BOOLEAN DEFAULT false');
+SELECT public._add_column_if_missing('services','badge_text','TEXT');
+SELECT public._add_column_if_missing('services','sort_order','INTEGER DEFAULT 0');
+SELECT public._add_column_if_missing('services','is_published','BOOLEAN DEFAULT true');
 
 SELECT public._add_column_if_missing('projects','is_published','BOOLEAN DEFAULT true');
 SELECT public._add_column_if_missing('skills','is_published','BOOLEAN DEFAULT true');
 SELECT public._add_column_if_missing('experience','is_published','BOOLEAN DEFAULT true');
-SELECT public._add_column_if_missing('services','is_published','BOOLEAN DEFAULT true');
 SELECT public._add_column_if_missing('testimonials','is_published','BOOLEAN DEFAULT true');
 SELECT public._add_column_if_missing('partners','is_published','BOOLEAN DEFAULT true');
 SELECT public._add_column_if_missing('learning_journey','is_published','BOOLEAN DEFAULT true');
@@ -1635,5 +1654,10 @@ UPDATE public.reasons_to_hire SET is_published = true WHERE is_published IS NULL
 UPDATE public.quotes SET is_published = true WHERE is_published IS NULL;
 UPDATE public.islamic SET is_published = true WHERE is_published IS NULL;
 UPDATE public.uses_items SET is_published = true WHERE is_published IS NULL;
+-- =============================================================================
+-- 20. RELOAD POSTGREST SCHEMA CACHE
+-- =============================================================================
+-- Wajib dijalankan agar kolom baru langsung bisa diakses via API Supabase
+NOTIFY pgrst, 'reload schema';
 
 SELECT 'DAFFA PORTFOLIO V2: Database Master Setup Berhasil 100%! Seluruh Skema & Data Lengkap Daffa Sudah Masuk.' AS status;

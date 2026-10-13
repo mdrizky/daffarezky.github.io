@@ -133,6 +133,28 @@ export default function AdminEducation() {
       }
 
       if (saveError) {
+        // Defensive: If logo_url is not in schema cache, retry without it
+        const errMsg = saveError.message || saveError.details || ''
+        if (errMsg.includes('logo_url') && errMsg.includes('schema cache')) {
+          console.warn('logo_url not in schema cache yet, retrying without logo_url...')
+          const { logo_url, ...payloadWithoutLogo } = payload
+          let retryError
+          if (editingId && editingId !== "new") {
+            const { error } = await supabase.from("education").update(payloadWithoutLogo).eq("id", editingId)
+            retryError = error
+          } else {
+            const { error } = await supabase.from("education").insert([payloadWithoutLogo])
+            retryError = error
+          }
+          if (retryError) {
+            throw new Error(retryError.message || retryError.details || JSON.stringify(retryError))
+          }
+          alert("Data pendidikan berhasil disimpan! (Logo URL disimpan setelah schema cache di-reload. Jalankan FINAL_DATABASE_SETUP.sql di SQL Editor.)")
+          setEditingId(null)
+          setFormData(initialFormState)
+          await fetchEducation()
+          return
+        }
         throw new Error(saveError.message || saveError.details || JSON.stringify(saveError))
       }
 
