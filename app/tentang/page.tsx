@@ -10,6 +10,7 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { PageSkeleton } from "@/components/ui/Skeleton";
+import EducationTimeline from "@/components/EducationTimeline";
 
 export default function TentangPage() {
   const { language } = useLanguage();
@@ -190,43 +191,7 @@ export default function TentangPage() {
             {/* Kolom Kanan: Pendidikan */}
             <div className="lg:col-span-6 space-y-8">
               <SectionHeader align="left" title={id ? 'Pendidikan' : 'Education'} eyebrow={id ? 'Akademik' : 'Academic'} />
-              <div className="space-y-4">
-                {education.map(edu => (
-                  <Card key={edu.id} className="bg-card text-card-foreground border-border hover:border-primary/40 transition-all shadow-sm">
-                    <CardContent className="p-5 flex items-center gap-4">
-                      {/* Logo Sekolah */}
-                      <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-muted border border-border flex items-center justify-center shrink-0">
-                        {edu.logo_url ? (
-                          <Image
-                            src={edu.logo_url}
-                            alt={edu.institution}
-                            fill
-                            className="object-contain p-1"
-                          />
-                        ) : (
-                          <span className="font-heading font-bold text-primary text-sm">
-                            {edu.institution.substring(0, 2).toUpperCase()}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Info Sekolah: Nama, Tingkatan, Jurusan, Periode */}
-                      <div className="flex-grow min-w-0">
-                        <div className="flex items-center justify-between gap-2">
-                          <h4 className="font-bold text-base text-foreground truncate">{edu.institution}</h4>
-                          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground shrink-0 border border-border">
-                            {edu.start_year} - {edu.is_current ? (id ? 'Sekarang' : 'Present') : edu.end_year}
-                          </span>
-                        </div>
-                        <p className="text-xs text-primary font-medium mt-0.5">
-                          {id ? edu.degree_id : edu.degree_en}
-                          {edu.field_of_study ? ` • ${edu.field_of_study}` : ''}
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+              <EducationTimeline items={education} id={id} />
             </div>
           </div>
         </section>

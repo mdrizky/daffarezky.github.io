@@ -914,51 +914,68 @@ BEGIN
     INSERT INTO public.education (institution, degree_id, degree_en, start_year, end_year, is_current, field_of_study, location, description_id, description_en, education_level, sort_order, is_published)
     VALUES
     (
-      'STDI Imam Syafi''i Jember',
-      'S1 Ilmu Hadis / Dirasat Islamiyah',
-      'Bachelor of Islamic Studies',
-      '2024',
+      'Institut IMSYA Indonesia',
+      'Perguruan Tinggi',
+      'Higher Education',
+      '2026',
       'Sekarang',
       true,
-      'Studi Islam & Metodologi Hadis',
-      'Jember, Jawa Timur',
-      'Menempuh pendidikan tinggi studi Islam, bahasa Arab, dan metodologi riset ilmiah untuk membentuk integritas moral dan intelektual.',
-      'Pursuing higher education in Islamic studies, classical Arabic, and research methodology to build strong ethical and intellectual integrity.',
+      'Studi Islam & Teknologi Informasi',
+      'Indonesia',
+      'Menempuh pendidikan tinggi studi Islam dan teknologi untuk membentuk integritas moral, intelektual, dan profesionalisme digital.',
+      'Pursuing higher education in Islamic studies and digital technology to build strong intellectual and professional integrity.',
       'KULIAH',
       1,
       true
     ),
     (
-      'Ma''had Tahfidz Al-Qur''an & Bahasa Arab',
-      'Program Tahfidz & Bahasa Arab',
-      'Tahfidz & Arabic Language Program',
-      '2022',
-      '2024',
+      'Ma''had Dar El Ilmi Sumatera Barat',
+      'Madrasah Aliyah / SMA / SMK',
+      'Senior High School / Islamic Boarding',
+      '2023',
+      '2026',
       false,
-      'Tahfidz Al-Qur''an & Dirasat Islamiyah',
-      'Indonesia',
-      'Program intensif penghafalan Al-Qur''an dan penguasaan bahasa Arab formal, melatih kedisiplinan dan daya ingat tinggi.',
-      'Intensive Qur''an memorization and classical Arabic language mastery, honing high discipline and focus.',
-      'TAHFIDZ',
+      'Rekayasa Perangkat Lunak & Dirasat Islamiyah',
+      'Sumatera Barat',
+      'Pendidikan tingkat menengah berbasis kejuruan teknologi dan pesantren, memperkuat dasar pemrograman dan kedisiplinan.',
+      'Secondary vocational & Islamic boarding education with strong emphasis on software engineering basics and discipline.',
+      'SMA',
       2,
       true
     ),
     (
-      'Madrasah Aliyah / SMA',
-      'Pendidikan Menengah Atas',
-      'Senior High School',
-      '2019',
-      '2022',
+      'SMPN 1 Batusangkar, Sumatera Barat',
+      'Sekolah Menengah Pertama',
+      'Junior High School',
+      '2020',
+      '2023',
       false,
-      'Ilmu Pengetahuan & Keagamaan',
-      'Indonesia',
-      'Pendidikan menengah dengan penguatan fondasi sains, teknologi informasi dasar, dan ilmu keagamaan.',
-      'Secondary education with foundational studies in science, IT basics, and humanities.',
-      'SMA',
+      'Pendidikan Dasar & Sains',
+      'Batusangkar, Sumatera Barat',
+      'Pendidikan formal tingkat menengah pertama dengan penanaman minat pada teknologi, sains, dan literasi digital awal.',
+      'Junior high school education fostering early passion in digital technology, science, and computer literacy.',
+      'SMP',
       3,
       true
     );
   END IF;
+
+  -- Auto-populate education_level untuk data yang sudah tersimpan sebelumnya
+  UPDATE public.education SET education_level = 'KULIAH'
+  WHERE (education_level IS NULL OR education_level = '')
+    AND (institution ILIKE '%IMSYA%' OR institution ILIKE '%STDI%' OR institution ILIKE '%Institut%' OR institution ILIKE '%Universitas%');
+
+  UPDATE public.education SET education_level = 'SMA'
+  WHERE (education_level IS NULL OR education_level = '')
+    AND (institution ILIKE '%Dar El Ilmi%' OR institution ILIKE '%SMA%' OR institution ILIKE '%SMK%' OR institution ILIKE '%Aliyah%');
+
+  UPDATE public.education SET education_level = 'SMP'
+  WHERE (education_level IS NULL OR education_level = '')
+    AND (institution ILIKE '%SMP%' OR institution ILIKE '%Batusangkar%' OR institution ILIKE '%MTs%');
+
+  UPDATE public.education SET education_level = 'TAHFIDZ'
+  WHERE (education_level IS NULL OR education_level = '')
+    AND (institution ILIKE '%Tahfidz%' OR institution ILIKE '%Pesantren%');
 END $$;
 
 -- [3] SERTIFIKAT RESMI (9 SERTIFIKAT DAFFA)

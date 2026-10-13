@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import type { Education } from "@/types"
 import { FaCloudUploadAlt, FaImage, FaTrash, FaEdit, FaPlus, FaCheck, FaTimes, FaGraduationCap } from "react-icons/fa"
+import { resolveEducationLevel, getLevelBadge } from "@/components/EducationTimeline"
 
 export default function AdminEducation() {
   const [items, setItems] = useState<Education[]>([])
@@ -517,8 +518,17 @@ export default function AdminEducation() {
                 </div>
 
                 <div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="font-bold text-gray-900 dark:text-white text-base">{item.institution}</h3>
+                    {(() => {
+                      const level = resolveEducationLevel(item)
+                      const badge = getLevelBadge(level)
+                      return (
+                        <span className={`text-[10px] px-2 py-0.5 rounded font-black uppercase tracking-wider border ${badge.bg} ${badge.text} ${badge.border}`}>
+                          {level}
+                        </span>
+                      )
+                    })()}
                     {item.is_published === false && (
                       <span className="text-[10px] px-2 py-0.5 bg-yellow-100 text-yellow-800 dark:bg-yellow-500/20 dark:text-yellow-400 rounded-full font-bold">Draft</span>
                     )}
