@@ -23,12 +23,23 @@ export default function Footer() {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const { data } = await supabase
-        .from('profile')
-        .select('name, motto_id, motto_en, bio_id, bio_en, footer_bio_id, footer_bio_en')
-        .limit(1)
-        .maybeSingle();
-      if (data) setProfile(data);
+      try {
+        const { data, error } = await supabase
+          .from('profile')
+          .select('*')
+          .order('updated_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (data && !error) {
+          setProfile(data);
+        } else {
+          const fallback = await supabase.from('profile').select('*').limit(1).maybeSingle();
+          if (fallback.data) setProfile(fallback.data);
+        }
+      } catch (err) {
+        console.error('Error fetching profile in Footer:', err);
+      }
     };
     fetchProfile();
   }, []);

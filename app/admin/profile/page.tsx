@@ -270,21 +270,31 @@ export default function AdminProfile() {
         }
       }
 
+      let saveError = null
+
       if (activeId) {
-        const { error } = await supabase
-          .from('profile')
-          .update(payload)
-          .eq('id', activeId)
-        if (error) throw error
+        const res = await supabase.from('profile').update(payload).eq('id', activeId)
+        saveError = res.error
       } else {
-        const { data, error } = await supabase
-          .from('profile')
-          .insert([payload])
-          .select('id')
-          .single()
-        if (error) throw error
-        if (data) setProfileId(data.id)
+        const res = await supabase.from('profile').insert([payload]).select('id').single()
+        saveError = res.error
+        if (res.data) setProfileId(res.data.id)
       }
+
+      // If error is 42703 (column does not exist), remove newly added optional columns and retry
+      if (saveError && (saveError.code === '42703' || String(saveError.message).includes('does not exist'))) {
+        console.warn('Retrying profile save without new optional columns:', saveError.message)
+        const safePayload = { ...payload }
+        delete safePayload.footer_bio_id
+        delete safePayload.footer_bio_en
+
+        if (activeId) {
+          const retryRes = await supabase.from('profile').update(safePayload).eq('id', activeId)
+          saveError = retryRes.error
+        }
+      }
+
+      if (saveError) throw saveError
       
       setSaveSuccessMsg('Seluruh data profile berhasil disimpan ke database!')
       setTimeout(() => setSaveSuccessMsg(null), 4000)
@@ -292,7 +302,7 @@ export default function AdminProfile() {
     } catch (error: unknown) {
       const errorMsg = error instanceof Error ? error.message : JSON.stringify(error)
       console.error('Error saving profile:', error)
-      alert(`Gagal menyimpan profile: ${errorMsg}\n\nPeriksa izin database atau jalankan FINAL_DATABASE_SETUP.sql di Supabase.`)
+      alert(`Gagal menyimpan profile: ${errorMsg}\n\nTip: Jalankan kembali FINAL_DATABASE_SETUP.sql di Supabase SQL Editor untuk memperbarui struktur database.`)
     } finally {
       setSaving(false)
     }

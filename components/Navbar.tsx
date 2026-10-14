@@ -117,9 +117,13 @@ export default function Navbar() {
 
           <Link
             href="/kontak"
-            className="rounded-full bg-primary text-primary-foreground px-6 py-2.5 text-sm font-semibold shadow-sm transition-all hover:opacity-90 hover:scale-105 active:scale-95"
+            className="group relative inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 hover:text-cyan-300 border border-cyan-500/30 hover:border-cyan-400 text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm whitespace-nowrap"
           >
-            {language === 'id' ? 'Hire Me 🔥' : 'Hire Me 🔥'}
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+            </span>
+            <span>Hire Me</span>
           </Link>
         </div>
 
@@ -177,9 +181,10 @@ export default function Navbar() {
           <Link
             href="/kontak"
             onClick={() => setMobileMenuOpen(false)}
-            className="rounded-full bg-primary text-primary-foreground px-8 py-3 text-base font-semibold shadow-md transition-all active:scale-95"
+            className="inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-black font-bold px-7 py-2.5 text-sm shadow-lg shadow-cyan-500/20 transition-all active:scale-95 whitespace-nowrap"
           >
-            {language === 'id' ? 'Hire Me 🔥' : 'Hire Me 🔥'}
+            <span className="w-2 h-2 rounded-full bg-black animate-pulse" />
+            <span>Hire Me</span>
           </Link>
         </div>
       )}

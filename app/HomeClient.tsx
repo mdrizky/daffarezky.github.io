@@ -7,8 +7,10 @@ import SocialLinks from "@/components/SocialLinks";
 import ProjectCard from "@/components/ProjectCard";
 import ServiceCard from "@/components/ServiceCard";
 import BlogCard from "@/components/BlogCard";
+import CertificateCard from "@/components/CertificateCard";
+import { defaultCertificatesList } from "@/lib/certificates-data";
 import dynamic from "next/dynamic";
-import type { Profile, Project, Service, ReasonsToHire, Testimonial, BlogPost, FocusArea } from "@/types";
+import type { Profile, Project, Service, ReasonsToHire, Testimonial, BlogPost, FocusArea, Certificate } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { SectionHeader } from "@/components/ui/SectionHeader";
@@ -97,6 +99,7 @@ interface HomeClientProps {
   partners: { id: string; name: string; logo_url?: string; website_url?: string }[];
   posts: BlogPost[];
   focusAreas: FocusArea[];
+  certificates?: Certificate[];
 }
 
 export default function HomeClient({
@@ -109,6 +112,7 @@ export default function HomeClient({
   partners,
   posts,
   focusAreas,
+  certificates,
 }: HomeClientProps) {
   const { language } = useLanguage();
   const id = language === "id";
@@ -406,6 +410,32 @@ export default function HomeClient({
             </span>
           </div>
           <PartnerSlider partners={partners} language={language} />
+        </Container>
+      </section>
+
+      {/* 8.5 Sertifikasi Profesional (Tepat setelah Kontribusi & Kolaborasi) */}
+      <section className="section-padding bg-card/20 border-b border-border">
+        <Container>
+          <SectionHeader
+            eyebrow={id ? "Kredensial & Lisensi" : "Verified Credentials"}
+            title={id ? "Sertifikasi Profesional" : "Professional Certifications"}
+            description={
+              id
+                ? "Bukti kompetensi resmi, sertifikasi keahlian, dan penyelesaian program teknologi terverifikasi."
+                : "Official competency credentials, verified tech certifications, and program completions."
+            }
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {((certificates && certificates.length > 0) ? certificates.slice(0, 3) : defaultCertificatesList.slice(0, 3)).map((cert) => (
+              <CertificateCard key={cert.id} certificate={cert} language={language} />
+            ))}
+          </div>
+          <div className="mt-12 text-center">
+            <Button href="/certificates" variant="outline">
+              {id ? "Lihat Semua Sertifikat" : "View All Certificates"}
+              <span className="ml-2">→</span>
+            </Button>
+          </div>
         </Container>
       </section>
 

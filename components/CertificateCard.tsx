@@ -45,14 +45,22 @@ export default function CertificateCard({
       : null
   );
 
+  const isPdf = Boolean(fileUrl && fileUrl.toLowerCase().includes('.pdf'));
+
   return (
     <>
       <div 
         className="group flex flex-col bg-[#12141D] dark:bg-[#0D0F17] border border-zinc-800 hover:border-cyan-500/50 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
       >
-        {/* Certificate Preview Image Container (Similar to friend's portfolio) */}
+        {/* Certificate Preview Image Container */}
         <div 
-          onClick={() => setIsOpen(true)}
+          onClick={() => {
+            if (fileUrl && isPdf && window.innerWidth < 640) {
+              window.open(fileUrl, '_blank');
+            } else {
+              setIsOpen(true);
+            }
+          }}
           className="relative aspect-[16/10] w-full bg-zinc-900 border border-zinc-800/80 rounded-xl overflow-hidden mb-4 cursor-pointer group/img"
         >
           {previewImage ? (
@@ -63,6 +71,17 @@ export default function CertificateCard({
               className="object-cover object-center group-hover/img:scale-105 transition-transform duration-500"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
+          ) : isPdf && fileUrl ? (
+            <div className="relative w-full h-full bg-zinc-950 overflow-hidden">
+              <iframe
+                src={`${fileUrl}#page=1&view=FitH&toolbar=0&navpanes=0&scrollbar=0`}
+                title={title}
+                className="w-full h-full pointer-events-none border-0"
+                loading="lazy"
+              />
+              {/* Overlay to ensure click triggers modal or open */}
+              <div className="absolute inset-0 bg-black/10 hover:bg-black/0 transition-colors" />
+            </div>
           ) : (
             <div className="w-full h-full bg-zinc-950 flex flex-col items-center justify-center p-4 text-center">
               <FaAward className="text-3xl text-cyan-400 mb-2" />
@@ -71,17 +90,18 @@ export default function CertificateCard({
             </div>
           )}
 
-          {/* Issuer pill badge on bottom left of image, exactly like friend's site */}
-          <div className="absolute bottom-3 left-3 z-10">
+          {/* Issuer pill badge on bottom left of image */}
+          <div className="absolute bottom-3 left-3 z-10 pointer-events-none">
             <span className="px-3 py-1 rounded-md bg-[#1F2430]/90 text-white font-extrabold text-[11px] uppercase tracking-wider border border-white/10 shadow-md">
               {issuer}
             </span>
           </div>
 
           {/* Subtle hover overlay */}
-          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
-            <span className="px-3 py-1.5 rounded-lg bg-black/80 backdrop-blur-sm text-cyan-400 text-xs font-semibold border border-cyan-500/30 shadow-lg">
-              {id ? 'Klik untuk Pratinjau' : 'Click to Preview'}
+          <div className="absolute inset-0 bg-black/25 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+            <span className="px-3 py-1.5 rounded-lg bg-black/80 backdrop-blur-sm text-cyan-400 text-xs font-semibold border border-cyan-500/30 shadow-lg flex items-center gap-1.5">
+              <FaExternalLinkAlt size={10} />
+              <span>{isPdf ? (id ? 'Buka Dokumen PDF' : 'Open PDF Document') : (id ? 'Klik untuk Pratinjau' : 'Click to Preview')}</span>
             </span>
           </div>
         </div>
@@ -96,14 +116,25 @@ export default function CertificateCard({
             {description}
           </p>
 
-          <div className="mt-auto pt-2">
+          <div className="mt-auto pt-2 flex items-center gap-2">
             <button
               type="button"
               onClick={() => setIsOpen(true)}
-              className="w-full py-2.5 px-4 bg-zinc-800/90 hover:bg-zinc-700 text-white text-xs sm:text-sm font-semibold rounded-xl border border-zinc-700/80 transition-all flex items-center justify-center gap-2 group-hover:border-cyan-500/40 group-hover:bg-zinc-800"
+              className="flex-1 py-2.5 px-4 bg-zinc-800/90 hover:bg-zinc-700 text-white text-xs sm:text-sm font-semibold rounded-xl border border-zinc-700/80 transition-all flex items-center justify-center gap-2 group-hover:border-cyan-500/40 group-hover:bg-zinc-800"
             >
               <span>{id ? 'Lihat Sertifikat' : 'View Certificate'}</span>
             </button>
+            {fileUrl && (
+              <a
+                href={fileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={id ? 'Buka PDF di Tab Baru' : 'Open PDF in New Tab'}
+                className="p-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 transition-colors flex items-center justify-center"
+              >
+                <FaExternalLinkAlt size={12} />
+              </a>
+            )}
           </div>
         </div>
       </div>
@@ -150,6 +181,14 @@ export default function CertificateCard({
                     alt={title}
                     fill
                     className="object-contain"
+                  />
+                </div>
+              ) : isPdf && fileUrl ? (
+                <div className="w-full h-[55vh] rounded-xl overflow-hidden border border-zinc-800 shadow-xl bg-zinc-950">
+                  <iframe
+                    src={`${fileUrl}#toolbar=1`}
+                    title={title}
+                    className="w-full h-full border-0"
                   />
                 </div>
               ) : (

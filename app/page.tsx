@@ -32,6 +32,7 @@ export default async function Home() {
     partnersRes,
     postsRes,
     focusAreasRes,
+    certificatesRes,
   ] = await Promise.all([
     supabase.from("profile").select("*").limit(1).single(),
     supabase.from("projects").select("*").eq("featured", true).eq("is_published", true).order("sort_order", { ascending: true }).limit(3),
@@ -43,6 +44,7 @@ export default async function Home() {
     supabase.from("partners").select("*").eq("is_published", true).order("order_index", { ascending: true }),
     supabase.from("blog_posts").select("*").eq("is_published", true).eq("status", "published").order("published_at", { ascending: false }).limit(6),
     supabase.from("focus_areas").select("*").eq("is_published", true).order("sort_order", { ascending: true }),
+    supabase.from("certificates").select("*").eq("is_published", true).order("sort_order", { ascending: true }).limit(3),
   ]).catch(() => []);
 
   const testimonials = (testimonialsRes?.data || []).map((row: Record<string, unknown>) => mapTestimonial(row));
@@ -61,6 +63,7 @@ export default async function Home() {
       partners={partnersRes?.data || []}
       posts={postsRes?.data || []}
       focusAreas={focusAreasRes?.data || []}
+      certificates={certificatesRes?.data || []}
     />
   );
 }

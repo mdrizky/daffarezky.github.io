@@ -11,6 +11,16 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { PageSkeleton } from "@/components/ui/Skeleton";
 import EducationTimeline from "@/components/EducationTimeline";
+import { FaRocket, FaShieldAlt, FaCloudUploadAlt, FaGlobe, FaCode } from "react-icons/fa";
+
+function getMilestoneIcon(title: string) {
+  const t = (title || '').toLowerCase();
+  if (t.includes('keamanan') || t.includes('security')) return <FaShieldAlt className="text-cyan-400" />;
+  if (t.includes('hosting') || t.includes('deploy') || t.includes('cloud')) return <FaCloudUploadAlt className="text-blue-400" />;
+  if (t.includes('inggris') || t.includes('english') || t.includes('komunikasi')) return <FaGlobe className="text-emerald-400" />;
+  if (t.includes('web') || t.includes('code') || t.includes('frontend')) return <FaCode className="text-purple-400" />;
+  return <FaRocket className="text-cyan-400" />;
+}
 
 export default function TentangPage() {
   const { language } = useLanguage();
@@ -168,23 +178,54 @@ export default function TentangPage() {
             {/* Kolom Kiri: Perjalanan Belajar */}
             <div className="lg:col-span-6 space-y-8">
               <SectionHeader align="left" title={id ? 'Perjalanan Belajar' : 'Learning Journey'} eyebrow={id ? 'Evolusi' : 'Evolution'} />
-              <div className="space-y-6">
-                {milestones.map((m, idx) => (
-                  <div key={m.id} className="flex gap-5">
-                    <div className="flex flex-col items-center">
-                      <Badge variant="secondary" className="px-3 py-1 font-bold whitespace-nowrap bg-primary/10 text-primary border-primary/20">
-                        {m.year}
-                      </Badge>
-                      {idx < milestones.length - 1 && (
-                        <div className="w-0.5 flex-grow bg-border my-2 min-h-[40px]"></div>
-                      )}
-                    </div>
-                    <div className="pb-6">
-                      <h3 className="text-lg font-bold text-foreground mb-1">{id ? m.title_id : m.title_en}</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{id ? m.description_id : m.description_en}</p>
-                    </div>
-                  </div>
-                ))}
+              
+              <div className="relative">
+                {milestones.length > 1 && (
+                  <div 
+                    className="absolute left-[21px] top-6 bottom-6 w-[2px] bg-gradient-to-b from-cyan-400 via-cyan-500/30 to-transparent pointer-events-none"
+                    aria-hidden="true"
+                  />
+                )}
+
+                <div className="space-y-5">
+                  {milestones.map((m, idx) => {
+                    const title = id ? m.title_id : (m.title_en || m.title_id);
+                    const desc = id ? m.description_id : (m.description_en || m.description_id);
+
+                    return (
+                      <div key={m.id} className="relative group flex items-start gap-4">
+                        {/* Node Icon */}
+                        <div className="relative z-10 flex-shrink-0">
+                          <div className="w-11 h-11 rounded-xl bg-card dark:bg-zinc-900 border border-border dark:border-zinc-800 shadow-sm flex items-center justify-center text-base transition-all duration-300 group-hover:scale-110 group-hover:border-cyan-400 group-hover:shadow-cyan-500/20">
+                            {getMilestoneIcon(title)}
+                          </div>
+                        </div>
+
+                        {/* Card Content */}
+                        <div className="flex-1 min-w-0 bg-card/60 dark:bg-zinc-900/50 border border-border/80 dark:border-zinc-800/80 rounded-2xl p-4 sm:p-5 shadow-sm hover:border-cyan-500/40 hover:shadow-lg hover:shadow-cyan-500/5 transition-all duration-300">
+                          <div className="flex items-center justify-between gap-2 mb-1.5">
+                            <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/25">
+                              {m.year}
+                            </span>
+                            <span className="text-[10px] font-mono text-muted-foreground/60">
+                              #{(idx + 1).toString().padStart(2, '0')}
+                            </span>
+                          </div>
+
+                          <h3 className="text-base font-heading font-bold text-foreground group-hover:text-cyan-400 transition-colors leading-snug">
+                            {title}
+                          </h3>
+
+                          {desc && (
+                            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed mt-2">
+                              {desc}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
