@@ -66,10 +66,10 @@ export default function Footer() {
 
   const quickLinks = language === 'id' ? quickLinksId : quickLinksEn;
 
-  // Dynamic bio text: prefer footer_bio, fallback to bio, fallback to default
+  // Dynamic footer bio text: ONLY use footer_bio_id/en; fallback to short concise default (NEVER use the long bio_id)
   const footerBio = language === 'id'
-    ? (profile?.footer_bio_id?.trim() || profile?.bio_id?.trim() || 'Web & Mobile Developer yang berfokus pada pengembangan teknologi, inovasi digital, dan solusi yang memberikan dampak positif bagi masyarakat.')
-    : (profile?.footer_bio_en?.trim() || profile?.bio_en?.trim() || 'Web & Mobile Developer focused on technology development, digital innovation, and solutions that provide a positive impact on society.');
+    ? (profile?.footer_bio_id?.trim() || 'Web & Mobile Developer yang berfokus pada pengembangan teknologi, inovasi digital, dan solusi yang memberikan dampak positif bagi masyarakat.')
+    : (profile?.footer_bio_en?.trim() || 'Web & Mobile Developer focused on technology development, digital innovation, and solutions that provide a positive impact on society.');
 
   // Dynamic motto text: prefer motto_id/en, fallback to default
   const mottoText = language === 'id'
