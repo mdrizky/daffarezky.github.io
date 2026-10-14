@@ -212,6 +212,8 @@ export type Profile = {
   vision_en?: string
   motto_id?: string
   motto_en?: string
+  footer_bio_id?: string
+  footer_bio_en?: string
   focus_id?: string
   focus_en?: string
   values_id?: string

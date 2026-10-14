@@ -12,7 +12,9 @@ import {
   FaEnvelope, 
   FaCloudUploadAlt,
   FaCheck,
-  FaLink
+  FaLink,
+  FaTiktok,
+  FaYoutube
 } from 'react-icons/fa'
 import { Profile } from '@/types'
 
@@ -28,6 +30,8 @@ export default function AdminProfile() {
     title_en: '',
     bio_id: '',
     bio_en: '',
+    footer_bio_id: '',
+    footer_bio_en: '',
     photo_url: '',
     about_photo_url: '',
     logo_url: '',
@@ -561,11 +565,39 @@ export default function AdminProfile() {
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Motto / Quote (ID)</label>
-                <input type="text" name="motto_id" value={profile.motto_id || ''} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
+                <input type="text" name="motto_id" value={profile.motto_id || ''} onChange={handleChange} placeholder="Teknologi • Inovasi • Kebermanfaatan" className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
+                <span className="text-xs text-muted-foreground mt-1 block">Tampil di footer dan kutipan utama situs (Bahasa Indonesia).</span>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Motto / Quote (EN)</label>
-                <input type="text" name="motto_en" value={profile.motto_en || ''} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
+                <input type="text" name="motto_en" value={profile.motto_en || ''} onChange={handleChange} placeholder="Technology • Innovation • Benefit" className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
+                <span className="text-xs text-muted-foreground mt-1 block">Tampil di footer dan kutipan utama situs (Bahasa Inggris).</span>
+              </div>
+            </div>
+            <div className="grid md:grid-cols-2 gap-4 pt-2 border-t border-gray-100 dark:border-zinc-800">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Teks Bio Footer (ID)</label>
+                <textarea 
+                  name="footer_bio_id" 
+                  rows={3} 
+                  value={profile.footer_bio_id || ''} 
+                  onChange={handleChange} 
+                  placeholder="Web & Mobile Developer yang berfokus pada pengembangan teknologi, inovasi digital, dan solusi yang memberikan dampak positif bagi masyarakat." 
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" 
+                />
+                <span className="text-xs text-muted-foreground mt-1 block">Teks deskripsi ringkas di bawah logo pada footer website pengguna (ID).</span>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Footer Bio Text (EN)</label>
+                <textarea 
+                  name="footer_bio_en" 
+                  rows={3} 
+                  value={profile.footer_bio_en || ''} 
+                  onChange={handleChange} 
+                  placeholder="Web & Mobile Developer focused on technology development, digital innovation, and solutions that provide a positive impact on society." 
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" 
+                />
+                <span className="text-xs text-muted-foreground mt-1 block">Teks deskripsi ringkas di bawah logo pada footer website pengguna (EN).</span>
               </div>
             </div>
           </div>
@@ -613,6 +645,14 @@ export default function AdminProfile() {
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2"><FaLinkedin className="text-blue-500" /> LinkedIn</label>
               <input type="text" name="linkedin" value={profile.linkedin || ''} onChange={handleChange} placeholder="https://linkedin.com/in/..." className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2"><FaTiktok className="text-zinc-900 dark:text-white" /> TikTok</label>
+              <input type="text" name="tiktok" value={profile.tiktok || ''} onChange={handleChange} placeholder="https://tiktok.com/@... atau username" className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2"><FaYoutube className="text-red-500" /> YouTube</label>
+              <input type="text" name="youtube" value={profile.youtube || ''} onChange={handleChange} placeholder="https://youtube.com/@... atau channel URL" className="w-full px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-zinc-800 rounded-xl text-gray-900 dark:text-white" />
             </div>
           </div>
         </div>

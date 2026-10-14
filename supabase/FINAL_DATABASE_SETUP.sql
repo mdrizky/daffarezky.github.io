@@ -119,8 +119,10 @@ CREATE TABLE IF NOT EXISTS public.profile (
   stats_passion TEXT DEFAULT '∞',
   vision_id TEXT,
   vision_en TEXT,
-  motto_id TEXT,
-  motto_en TEXT,
+  motto_id TEXT DEFAULT 'Teknologi • Inovasi • Kebermanfaatan',
+  motto_en TEXT DEFAULT 'Technology • Innovation • Benefit',
+  footer_bio_id TEXT DEFAULT 'Web & Mobile Developer yang berfokus pada pengembangan teknologi, inovasi digital, dan solusi yang memberikan dampak positif bagi masyarakat.',
+  footer_bio_en TEXT DEFAULT 'Web & Mobile Developer focused on technology development, digital innovation, and solutions that provide a positive impact on society.',
   focus_id TEXT,
   focus_en TEXT,
   values_id TEXT,
@@ -595,6 +597,16 @@ SELECT public._add_column_if_missing('profile','availability_status_en','TEXT');
 SELECT public._add_column_if_missing('profile','stats_projects','TEXT');
 SELECT public._add_column_if_missing('profile','stats_tools','TEXT');
 SELECT public._add_column_if_missing('profile','stats_passion','TEXT');
+SELECT public._add_column_if_missing('profile','motto_id','TEXT DEFAULT ''Teknologi • Inovasi • Kebermanfaatan''');
+SELECT public._add_column_if_missing('profile','motto_en','TEXT DEFAULT ''Technology • Innovation • Benefit''');
+SELECT public._add_column_if_missing('profile','footer_bio_id','TEXT DEFAULT ''Web & Mobile Developer yang berfokus pada pengembangan teknologi, inovasi digital, dan solusi yang memberikan dampak positif bagi masyarakat.''');
+SELECT public._add_column_if_missing('profile','footer_bio_en','TEXT DEFAULT ''Web & Mobile Developer focused on technology development, digital innovation, and solutions that provide a positive impact on society.''');
+SELECT public._add_column_if_missing('profile','vision_id','TEXT');
+SELECT public._add_column_if_missing('profile','vision_en','TEXT');
+SELECT public._add_column_if_missing('profile','focus_id','TEXT');
+SELECT public._add_column_if_missing('profile','focus_en','TEXT');
+SELECT public._add_column_if_missing('profile','values_id','TEXT');
+SELECT public._add_column_if_missing('profile','values_en','TEXT');
 SELECT public._add_column_if_missing('profile','updated_at','TIMESTAMPTZ DEFAULT now()');
 
 SELECT public._add_column_if_missing('certificates','image_url','TEXT');
@@ -867,7 +879,9 @@ BEGIN
       availability_status_id, availability_status_en,
       stats_projects, stats_tools, stats_passion,
       vision_id, vision_en,
-      motto_id, motto_en
+      motto_id, motto_en,
+      footer_bio_id, footer_bio_en,
+      tiktok, youtube
     ) VALUES (
       'Muhammad Daffa Rezky Adyra',
       'Web & Mobile Developer',
@@ -893,8 +907,12 @@ BEGIN
       '∞',
       'Menjadi profesional di bidang teknologi yang mengintegrasikan inovasi digital dengan nilai-nilai etika dan kebermanfaatan nyata bagi umat.',
       'To become a tech professional who integrates digital innovation with ethical values and impactful solutions for the community.',
-      'Sebaik-baik manusia adalah yang paling bermanfaat bagi orang lain.',
-      'The best of people are those that bring the most benefit to the rest of mankind.'
+      'Teknologi • Inovasi • Kebermanfaatan',
+      'Technology • Innovation • Benefit',
+      'Web & Mobile Developer yang berfokus pada pengembangan teknologi, inovasi digital, dan solusi yang memberikan dampak positif bagi masyarakat.',
+      'Web & Mobile Developer focused on technology development, digital innovation, and solutions that provide a positive impact on society.',
+      'https://tiktok.com/@daffarezky_',
+      'https://youtube.com'
     );
   ELSE
     -- Pastikan field kritis tidak null
@@ -902,7 +920,11 @@ BEGIN
       name = COALESCE(NULLIF(name, ''), 'Muhammad Daffa Rezky Adyra'),
       title_id = COALESCE(NULLIF(title_id, ''), 'Web & Mobile Developer'),
       title_en = COALESCE(NULLIF(title_en, ''), 'Web & Mobile Developer'),
-      email = COALESCE(NULLIF(email, ''), 'daffarezky99@gmail.com')
+      email = COALESCE(NULLIF(email, ''), 'daffarezky99@gmail.com'),
+      motto_id = COALESCE(NULLIF(motto_id, ''), 'Teknologi • Inovasi • Kebermanfaatan'),
+      motto_en = COALESCE(NULLIF(motto_en, ''), 'Technology • Innovation • Benefit'),
+      footer_bio_id = COALESCE(NULLIF(footer_bio_id, ''), 'Web & Mobile Developer yang berfokus pada pengembangan teknologi, inovasi digital, dan solusi yang memberikan dampak positif bagi masyarakat.'),
+      footer_bio_en = COALESCE(NULLIF(footer_bio_en, ''), 'Web & Mobile Developer focused on technology development, digital innovation, and solutions that provide a positive impact on society.')
     WHERE id = (SELECT id FROM public.profile LIMIT 1);
   END IF;
 END $$;

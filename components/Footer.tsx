@@ -11,12 +11,24 @@ import NewsletterForm from "./NewsletterForm";
 
 export default function Footer() {
   const { language } = useLanguage();
-  const [profileName, setProfileName] = useState<string>("Daffa Rizky");
+  const [profile, setProfile] = useState<{
+    name?: string;
+    motto_id?: string;
+    motto_en?: string;
+    bio_id?: string;
+    bio_en?: string;
+    footer_bio_id?: string;
+    footer_bio_en?: string;
+  } | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const { data } = await supabase.from('profile').select('name').limit(1);
-      if (data && data.length > 0) setProfileName(data[0].name);
+      const { data } = await supabase
+        .from('profile')
+        .select('name, motto_id, motto_en, bio_id, bio_en, footer_bio_id, footer_bio_en')
+        .limit(1)
+        .maybeSingle();
+      if (data) setProfile(data);
     };
     fetchProfile();
   }, []);
@@ -43,6 +55,16 @@ export default function Footer() {
 
   const quickLinks = language === 'id' ? quickLinksId : quickLinksEn;
 
+  // Dynamic bio text: prefer footer_bio, fallback to bio, fallback to default
+  const footerBio = language === 'id'
+    ? (profile?.footer_bio_id?.trim() || profile?.bio_id?.trim() || 'Web & Mobile Developer yang berfokus pada pengembangan teknologi, inovasi digital, dan solusi yang memberikan dampak positif bagi masyarakat.')
+    : (profile?.footer_bio_en?.trim() || profile?.bio_en?.trim() || 'Web & Mobile Developer focused on technology development, digital innovation, and solutions that provide a positive impact on society.');
+
+  // Dynamic motto text: prefer motto_id/en, fallback to default
+  const mottoText = language === 'id'
+    ? (profile?.motto_id?.trim() || 'Teknologi • Inovasi • Kebermanfaatan')
+    : (profile?.motto_en?.trim() || profile?.motto_id?.trim() || 'Technology • Innovation • Benefit');
+
   return (
     <footer className="border-t border-border bg-card/40 pt-16 pb-8 transition-colors duration-300">
       <div className="container mx-auto px-6 md:px-12">
@@ -56,14 +78,12 @@ export default function Footer() {
           <div className="flex flex-col gap-6">
             <SiteLogo size={40} textSize="text-xl" />
             <p className="text-muted-foreground max-w-sm leading-relaxed text-sm">
-              {language === 'id'
-                ? 'Web & Mobile Developer yang berfokus pada pengembangan teknologi, inovasi digital, dan solusi yang memberikan dampak positif bagi masyarakat.'
-                : 'Web & Mobile Developer focused on technology development, digital innovation, and solutions that provide a positive impact on society.'}
+              {footerBio}
             </p>
             <div className="flex flex-col gap-1">
               <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Motto</span>
               <p className="text-sm font-medium text-primary">
-                Teknologi • Inovasi • Kebermanfaatan
+                {mottoText}
               </p>
             </div>
           </div>
@@ -104,7 +124,7 @@ export default function Footer() {
         {/* Bottom */}
         <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-border/60 relative gap-4 text-center md:text-left">
           <p className="text-muted-foreground text-sm">
-            © 2026 {profileName}. {language === 'id' ? 'Dibangun dengan dedikasi, pembelajaran, dan semangat kebermanfaatan.' : 'Built with dedication, learning, and the spirit of benefit.'}
+            © 2026 {profile?.name || 'Muhammad Daffa Rezky Adyra'}. {language === 'id' ? 'Dibangun dengan dedikasi, pembelajaran, dan semangat kebermanfaatan.' : 'Built with dedication, learning, and the spirit of benefit.'}
           </p>
           
           {/* Hidden Admin Link */}

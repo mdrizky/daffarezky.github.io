@@ -1,6 +1,7 @@
 'use client'
 
 import Image from "next/image";
+import Link from "next/link";
 import { useLanguage } from "@/components/LanguageProvider";
 import SocialLinks from "@/components/SocialLinks";
 import ProjectCard from "@/components/ProjectCard";
@@ -13,7 +14,75 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardContent } from "@/components/ui/Card";
-import { FaGraduationCap, FaClock, FaFileAlt, FaArrowRight } from "react-icons/fa";
+import { 
+  FaGraduationCap, 
+  FaClock, 
+  FaFileAlt, 
+  FaArrowRight,
+  FaCode,
+  FaDatabase,
+  FaBrain,
+  FaLaptopCode,
+  FaMobileAlt,
+  FaServer,
+  FaHeart,
+  FaRobot
+} from "react-icons/fa";
+
+// Professional SVG icon renderer for focus areas
+function renderFocusAreaIcon(iconName?: string, title?: string) {
+  const key = `${iconName || ''} ${title || ''}`.toLowerCase();
+  
+  if (key.includes('code') || key.includes('web development') || key.includes('frontend')) {
+    return <FaCode className="text-xl md:text-2xl text-cyan-400" />;
+  }
+  if (key.includes('database') || key.includes('backend') || key.includes('sql') || key.includes('supabase')) {
+    return <FaDatabase className="text-xl md:text-2xl text-cyan-400" />;
+  }
+  if (key.includes('cpu') || key.includes('ai') || key.includes('otomasi') || key.includes('automation') || key.includes('brain')) {
+    return <FaBrain className="text-xl md:text-2xl text-cyan-400" />;
+  }
+  if (key.includes('mobile') || key.includes('android') || key.includes('ios') || key.includes('aplikasi')) {
+    return <FaMobileAlt className="text-xl md:text-2xl text-cyan-400" />;
+  }
+  if (key.includes('server') || key.includes('api') || key.includes('cloud')) {
+    return <FaServer className="text-xl md:text-2xl text-cyan-400" />;
+  }
+  if (key.includes('heart') || key.includes('nilai') || key.includes('value')) {
+    return <FaHeart className="text-xl md:text-2xl text-cyan-400" />;
+  }
+  if (key.includes('robot')) {
+    return <FaRobot className="text-xl md:text-2xl text-cyan-400" />;
+  }
+  return <FaLaptopCode className="text-xl md:text-2xl text-cyan-400" />;
+}
+
+const defaultFocusSolutions: Partial<FocusArea>[] = [
+  {
+    id: 'sol-web',
+    title_id: 'Web Development',
+    title_en: 'Web Development',
+    description_id: 'Membangun website modern, responsif, cepat, dan mudah digunakan untuk kebutuhan personal maupun bisnis.',
+    description_en: 'Building modern, responsive, fast, and intuitive websites for personal and business needs.',
+    icon: 'code',
+  },
+  {
+    id: 'sol-backend',
+    title_id: 'Back-End & Database',
+    title_en: 'Back-End & Database',
+    description_id: 'Mengembangkan API, sistem autentikasi aman, dan manajemen database terstruktur yang siap menampung skala pengguna.',
+    description_en: 'Developing robust APIs, secure authentication systems, and structured databases ready to scale.',
+    icon: 'database',
+  },
+  {
+    id: 'sol-ai',
+    title_id: 'Solusi AI & Otomasi Digital',
+    title_en: 'AI Integration & Automation',
+    description_id: 'Mengintegrasikan layanan AI modern (LLM) dan otomatisasi alur kerja untuk mempercepat efisiensi operasional bisnis.',
+    description_en: 'Integrating modern AI models and workflow automations to accelerate operational efficiency.',
+    icon: 'cpu',
+  },
+];
 
 const TestimonialCarousel = dynamic(() => import("@/components/TestimonialCarousel"), { ssr: false });
 const PartnerSlider = dynamic(() => import("@/components/PartnerSlider"), { ssr: false });
@@ -156,29 +225,68 @@ export default function HomeClient({
         </Container>
       </section>
 
-      {/* 3. What I Build (Focus Areas) */}
-      {focusAreas && focusAreas.length > 0 && (
-        <section className="section-padding bg-card/40 border-y border-border">
-          <Container>
-            <SectionHeader
-              eyebrow={id ? "Fokus" : "Focus"}
-              title={id ? "Apa Yang Saya Bangun" : "What I Build"}
-              description={id ? "Spesialisasi dalam solusi teknologi yang efisien, modern, dan scalable." : "Specializing in efficient, modern, and scalable technology solutions."}
-            />
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {focusAreas.map((area) => (
-                <Card key={area.id} className="bg-card text-card-foreground border-border hover:border-primary/40 transition-all h-full">
-                  <CardContent className="p-8">
-                    {area.icon && <div className="text-4xl mb-4">{area.icon}</div>}
-                    <h3 className="text-xl font-bold mb-3 text-foreground">{id ? area.title_id : area.title_en}</h3>
-                    <p className="text-muted-foreground leading-relaxed text-sm">{id ? area.description_id : area.description_en}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </Container>
-        </section>
-      )}
+      {/* 3. What I Build — Premium Digital Solutions */}
+      <section className="section-padding bg-card/30 dark:bg-zinc-950/40 border-y border-border/80">
+        <Container>
+          <SectionHeader
+            eyebrow="MY EXPERTISE"
+            title={id ? "Apa yang Saya Bangun" : "What I Build"}
+            description={
+              id
+                ? "Solusi digital untuk membantu bisnis berkembang melalui teknologi yang modern, efisien, dan tepat guna."
+                : "Digital solutions that help businesses grow through modern, efficient, and purposeful technology."
+            }
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {((focusAreas && focusAreas.length > 0) ? focusAreas : defaultFocusSolutions).map((area, index) => {
+              const title = id ? area.title_id : (area.title_en || area.title_id);
+              const desc = id ? area.description_id : (area.description_en || area.description_id);
+              const stepNumber = String(index + 1).padStart(2, '0');
+
+              return (
+                <div
+                  key={area.id || index}
+                  className="group relative bg-card/70 dark:bg-zinc-900/60 border border-border/80 dark:border-zinc-800/80 rounded-2xl p-6 sm:p-7 md:p-8 flex flex-col justify-between hover:border-cyan-500/40 hover:shadow-xl hover:shadow-cyan-500/5 hover:-translate-y-1 transition-all duration-300"
+                >
+                  <div>
+                    {/* Top Row: Icon Container + Number */}
+                    <div className="flex items-center justify-between mb-5">
+                      <div className="w-12 h-12 rounded-xl bg-cyan-500/10 dark:bg-cyan-500/15 border border-cyan-500/20 text-cyan-400 flex items-center justify-center text-xl shadow-sm transition-transform duration-300 group-hover:scale-105 group-hover:border-cyan-400/40">
+                        {renderFocusAreaIcon(area.icon, title)}
+                      </div>
+                      <span className="text-xs font-mono font-bold text-muted-foreground/40 group-hover:text-cyan-400/70 transition-colors">
+                        {stepNumber}
+                      </span>
+                    </div>
+
+                    {/* Service Title */}
+                    <h3 className="text-lg md:text-xl font-heading font-bold text-foreground mb-2.5 group-hover:text-cyan-400 transition-colors duration-200">
+                      {title}
+                    </h3>
+
+                    {/* Benefit Description */}
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {desc}
+                    </p>
+                  </div>
+
+                  {/* Bottom Action: Contextual Link */}
+                  <div className="mt-6 pt-4 border-t border-border/40 dark:border-zinc-800/60 flex items-center justify-between">
+                    <Link
+                      href="/projects"
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-cyan-400 group-hover:text-cyan-400 transition-colors duration-200"
+                    >
+                      <span>{id ? "Lihat Studi Kasus" : "View Case Studies"}</span>
+                      <FaArrowRight className="text-[10px] transform group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Container>
+      </section>
 
       {/* 4. About Summary */}
       <section className="section-padding">

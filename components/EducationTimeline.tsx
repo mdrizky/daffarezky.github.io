@@ -169,15 +169,15 @@ export default function EducationTimeline({
 
   return (
     <div className={`relative ${className}`}>
-      {/* Vertical Cyan Gradient Timeline Line */}
+      {/* Thin Vertical Cyan Gradient Timeline Line */}
       {items.length > 1 && (
         <div
-          className="absolute left-[39px] md:left-[55px] top-10 md:top-14 bottom-10 md:bottom-14 w-[2px] md:w-[3px] bg-gradient-to-b from-cyan-400 via-cyan-500 to-cyan-500/20 shadow-[0_0_12px_rgba(6,182,212,0.4)] pointer-events-none z-0"
+          className="absolute left-[23px] md:left-[27px] top-6 md:top-7 bottom-6 md:bottom-7 w-[2px] bg-gradient-to-b from-cyan-400 via-cyan-500 to-cyan-500/20 shadow-[0_0_8px_rgba(6,182,212,0.3)] pointer-events-none z-0"
         />
       )}
 
       {/* Timeline items list */}
-      <div className="space-y-8 md:space-y-10">
+      <div className="space-y-6 md:space-y-8">
         {items.map((edu, index) => {
           const level = resolveEducationLevel(edu)
           const badge = getLevelBadge(level)
@@ -190,33 +190,33 @@ export default function EducationTimeline({
           return (
             <div
               key={edu.id}
-              className="relative group flex items-start gap-5 md:gap-7 animate-fade-in-up"
+              className="relative group flex items-start gap-4 md:gap-5 animate-fade-in-up"
               style={{
-                animationDelay: `${index * 150}ms`,
+                animationDelay: `${index * 120}ms`,
                 animationFillMode: 'both',
               }}
             >
-              {/* Circular Logo Container (80px mobile / 112px desktop) */}
+              {/* Circular Logo Container (Standard 48px mobile / 56px desktop) */}
               <div className="relative z-10 flex-shrink-0">
                 <div
                   className={`
-                    w-[80px] h-[80px] md:w-[112px] md:h-[112px]
-                    rounded-full bg-white text-zinc-900
-                    border-2 md:border-[3px] border-zinc-200 dark:border-zinc-700
-                    shadow-xl dark:shadow-2xl dark:shadow-black/70
+                    w-12 h-12 md:w-14 md:h-14
+                    rounded-full bg-white dark:bg-zinc-900 text-zinc-900
+                    border-2 border-zinc-200 dark:border-zinc-700
+                    shadow-md dark:shadow-xl dark:shadow-black/50
                     flex items-center justify-center
-                    overflow-hidden p-2.5 md:p-3.5
-                    transition-all duration-500 ease-out
-                    group-hover:scale-105 group-hover:border-cyan-400 group-hover:shadow-cyan-500/25 group-hover:shadow-2xl
+                    overflow-hidden p-1.5 md:p-2
+                    transition-all duration-300 ease-out
+                    group-hover:scale-105 group-hover:border-cyan-400 group-hover:shadow-cyan-500/20
                   `}
                 >
                   {edu.logo_url && !hasImageError ? (
                     <Image
                       src={edu.logo_url}
                       alt={edu.institution}
-                      width={112}
-                      height={112}
-                      className="w-full h-full object-contain rounded-full transition-transform duration-500 group-hover:scale-110"
+                      width={56}
+                      height={56}
+                      className="w-full h-full object-contain rounded-full transition-transform duration-300 group-hover:scale-105"
                       unoptimized
                       onError={() =>
                         setImageErrors((prev) => ({ ...prev, [edu.id]: true }))
@@ -224,10 +224,7 @@ export default function EducationTimeline({
                     />
                   ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center text-center">
-                      <FaGraduationCap className="text-2xl md:text-4xl text-cyan-600 dark:text-cyan-600 transition-transform duration-300 group-hover:scale-110" />
-                      <span className="text-[10px] md:text-xs font-bold text-zinc-600 mt-0.5 truncate max-w-[65px] md:max-w-[85px]">
-                        {edu.institution.substring(0, 3).toUpperCase()}
-                      </span>
+                      <FaGraduationCap className="text-xl md:text-2xl text-cyan-500 dark:text-cyan-400 transition-transform duration-300 group-hover:scale-110" />
                     </div>
                   )}
                 </div>
@@ -236,49 +233,48 @@ export default function EducationTimeline({
                 {edu.is_current && (
                   <div
                     title={id ? 'Sedang Ditempuh' : 'In Progress'}
-                    className="absolute -bottom-1 -right-1 md:bottom-0 md:right-0 w-4 h-4 md:w-5 md:h-5 bg-cyan-400 border-2 border-white dark:border-zinc-950 rounded-full shadow-lg shadow-cyan-400/50 flex items-center justify-center animate-pulse"
+                    className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 md:w-4 md:h-4 bg-cyan-400 border-2 border-white dark:border-zinc-950 rounded-full shadow-md shadow-cyan-400/50 flex items-center justify-center animate-pulse"
                   >
-                    <div className="w-1.5 h-1.5 bg-white rounded-full" />
+                    <div className="w-1 h-1 bg-white rounded-full" />
                   </div>
                 )}
               </div>
 
               {/* Text Information Column */}
-              <div className="flex-1 min-w-0 pt-1 md:pt-2">
+              <div className="flex-1 min-w-0 pt-0.5">
                 {/* Year Range (above institution name) */}
-                <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                  <span className="text-xs md:text-sm font-semibold tracking-wider text-zinc-400 dark:text-zinc-500">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <span className="text-xs font-semibold text-zinc-400 dark:text-zinc-500">
                     {yearText}
                   </span>
                   {edu.is_current && (
-                    <span className="inline-flex items-center gap-1 text-[10px] md:text-xs font-bold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/30">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/30">
                       <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
                       {id ? 'Sedang Ditempuh' : 'In Progress'}
                     </span>
                   )}
                 </div>
 
-                {/* Institution Name (Bold, large, cyan on hover) */}
-                <h3 className="text-xl md:text-2xl lg:text-3xl font-heading font-extrabold text-foreground group-hover:text-cyan-400 transition-colors duration-300 leading-snug tracking-tight">
+                {/* Institution Name (Standard, elegant, cyan on hover) */}
+                <h3 className="text-base md:text-lg lg:text-xl font-heading font-bold text-foreground group-hover:text-cyan-400 transition-colors duration-200 leading-snug">
                   {edu.institution}
                 </h3>
 
                 {/* Education Level Badge (Colored per level) */}
-                <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                <div className="mt-1.5 flex flex-wrap items-center gap-2">
                   <span
                     className={`
-                      inline-flex items-center px-3.5 py-1 rounded-md
-                      text-[11px] md:text-xs font-black uppercase tracking-[0.16em]
+                      inline-flex items-center px-2.5 py-0.5 rounded-full
+                      text-[10px] md:text-[11px] font-bold uppercase tracking-wider
                       border ${badge.bg} ${badge.text} ${badge.border}
                       shadow-sm ${badge.glow}
-                      transition-all duration-300 group-hover:scale-105
                     `}
                   >
                     {level}
                   </span>
 
                   {edu.field_of_study && (
-                    <span className="text-xs md:text-sm text-muted-foreground/80 font-medium">
+                    <span className="text-xs text-muted-foreground font-medium">
                       • {edu.field_of_study}
                     </span>
                   )}
@@ -286,22 +282,22 @@ export default function EducationTimeline({
 
                 {/* Degree / Program */}
                 {(id ? edu.degree_id : edu.degree_en) && (
-                  <p className="text-sm md:text-base font-semibold text-foreground/90 mt-2">
+                  <p className="text-xs md:text-sm font-semibold text-foreground/90 mt-1.5">
                     {id ? edu.degree_id : edu.degree_en}
                   </p>
                 )}
 
                 {/* Description (Subtle by default, brightens up on hover) */}
                 {(id ? edu.description_id : edu.description_en) && (
-                  <p className="text-xs md:text-sm text-zinc-400 dark:text-zinc-400 leading-relaxed mt-2 max-w-xl opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+                  <p className="text-xs md:text-sm text-zinc-400 dark:text-zinc-400 leading-relaxed mt-1.5 max-w-xl opacity-75 group-hover:opacity-100 transition-opacity duration-200">
                     {id ? edu.description_id : edu.description_en}
                   </p>
                 )}
 
                 {/* Location */}
                 {edu.location && (
-                  <div className="mt-2 text-xs text-muted-foreground/70 flex items-center gap-1.5 opacity-60 group-hover:opacity-90 transition-opacity duration-300">
-                    <FaMapMarkerAlt className="text-cyan-400 text-[11px]" />
+                  <div className="mt-1.5 text-xs text-muted-foreground/70 flex items-center gap-1.5">
+                    <FaMapMarkerAlt className="text-cyan-400 text-[10px]" />
                     <span>{edu.location}</span>
                   </div>
                 )}
@@ -312,7 +308,7 @@ export default function EducationTimeline({
                     href={edu.certificate_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 font-semibold mt-2.5 underline decoration-cyan-400/40 hover:decoration-cyan-400"
+                    className="inline-flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 font-semibold mt-2 underline decoration-cyan-400/40 hover:decoration-cyan-400"
                   >
                     <FaExternalLinkAlt className="text-[10px]" />
                     <span>{id ? 'Lihat Ijazah / Sertifikat' : 'View Certificate'}</span>
