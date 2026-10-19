@@ -601,6 +601,8 @@ SELECT public._add_column_if_missing('profile','motto_id','TEXT DEFAULT ''Teknol
 SELECT public._add_column_if_missing('profile','motto_en','TEXT DEFAULT ''Technology • Innovation • Benefit''');
 SELECT public._add_column_if_missing('profile','footer_bio_id','TEXT DEFAULT ''Web & Mobile Developer yang berfokus pada pengembangan teknologi, inovasi digital, dan solusi yang memberikan dampak positif bagi masyarakat.''');
 SELECT public._add_column_if_missing('profile','footer_bio_en','TEXT DEFAULT ''Web & Mobile Developer focused on technology development, digital innovation, and solutions that provide a positive impact on society.''');
+ALTER TABLE public.profile ADD COLUMN IF NOT EXISTS footer_bio_id TEXT DEFAULT 'Web & Mobile Developer yang berfokus pada pengembangan teknologi, inovasi digital, dan solusi yang memberikan dampak positif bagi masyarakat.';
+ALTER TABLE public.profile ADD COLUMN IF NOT EXISTS footer_bio_en TEXT DEFAULT 'Web & Mobile Developer focused on technology development, digital innovation, and solutions that provide a positive impact on society.';
 SELECT public._add_column_if_missing('profile','vision_id','TEXT');
 SELECT public._add_column_if_missing('profile','vision_en','TEXT');
 SELECT public._add_column_if_missing('profile','focus_id','TEXT');

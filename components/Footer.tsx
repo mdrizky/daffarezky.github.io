@@ -66,10 +66,13 @@ export default function Footer() {
 
   const quickLinks = language === 'id' ? quickLinksId : quickLinksEn;
 
-  // Dynamic footer bio text: ONLY use footer_bio_id/en; fallback to short concise default (NEVER use the long bio_id)
+  // Dynamic footer bio text: ONLY use footer_bio_id/en; fallback to local storage or short concise default (NEVER use the long bio_id)
+  const localFooterBioId = typeof window !== 'undefined' ? localStorage.getItem('portfolio_footer_bio_id') : null;
+  const localFooterBioEn = typeof window !== 'undefined' ? localStorage.getItem('portfolio_footer_bio_en') : null;
+
   const footerBio = language === 'id'
-    ? (profile?.footer_bio_id?.trim() || 'Web & Mobile Developer yang berfokus pada pengembangan teknologi, inovasi digital, dan solusi yang memberikan dampak positif bagi masyarakat.')
-    : (profile?.footer_bio_en?.trim() || 'Web & Mobile Developer focused on technology development, digital innovation, and solutions that provide a positive impact on society.');
+    ? (profile?.footer_bio_id?.trim() || localFooterBioId?.trim() || 'Web & Mobile Developer yang berfokus pada pengembangan teknologi, inovasi digital, dan solusi yang memberikan dampak positif bagi masyarakat.')
+    : (profile?.footer_bio_en?.trim() || localFooterBioEn?.trim() || 'Web & Mobile Developer focused on technology development, digital innovation, and solutions that provide a positive impact on society.');
 
   // Dynamic motto text: prefer motto_id/en, fallback to default
   const mottoText = language === 'id'

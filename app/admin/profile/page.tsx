@@ -14,7 +14,10 @@ import {
   FaCheck,
   FaLink,
   FaTiktok,
-  FaYoutube
+  FaYoutube,
+  FaCopy,
+  FaTimes,
+  FaExclamationTriangle
 } from 'react-icons/fa'
 import { Profile } from '@/types'
 
@@ -23,6 +26,8 @@ export default function AdminProfile() {
   const [saving, setSaving] = useState(false)
   const [uploadingField, setUploadingField] = useState<string | null>(null)
   const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null)
+  const [sqlNotice, setSqlNotice] = useState<string | null>(null)
+  const [copiedSql, setCopiedSql] = useState(false)
 
   const [profile, setProfile] = useState<Partial<Profile>>({
     name: '',
@@ -77,9 +82,18 @@ export default function AdminProfile() {
       if (error && error.code !== 'PGRST116') throw error
       
       if (data) {
-        // Format birth_date if present
+        let localFooterId = ''
+        let localFooterEn = ''
+        if (typeof window !== 'undefined') {
+          localFooterId = localStorage.getItem('portfolio_footer_bio_id') || ''
+          localFooterEn = localStorage.getItem('portfolio_footer_bio_en') || ''
+        }
+
+        // Format birth_date if present & fallback footer_bio if column not in DB yet
         const formattedData = {
           ...data,
+          footer_bio_id: data.footer_bio_id || localFooterId || '',
+          footer_bio_en: data.footer_bio_en || localFooterEn || '',
           birth_date: data.birth_date ? String(data.birth_date).split('T')[0] : ''
         }
         setProfile(formattedData)
@@ -261,6 +275,16 @@ export default function AdminProfile() {
 
       payload.updated_at = new Date().toISOString()
 
+      // Always persist footer bio locally so the user NEVER loses their edits
+      if (typeof window !== 'undefined') {
+        if (payload.footer_bio_id !== undefined) {
+          localStorage.setItem('portfolio_footer_bio_id', String(payload.footer_bio_id || ''))
+        }
+        if (payload.footer_bio_en !== undefined) {
+          localStorage.setItem('portfolio_footer_bio_en', String(payload.footer_bio_en || ''))
+        }
+      }
+
       let activeId = profileId
       if (!activeId) {
         const { data: existing } = await supabase.from('profile').select('id').limit(1).maybeSingle()
@@ -281,9 +305,25 @@ export default function AdminProfile() {
         if (res.data) setProfileId(res.data.id)
       }
 
-      // If error is 42703 (column does not exist), remove newly added optional columns and retry
-      if (saveError && (saveError.code === '42703' || String(saveError.message).includes('does not exist'))) {
-        console.warn('Retrying profile save without new optional columns:', saveError.message)
+      // Check if error is related to schema cache or missing column (PGRST204, 42703, etc.)
+      const isColumnMissing = (err: unknown) => {
+        if (!err || typeof err !== 'object') return false
+        const errObj = err as Record<string, unknown>
+        const msg = String(errObj.message || '').toLowerCase()
+        const code = String(errObj.code || '')
+        return (
+          code === 'PGRST204' ||
+          code === '42703' ||
+          msg.includes('schema cache') ||
+          msg.includes('could not find') ||
+          msg.includes('does not exist')
+        )
+      }
+
+      let columnFallbackApplied = false
+
+      if (isColumnMissing(saveError)) {
+        console.warn('Column missing in Supabase schema, retrying without footer_bio columns:', saveError?.message)
         const safePayload = { ...payload }
         delete safePayload.footer_bio_id
         delete safePayload.footer_bio_en
@@ -291,18 +331,33 @@ export default function AdminProfile() {
         if (activeId) {
           const retryRes = await supabase.from('profile').update(safePayload).eq('id', activeId)
           saveError = retryRes.error
+          if (!saveError) columnFallbackApplied = true
+        } else {
+          const retryRes = await supabase.from('profile').insert([safePayload]).select('id').single()
+          saveError = retryRes.error
+          if (!saveError) {
+            columnFallbackApplied = true
+            if (retryRes.data) setProfileId(retryRes.data.id)
+          }
         }
       }
 
       if (saveError) throw saveError
       
-      setSaveSuccessMsg('Seluruh data profile berhasil disimpan ke database!')
-      setTimeout(() => setSaveSuccessMsg(null), 4000)
-      alert('Profile berhasil disimpan!')
+      if (columnFallbackApplied) {
+        const sqlSnippet = `ALTER TABLE public.profile \nADD COLUMN IF NOT EXISTS footer_bio_id TEXT DEFAULT 'Web & Mobile Developer yang berfokus pada pengembangan teknologi, inovasi digital, dan solusi yang memberikan dampak positif bagi masyarakat.';\n\nALTER TABLE public.profile \nADD COLUMN IF NOT EXISTS footer_bio_en TEXT DEFAULT 'Web & Mobile Developer focused on technology development, digital innovation, and solutions that provide a positive impact on society.';\n\nNOTIFY pgrst, 'reload schema';`
+        setSqlNotice(sqlSnippet)
+        setSaveSuccessMsg('Profil berhasil disimpan & Teks Bio Footer tersimpan di browser Anda! Silakan jalankan query SQL di bawah pada Supabase agar tersimpan permanen di cloud.')
+      } else {
+        setSqlNotice(null)
+        setSaveSuccessMsg('Seluruh data profile berhasil disimpan ke database!')
+        setTimeout(() => setSaveSuccessMsg(null), 4000)
+        alert('Profile berhasil disimpan!')
+      }
     } catch (error: unknown) {
       const errorMsg = error instanceof Error ? error.message : JSON.stringify(error)
       console.error('Error saving profile:', error)
-      alert(`Gagal menyimpan profile: ${errorMsg}\n\nTip: Jalankan kembali FINAL_DATABASE_SETUP.sql di Supabase SQL Editor untuk memperbarui struktur database.`)
+      alert(`Gagal menyimpan profile: ${errorMsg}\n\nTip: Jalankan ADD_FOOTER_BIO_COLUMNS.sql di Supabase SQL Editor untuk memperbarui struktur database.`)
     } finally {
       setSaving(false)
     }
@@ -327,8 +382,48 @@ export default function AdminProfile() {
 
       {saveSuccessMsg && (
         <div className="mb-6 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 flex items-center gap-3 text-sm font-semibold animate-fade-in">
-          <FaCheck className="text-emerald-500" />
+          <FaCheck className="text-emerald-500 shrink-0" />
           <span>{saveSuccessMsg}</span>
+        </div>
+      )}
+
+      {sqlNotice && (
+        <div className="mb-8 p-5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700/60 text-amber-900 dark:text-amber-200 animate-fade-in shadow-md">
+          <div className="flex items-start justify-between gap-3 mb-2">
+            <div className="flex items-center gap-2.5 font-bold text-base text-amber-800 dark:text-amber-300">
+              <FaExclamationTriangle className="text-amber-500 shrink-0 text-lg" />
+              <span>Langkah Terakhir: Aktifkan Kolom di Supabase SQL Editor</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSqlNotice(null)}
+              className="text-amber-600 hover:text-amber-800 dark:text-amber-400 p-1 rounded-lg"
+              title="Tutup Pesan"
+            >
+              <FaTimes />
+            </button>
+          </div>
+          <p className="text-xs sm:text-sm text-amber-800/90 dark:text-amber-200/90 leading-relaxed mb-3">
+            Teks Bio Footer Anda <strong>sudah tersimpan di browser dan langsung tampil di website</strong>. Agar tersimpan permanen di cloud Supabase untuk semua pengunjung, silakan buka tab <strong>Supabase SQL Editor</strong> Anda, tempel kode SQL berikut, lalu klik <strong>Run</strong>:
+          </p>
+          <div className="relative bg-zinc-950 text-cyan-300 p-4 rounded-xl font-mono text-xs overflow-x-auto border border-zinc-800 mb-3 shadow-inner">
+            <pre className="whitespace-pre-wrap select-all leading-relaxed">{sqlNotice}</pre>
+            <button
+              type="button"
+              onClick={() => {
+                navigator.clipboard.writeText(sqlNotice);
+                setCopiedSql(true);
+                setTimeout(() => setCopiedSql(false), 3000);
+              }}
+              className="mt-3 sm:mt-0 sm:absolute sm:top-3 sm:right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black font-sans font-bold text-xs shadow-md transition-all active:scale-95"
+            >
+              <FaCopy />
+              <span>{copiedSql ? 'Tersalin ke Clipboard!' : 'Salin Query SQL'}</span>
+            </button>
+          </div>
+          <span className="text-xs text-amber-700/90 dark:text-amber-400/90 block">
+            ✓ File script ini juga tersedia di <code>supabase/ADD_FOOTER_BIO_COLUMNS.sql</code>
+          </span>
         </div>
       )}
 
