@@ -5,12 +5,41 @@ export type CertificateWithDescription = Certificate & {
   description_en?: string;
 };
 
+// Intelligent helper to safely detect certificate category with 100% backward compatibility
+export function getCertificateCategory(cert: Partial<Certificate>): 'Keagamaan' | 'Umum & Teknologi' {
+  if (cert.category) {
+    const cat = cert.category.toLowerCase().trim();
+    if (cat.includes('agama') || cat.includes('islam') || cat.includes('qur') || cat.includes('arab')) {
+      return 'Keagamaan';
+    }
+    return 'Umum & Teknologi';
+  }
+
+  // Intelligent fallback for legacy items based on keywords
+  const text = `${cert.title_id || ''} ${cert.title_en || ''} ${cert.issuer || ''} ${(cert as Record<string, unknown>).description_id || ''}`.toLowerCase();
+  if (
+    text.includes('tahfidz') || 
+    text.includes('qur') || 
+    text.includes('tasheel') || 
+    text.includes('arab') || 
+    text.includes('islam') ||
+    text.includes('ashabul') ||
+    text.includes('ma\'had') ||
+    text.includes('syahadah')
+  ) {
+    return 'Keagamaan';
+  }
+  return 'Umum & Teknologi';
+}
+
 export const defaultCertificatesList: CertificateWithDescription[] = [
   { 
     id: "cert-dicoding-1", 
     title_id: "Dicoding — Dasar-Dasar Literasi Keuangan", 
     title_en: "Dicoding — Financial Literacy Fundamentals", 
     issuer: "Dicoding", 
+    category: "Umum & Teknologi",
+    tags: ["Kompetensi", "Literasi Digital"],
     image_url: "/assets/certificates/dicoding-financial-literacy.svg",
     file_url: "/assets/certificates/Financial Literacy 101.pdf", 
     date_issued: "23 September 2025",
@@ -22,6 +51,8 @@ export const defaultCertificatesList: CertificateWithDescription[] = [
     title_id: "Tasheel — Uji Kemampuan Bahasa Arab", 
     title_en: "Tasheel — Arabic Proficiency Test", 
     issuer: "Tasheel", 
+    category: "Keagamaan",
+    tags: ["Kompetensi", "Bahasa Arab"],
     image_url: "/assets/certificates/sertifikat-tasheel.jpg",
     file_url: "/assets/certificates/sertifikat-tasheel.pdf", 
     date_issued: "03 Januari 2026",
@@ -33,6 +64,8 @@ export const defaultCertificatesList: CertificateWithDescription[] = [
     title_id: "Surat Rekomendasi Tasheel Timur Tengah", 
     title_en: "Tasheel Middle East Recommendation Letter", 
     issuer: "Tasheel", 
+    category: "Keagamaan",
+    tags: ["Akademik", "Rekomendasi"],
     image_url: "/assets/certificates/surat-rekomendasi-tasheel.jpg",
     file_url: "/assets/certificates/surat-rekomendasi-tasheel.pdf", 
     date_issued: "03 Januari 2026",
@@ -44,6 +77,8 @@ export const defaultCertificatesList: CertificateWithDescription[] = [
     title_id: "Juara 1 Musabaqah Tahfidz Qur'an 3 Juz", 
     title_en: "1st Place 3 Juz Qur'an Memorization Contest", 
     issuer: "Ashabul Qur'an", 
+    category: "Keagamaan",
+    tags: ["Prestasi", "Tahfidz"],
     image_url: "/assets/certificates/sertifikat-tahfidz-quran.jpg",
     file_url: "/assets/certificates/Document 15.pdf", 
     date_issued: "15 Sya'ban 1445 H",
@@ -55,6 +90,8 @@ export const defaultCertificatesList: CertificateWithDescription[] = [
     title_id: "Digitalent — AI Engineer For Milenial", 
     title_en: "Digitalent — AI Engineer For Milenial", 
     issuer: "Kominfo", 
+    category: "Umum & Teknologi",
+    tags: ["Pelatihan", "AI & Automation"],
     image_url: "/assets/certificates/digitalent-ai-engineer.svg",
     file_url: "/assets/certificates/ai-engineer-milenial.pdf", 
     date_issued: "2024",
@@ -66,6 +103,8 @@ export const defaultCertificatesList: CertificateWithDescription[] = [
     title_id: "Digitalent — Ethical Hacker For Dummies", 
     title_en: "Digitalent — Ethical Hacker For Dummies", 
     issuer: "Kominfo", 
+    category: "Umum & Teknologi",
+    tags: ["Kompetensi", "Cybersecurity"],
     image_url: "/assets/certificates/digitalent-ethical-hacker.svg",
     file_url: "/assets/certificates/ethical-hacker-dummies.pdf", 
     date_issued: "2024",
@@ -77,6 +116,8 @@ export const defaultCertificatesList: CertificateWithDescription[] = [
     title_id: "Produk Digital dan Desain Grafis", 
     title_en: "Digital Products & Graphic Design", 
     issuer: "Kominfo", 
+    category: "Umum & Teknologi",
+    tags: ["Pelatihan", "Digital Product"],
     image_url: "/assets/certificates/digitalent-digital-products.svg",
     file_url: "/assets/certificates/digital-products-graphic-design.pdf", 
     date_issued: "2024",

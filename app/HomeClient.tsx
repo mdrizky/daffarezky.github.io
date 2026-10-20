@@ -8,7 +8,7 @@ import ProjectCard from "@/components/ProjectCard";
 import ServiceCard from "@/components/ServiceCard";
 import BlogCard from "@/components/BlogCard";
 import CertificateCard from "@/components/CertificateCard";
-import { defaultCertificatesList } from "@/lib/certificates-data";
+import { defaultCertificatesList, getCertificateCategory } from "@/lib/certificates-data";
 import dynamic from "next/dynamic";
 import type { Profile, Project, Service, ReasonsToHire, Testimonial, BlogPost, FocusArea, Certificate } from "@/types";
 import { Button } from "@/components/ui/Button";
@@ -413,7 +413,7 @@ export default function HomeClient({
         </Container>
       </section>
 
-      {/* 8.5 Sertifikasi Profesional (Tepat setelah Kontribusi & Kolaborasi) */}
+      {/* 8.5 Sertifikasi Profesional (Khusus Umum & Teknologi di Beranda) */}
       <section className="section-padding bg-card/20 border-b border-border">
         <Container>
           <SectionHeader
@@ -426,13 +426,21 @@ export default function HomeClient({
             }
           />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {((certificates && certificates.length > 0) ? certificates.slice(0, 3) : defaultCertificatesList.slice(0, 3)).map((cert) => (
-              <CertificateCard key={cert.id} certificate={cert} language={language} />
-            ))}
+            {(() => {
+              const baseList = (certificates && certificates.length > 0) ? certificates : defaultCertificatesList;
+              // Sesuai permintaan: di halaman home HANYA tampilkan sertifikat Umum & Teknologi
+              const generalCerts = baseList
+                .filter(cert => cert.is_published !== false && getCertificateCategory(cert) === 'Umum & Teknologi')
+                .slice(0, 3);
+
+              return generalCerts.map((cert) => (
+                <CertificateCard key={cert.id} certificate={cert} language={language} />
+              ));
+            })()}
           </div>
           <div className="mt-12 text-center">
-            <Button href="/certificates" variant="outline">
-              {id ? "Lihat Semua Sertifikat" : "View All Certificates"}
+            <Button href="/skills" variant="outline">
+              {id ? "Lihat Semua Sertifikat & Pencapaian" : "View All Certificates & Achievements"}
               <span className="ml-2">→</span>
             </Button>
           </div>

@@ -223,6 +223,8 @@ CREATE TABLE IF NOT EXISTS public.certificates (
   file_url TEXT,
   description_id TEXT,
   description_en TEXT,
+  category TEXT DEFAULT 'Umum & Teknologi',
+  tags TEXT[] DEFAULT '{}',
   date_issued TEXT,
   sort_order INTEGER DEFAULT 0,
   is_published BOOLEAN DEFAULT true
@@ -618,6 +620,10 @@ SELECT public._add_column_if_missing('certificates','description_en','TEXT');
 SELECT public._add_column_if_missing('certificates','date_issued','TEXT');
 SELECT public._add_column_if_missing('certificates','is_published','BOOLEAN DEFAULT true');
 SELECT public._add_column_if_missing('certificates','sort_order','INTEGER DEFAULT 0');
+SELECT public._add_column_if_missing('certificates','category','TEXT DEFAULT ''Umum & Teknologi''');
+SELECT public._add_column_if_missing('certificates','tags','TEXT[] DEFAULT ''{}''');
+ALTER TABLE public.certificates ADD COLUMN IF NOT EXISTS category TEXT DEFAULT 'Umum & Teknologi';
+ALTER TABLE public.certificates ADD COLUMN IF NOT EXISTS tags TEXT[] DEFAULT '{}';
 
 SELECT public._add_column_if_missing('education','logo_url','TEXT');
 SELECT public._add_column_if_missing('education','is_current','BOOLEAN DEFAULT false');
@@ -1016,15 +1022,16 @@ BEGIN
     AND (institution ILIKE '%Tahfidz%' OR institution ILIKE '%Pesantren%');
 END $$;
 
--- [3] SERTIFIKAT RESMI (9 SERTIFIKAT DAFFA)
--- [3] SERTIFIKAT RESMI (9 SERTIFIKAT DAFFA)
-INSERT INTO public.certificates (title_id, title_en, issuer, date_issued, image_url, file_url, description_id, description_en, sort_order, is_published)
-SELECT v.title_id, v.title_en, v.issuer, v.date_issued, v.image_url, v.file_url, v.description_id, v.description_en, v.sort_order, v.is_published
+-- [3] SERTIFIKAT RESMI (SERTIFIKAT DAFFA)
+INSERT INTO public.certificates (title_id, title_en, issuer, category, tags, date_issued, image_url, file_url, description_id, description_en, sort_order, is_published)
+SELECT v.title_id, v.title_en, v.issuer, v.category, v.tags, v.date_issued, v.image_url, v.file_url, v.description_id, v.description_en, v.sort_order, v.is_published
 FROM (VALUES
   (
     'Dicoding — Dasar-Dasar Literasi Keuangan',
     'Dicoding — Financial Literacy Fundamentals',
     'Dicoding',
+    'Umum & Teknologi',
+    ARRAY['Kompetensi', 'Literasi Digital'],
     '23 September 2025',
     '/assets/certificates/dicoding-financial-literacy.svg',
     '/assets/certificates/Financial Literacy 101.pdf',
@@ -1037,6 +1044,8 @@ FROM (VALUES
     'Tasheel — Uji Kemampuan Bahasa Arab',
     'Tasheel — Arabic Proficiency Test',
     'Tasheel',
+    'Keagamaan',
+    ARRAY['Kompetensi', 'Bahasa Arab'],
     '03 Januari 2026',
     '/assets/certificates/sertifikat-tasheel.jpg',
     '/assets/certificates/sertifikat-tasheel.pdf',
@@ -1049,6 +1058,8 @@ FROM (VALUES
     'Surat Rekomendasi Tasheel Timur Tengah',
     'Tasheel Middle East Recommendation Letter',
     'Tasheel',
+    'Keagamaan',
+    ARRAY['Akademik', 'Rekomendasi'],
     '03 Januari 2026',
     '/assets/certificates/surat-rekomendasi-tasheel.jpg',
     '/assets/certificates/surat-rekomendasi-tasheel.pdf',
@@ -1061,6 +1072,8 @@ FROM (VALUES
     'Juara 1 Musabaqah Tahfidz Qur''an 3 Juz',
     '1st Place 3 Juz Qur''an Memorization Contest',
     'Ashabul Qur''an',
+    'Keagamaan',
+    ARRAY['Prestasi', 'Tahfidz'],
     '15 Sya''ban 1445 H',
     '/assets/certificates/sertifikat-tahfidz-quran.jpg',
     '/assets/certificates/Document 15.pdf',
@@ -1073,6 +1086,8 @@ FROM (VALUES
     'Digitalent — AI Engineer For Milenial',
     'Digitalent — AI Engineer For Milenial',
     'Kominfo',
+    'Umum & Teknologi',
+    ARRAY['Pelatihan', 'AI & Automation'],
     '2024',
     '/assets/certificates/digitalent-ai-engineer.svg',
     '/assets/certificates/ai-engineer-milenial.pdf',
@@ -1085,6 +1100,8 @@ FROM (VALUES
     'Digitalent — Ethical Hacker For Dummies',
     'Digitalent — Ethical Hacker For Dummies',
     'Kominfo',
+    'Umum & Teknologi',
+    ARRAY['Kompetensi', 'Cybersecurity'],
     '2024',
     '/assets/certificates/digitalent-ethical-hacker.svg',
     '/assets/certificates/ethical-hacker-dummies.pdf',
@@ -1097,6 +1114,8 @@ FROM (VALUES
     'Produk Digital dan Desain Grafis',
     'Digital Products & Graphic Design',
     'Kominfo',
+    'Umum & Teknologi',
+    ARRAY['Pelatihan', 'Digital Product'],
     '2024',
     '/assets/certificates/digitalent-digital-products.svg',
     '/assets/certificates/digital-products-graphic-design.pdf',
@@ -1105,10 +1124,26 @@ FROM (VALUES
     7,
     true
   )
-) AS v(title_id, title_en, issuer, date_issued, image_url, file_url, description_id, description_en, sort_order, is_published)
+) AS v(title_id, title_en, issuer, category, tags, date_issued, image_url, file_url, description_id, description_en, sort_order, is_published)
 WHERE NOT EXISTS (
   SELECT 1 FROM public.certificates c WHERE c.title_id = v.title_id
 );
+
+-- Backfill kategori untuk data sertifikat lama jika masih NULL
+UPDATE public.certificates
+SET category = 'Keagamaan'
+WHERE (category IS NULL OR category = '') AND (
+  title_id ILIKE '%tahfidz%' OR
+  title_id ILIKE '%qur%' OR
+  title_id ILIKE '%tasheel%' OR
+  title_id ILIKE '%arab%' OR
+  issuer ILIKE '%tasheel%' OR
+  issuer ILIKE '%ashabul%'
+);
+
+UPDATE public.certificates
+SET category = 'Umum & Teknologi'
+WHERE category IS NULL OR category = '';
 
 -- [4] KEAHLIAN TEKNOLOGI (SKILLS)
 INSERT INTO public.skills (name, category, level, icon, show_on_home, sort_order, is_published)

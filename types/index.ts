@@ -293,9 +293,13 @@ export type Certificate = {
   title_id: string
   title_en: string
   issuer: string
+  category?: 'Keagamaan' | 'Umum & Teknologi' | string
+  tags?: string[]
   image_url?: string
   file_url: string
   date_issued: string
+  description_id?: string
+  description_en?: string
   sort_order?: number
   is_published?: boolean
 }

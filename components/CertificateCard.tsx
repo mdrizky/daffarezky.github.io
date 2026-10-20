@@ -1,16 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import type { Certificate } from '@/types';
 import { 
   FaExternalLinkAlt, 
-  FaFilePdf, 
   FaTimes, 
   FaAward, 
   FaCheckCircle,
-  FaDownload
+  FaCalendarAlt,
+  FaTag
 } from 'react-icons/fa';
+import { getCertificateCategory } from '@/lib/certificates-data';
 
 interface CertificateCardProps {
   certificate: Certificate & {
@@ -32,7 +33,9 @@ export default function CertificateCard({
   const issuer = certificate.issuer || 'Sertifikasi';
   const dateIssued = certificate.date_issued || '2024 - 2025';
   const fileUrl = certificate.file_url || certificate.image_url;
-  
+  const resolvedCategory = getCertificateCategory(certificate);
+  const tags = certificate.tags || [];
+
   // Description fallback
   const description = id 
     ? (certificate.description_id || `Sertifikat pembelajaran dan kompetensi resmi dari ${issuer}.`)
@@ -47,6 +50,27 @@ export default function CertificateCard({
 
   const isPdf = Boolean(fileUrl && fileUrl.toLowerCase().includes('.pdf'));
 
+  // Keyboard accessibility for modal (ESC to close)
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') setIsOpen(false);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    } else {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, handleKeyDown]);
+
+  const isReligious = resolvedCategory === 'Keagamaan';
+
   return (
     <>
       <div 
@@ -55,13 +79,13 @@ export default function CertificateCard({
         {/* Certificate Preview Image Container */}
         <div 
           onClick={() => {
-            if (fileUrl && isPdf && window.innerWidth < 640) {
+            if (fileUrl && isPdf && typeof window !== 'undefined' && window.innerWidth < 640) {
               window.open(fileUrl, '_blank');
             } else {
               setIsOpen(true);
             }
           }}
-          className="relative aspect-[16/10] w-full bg-zinc-900 border border-zinc-800/80 rounded-xl overflow-hidden mb-4 cursor-pointer group/img"
+          className="relative aspect-[16/10] w-full bg-zinc-950 border border-zinc-800/80 rounded-xl overflow-hidden mb-4 cursor-pointer group/img select-none"
         >
           {previewImage ? (
             <Image
@@ -79,7 +103,6 @@ export default function CertificateCard({
                 className="w-full h-full pointer-events-none border-0"
                 loading="lazy"
               />
-              {/* Overlay to ensure click triggers modal or open */}
               <div className="absolute inset-0 bg-black/10 hover:bg-black/0 transition-colors" />
             </div>
           ) : (
@@ -90,6 +113,17 @@ export default function CertificateCard({
             </div>
           )}
 
+          {/* Top-Right Category Pill */}
+          <div className="absolute top-3 right-3 z-10 pointer-events-none">
+            <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase border backdrop-blur-md shadow-md ${
+              isReligious 
+                ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40' 
+                : 'bg-cyan-950/80 text-cyan-300 border-cyan-500/40'
+            }`}>
+              {resolvedCategory}
+            </span>
+          </div>
+
           {/* Issuer pill badge on bottom left of image */}
           <div className="absolute bottom-3 left-3 z-10 pointer-events-none">
             <span className="px-3 py-1 rounded-md bg-[#1F2430]/90 text-white font-extrabold text-[11px] uppercase tracking-wider border border-white/10 shadow-md">
@@ -98,9 +132,9 @@ export default function CertificateCard({
           </div>
 
           {/* Subtle hover overlay */}
-          <div className="absolute inset-0 bg-black/25 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-            <span className="px-3 py-1.5 rounded-lg bg-black/80 backdrop-blur-sm text-cyan-400 text-xs font-semibold border border-cyan-500/30 shadow-lg flex items-center gap-1.5">
-              <FaExternalLinkAlt size={10} />
+          <div className="absolute inset-0 bg-black/35 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+            <span className="px-3.5 py-2 rounded-xl bg-black/85 backdrop-blur-md text-cyan-400 text-xs font-semibold border border-cyan-500/40 shadow-xl flex items-center gap-2 transform translate-y-2 group-hover/img:translate-y-0 transition-transform">
+              <FaExternalLinkAlt size={11} />
               <span>{isPdf ? (id ? 'Buka Dokumen PDF' : 'Open PDF Document') : (id ? 'Klik untuk Pratinjau' : 'Click to Preview')}</span>
             </span>
           </div>
@@ -108,7 +142,31 @@ export default function CertificateCard({
 
         {/* Certificate Details */}
         <div className="flex flex-col flex-1">
-          <h3 className="font-heading font-bold text-base sm:text-lg text-white group-hover:text-cyan-400 transition-colors leading-snug mb-1 line-clamp-1">
+          {/* Metadata Row: Date & Tags */}
+          <div className="flex items-center justify-between text-[11px] text-zinc-500 mb-2 gap-2">
+            <span className="flex items-center gap-1.5 font-medium">
+              <FaCalendarAlt className="text-[10px] text-zinc-400" />
+              <span>{dateIssued}</span>
+            </span>
+            {tags.length > 0 && (
+              <div className="flex items-center gap-1 overflow-hidden">
+                {tags.slice(0, 2).map((tag, idx) => (
+                  <span 
+                    key={idx} 
+                    className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded bg-zinc-800/80 text-zinc-400 border border-zinc-700/60 truncate"
+                  >
+                    <FaTag className="text-[8px] text-zinc-500" />
+                    <span>{tag}</span>
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <h3 
+            className="font-heading font-bold text-base sm:text-lg text-white group-hover:text-cyan-400 transition-colors leading-snug mb-1.5 line-clamp-1"
+            title={title}
+          >
             {title}
           </h3>
           
@@ -120,7 +178,7 @@ export default function CertificateCard({
             <button
               type="button"
               onClick={() => setIsOpen(true)}
-              className="flex-1 py-2.5 px-4 bg-zinc-800/90 hover:bg-zinc-700 text-white text-xs sm:text-sm font-semibold rounded-xl border border-zinc-700/80 transition-all flex items-center justify-center gap-2 group-hover:border-cyan-500/40 group-hover:bg-zinc-800"
+              className="flex-1 py-2.5 px-4 bg-zinc-800/90 hover:bg-zinc-700 text-white text-xs sm:text-sm font-semibold rounded-xl border border-zinc-700/80 transition-all flex items-center justify-center gap-2 group-hover:border-cyan-500/40 group-hover:bg-zinc-800 active:scale-[0.98]"
             >
               <span>{id ? 'Lihat Sertifikat' : 'View Certificate'}</span>
             </button>
@@ -129,8 +187,8 @@ export default function CertificateCard({
                 href={fileUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                title={id ? 'Buka PDF di Tab Baru' : 'Open PDF in New Tab'}
-                className="p-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 transition-colors flex items-center justify-center"
+                title={id ? 'Buka Dokumen di Tab Baru' : 'Open Document in New Tab'}
+                className="p-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 transition-colors flex items-center justify-center shrink-0 active:scale-[0.95]"
               >
                 <FaExternalLinkAlt size={12} />
               </a>
@@ -142,7 +200,9 @@ export default function CertificateCard({
       {/* Modal Lightbox for Certificate Details */}
       {isOpen && (
         <div 
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 bg-black/80 backdrop-blur-md animate-fade-in"
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/85 backdrop-blur-md animate-fade-in"
           onClick={() => setIsOpen(false)}
         >
           <div 
@@ -150,23 +210,31 @@ export default function CertificateCard({
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="p-5 sm:p-6 border-b border-zinc-800 flex items-center justify-between bg-zinc-900/40">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-cyan-400">
+            <div className="p-4 sm:p-6 border-b border-zinc-800 flex items-center justify-between bg-zinc-900/50">
+              <div className="min-w-0 pr-4">
+                <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
+                    isReligious 
+                      ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40' 
+                      : 'bg-cyan-950/80 text-cyan-300 border-cyan-500/40'
+                  }`}>
+                    {resolvedCategory}
+                  </span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-white">
                     {issuer}
                   </span>
                   <span className="text-xs text-zinc-500">•</span>
                   <span className="text-xs text-zinc-400">{dateIssued}</span>
                 </div>
-                <h3 className="text-lg sm:text-xl font-bold font-heading text-white">
+                <h3 className="text-base sm:text-xl font-bold font-heading text-white truncate">
                   {title}
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="p-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white transition-colors"
+                className="p-2 sm:p-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white transition-colors shrink-0"
+                aria-label="Tutup"
               >
                 <FaTimes size={16} />
               </button>
@@ -203,10 +271,12 @@ export default function CertificateCard({
               <div className="w-full mt-4 p-4 rounded-xl bg-zinc-900/60 border border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-zinc-400">
                 <div className="flex items-center gap-2">
                   <FaCheckCircle className="text-emerald-400 text-sm flex-shrink-0" />
-                  <span>{id ? 'Terverifikasi Resmi' : 'Officially Verified'}: <strong className="text-white">{issuer}</strong></span>
+                  <span>{id ? 'Institusi Penerbit' : 'Issuing Organization'}: <strong className="text-white">{issuer}</strong></span>
                 </div>
-                <div>
-                  <span>{id ? 'Waktu Penerbitan' : 'Date of Issuance'}: <strong className="text-white">{dateIssued}</strong></span>
+                <div className="flex items-center gap-3">
+                  <span>{id ? 'Kategori' : 'Category'}: <strong className="text-white">{resolvedCategory}</strong></span>
+                  <span>•</span>
+                  <span>{id ? 'Tanggal' : 'Date'}: <strong className="text-white">{dateIssued}</strong></span>
                 </div>
               </div>
 
@@ -217,7 +287,7 @@ export default function CertificateCard({
                     href={fileUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-bold text-xs sm:text-sm shadow-md transition-all"
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95"
                   >
                     <FaExternalLinkAlt size={12} />
                     <span>{id ? 'Buka Dokumen Asli (PDF/File)' : 'Open Original Document'}</span>
@@ -226,7 +296,7 @@ export default function CertificateCard({
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="px-5 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-semibold text-xs sm:text-sm transition-colors"
+                  className="px-5 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-semibold text-xs sm:text-sm transition-colors active:scale-95"
                 >
                   {id ? 'Tutup' : 'Close'}
                 </button>

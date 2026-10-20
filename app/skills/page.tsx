@@ -14,10 +14,8 @@ import {
 } from "react-icons/si";
 import { FaBullseye, FaPenNib, FaSearchDollar, FaFilter, FaRobot, FaTools } from "react-icons/fa";
 import { Container } from "@/components/ui/Container";
-import { SectionHeader } from "@/components/ui/SectionHeader";
 import { PageSkeleton } from "@/components/ui/Skeleton";
-import CertificateCard from "@/components/CertificateCard";
-import { defaultCertificatesList } from "@/lib/certificates-data";
+import CertificateGallery from "@/components/CertificateGallery";
 
 export default function KeahlianPage() {
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -130,39 +128,14 @@ export default function KeahlianPage() {
           ))}
         </div>
 
-        {/* Certificates Section (Tampilan Sertifikat Realistis seperti Permintaan) */}
-        {(() => {
-          const displayCerts = certificates.length > 0 ? certificates : defaultCertificatesList;
-
-          return (
-            <div className="animate-fade-in pt-16 border-t border-border">
-              <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
-                <div>
-                  <span className="text-xs font-bold uppercase tracking-widest text-primary mb-1 block">
-                    {id ? 'Kompetensi & Lisensi' : 'Credentials & Licensing'}
-                  </span>
-                  <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground">
-                    {id ? 'Sertifikasi Profesional' : 'Professional Certifications'}
-                  </h2>
-                </div>
-                <p className="text-sm text-muted-foreground max-w-md">
-                  {id ? 'Klik pada kartu sertifikat untuk melihat pratinjau lengkap dan dokumen PDF aslinya.' : 'Click on any certificate to view high-res preview and original PDF.'}
-                </p>
-              </div>
-              
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {displayCerts.map((cert) => (
-                  <CertificateCard 
-                    key={cert.id} 
-                    certificate={cert} 
-                    language={language}
-                    category={cert.issuer === 'Dicoding' ? 'Literasi Finansial & Tech' : 'Informatika & Pemrograman'} 
-                  />
-                ))}
-              </div>
-            </div>
-          );
-        })()}
+        {/* Certificates Section — Redesigned Gallery with Category Filters */}
+        <div className="animate-fade-in pt-16 border-t border-border">
+          <CertificateGallery 
+            certificates={certificates}
+            language={language}
+            showHeader={true}
+          />
+        </div>
       </Container>
     </div>
   );
