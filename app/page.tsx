@@ -40,7 +40,7 @@ export default async function Home() {
     supabase.from("skills").select("*", { count: "exact", head: true }).eq("is_published", true),
     supabase.from("projects").select("*", { count: "exact", head: true }).eq("is_published", true),
     supabase.from("reasons_to_hire").select("*").eq("is_published", true).order("sort_order", { ascending: true }),
-    supabase.from("testimonials").select("*").eq("is_published", true).order("created_at", { ascending: false }).limit(6),
+    supabase.from("testimonials").select("*").eq("is_published", true).order("created_at", { ascending: false }).limit(18),
     supabase.from("partners").select("*").eq("is_published", true).order("order_index", { ascending: true }),
     supabase.from("blog_posts").select("*").eq("is_published", true).eq("status", "published").order("published_at", { ascending: false }).limit(6),
     supabase.from("focus_areas").select("*").eq("is_published", true).order("sort_order", { ascending: true }),

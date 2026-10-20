@@ -8,10 +8,9 @@ import type { Profile, Education, FocusArea, CoreValue, LearningJourney } from "
 import { Container } from "@/components/ui/Container";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Card, CardContent } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { PageSkeleton } from "@/components/ui/Skeleton";
 import EducationTimeline from "@/components/EducationTimeline";
-import { FaRocket, FaShieldAlt, FaCloudUploadAlt, FaGlobe, FaCode } from "react-icons/fa";
+import { FaRocket, FaShieldAlt, FaCloudUploadAlt, FaGlobe, FaCode, FaProjectDiagram, FaTools, FaClock, FaGraduationCap, FaCertificate, FaLaptopCode, FaStar } from "react-icons/fa";
 
 function getMilestoneIcon(title: string) {
   const t = (title || '').toLowerCase();
@@ -32,16 +31,20 @@ export default function TentangPage() {
   const [coreValues, setCoreValues] = useState<CoreValue[]>([]);
   const [milestones, setMilestones] = useState<LearningJourney[]>([]);
   const [loading, setLoading] = useState(true);
+  const [statsData, setStatsData] = useState({ projects: 0, skills: 0, certificates: 0 });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [profileRes, eduRes, focusRes, valuesRes, milestonesRes] = await Promise.all([
+        const [profileRes, eduRes, focusRes, valuesRes, milestonesRes, projectsCountRes, skillsCountRes, certsCountRes] = await Promise.all([
           supabase.from("profile").select("*").limit(1),
           supabase.from("education").select("*").eq("is_published", true).order("start_year", { ascending: false }),
           supabase.from("focus_areas").select("*").eq("is_published", true).order("sort_order"),
           supabase.from("core_values").select("*").eq("is_published", true).order("sort_order"),
           supabase.from("learning_journey").select("*").eq("is_published", true).order("year", { ascending: false }),
+          supabase.from("projects").select("*", { count: "exact", head: true }).eq("is_published", true),
+          supabase.from("skills").select("*", { count: "exact", head: true }).eq("is_published", true),
+          supabase.from("certificates").select("*", { count: "exact", head: true }).eq("is_published", true),
         ]);
 
         if (profileRes.data?.length) setProfile(profileRes.data[0]);
@@ -49,6 +52,11 @@ export default function TentangPage() {
         if (focusRes.data) setFocusAreas(focusRes.data);
         if (valuesRes.data) setCoreValues(valuesRes.data);
         if (milestonesRes.data) setMilestones(milestonesRes.data);
+        setStatsData({
+          projects: projectsCountRes?.count || 0,
+          skills: skillsCountRes?.count || 0,
+          certificates: certsCountRes?.count || 0,
+        });
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -74,6 +82,40 @@ export default function TentangPage() {
     </div>
   );
 
+  // Stats configuration
+  const statsItems = [
+    {
+      icon: <FaProjectDiagram className="text-cyan-400" />,
+      value: `${statsData.projects}+`,
+      label: id ? 'Proyek Selesai' : 'Projects Completed',
+    },
+    {
+      icon: <FaTools className="text-emerald-400" />,
+      value: `${statsData.skills}+`,
+      label: id ? 'Skill Dikuasai' : 'Skills Mastered',
+    },
+    {
+      icon: <FaCertificate className="text-amber-400" />,
+      value: `${statsData.certificates}+`,
+      label: id ? 'Sertifikat Diperoleh' : 'Certificates Earned',
+    },
+    {
+      icon: <FaClock className="text-purple-400" />,
+      value: '3+',
+      label: id ? 'Tahun Belajar IT' : 'Years Learning IT',
+    },
+    {
+      icon: <FaGraduationCap className="text-blue-400" />,
+      value: id ? 'Semester 1' : '1st Sem',
+      label: id ? 'Kuliah S1' : 'Undergraduate',
+    },
+    {
+      icon: <FaStar className="text-yellow-400" />,
+      value: '100%',
+      label: id ? 'Dedikasi Penuh' : 'Full Dedication',
+    },
+  ];
+
   return (
     <div className="pt-32 pb-24 min-h-screen bg-background transition-colors duration-300">
       <Container>
@@ -86,6 +128,28 @@ export default function TentangPage() {
             {id ? 'Mengenal lebih dekat siapa di balik layar, perjalanan, dan visi saya di dunia digital.' : 'Get to know the person behind the screen, the journey, and my vision in the digital world.'}
           </p>
         </div>
+
+        {/* Stats Strip — Compact overview */}
+        <section className="mb-20 animate-fade-in">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            {statsItems.map((stat, idx) => (
+              <div 
+                key={idx} 
+                className="group relative bg-card/60 dark:bg-zinc-900/50 border border-border/80 dark:border-zinc-800/70 rounded-2xl p-5 text-center hover:border-cyan-500/40 hover:shadow-lg hover:shadow-cyan-500/5 hover:-translate-y-0.5 transition-all duration-300"
+              >
+                <div className="flex justify-center mb-3 text-xl">
+                  {stat.icon}
+                </div>
+                <div className="text-2xl sm:text-3xl font-heading font-extrabold text-foreground mb-1 group-hover:text-cyan-400 transition-colors">
+                  {stat.value}
+                </div>
+                <div className="text-[11px] sm:text-xs text-muted-foreground font-medium leading-tight">
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
         {/* 1. Perkenalan & Vision */}
         <section className="mb-24 animate-fade-in">
@@ -112,6 +176,14 @@ export default function TentangPage() {
                     <span className="text-muted-foreground">{id ? 'Lokasi' : 'Location'}</span>
                     <span className="font-medium text-foreground">{profile?.birth_place || '-'}</span>
                   </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">{id ? 'Fokus' : 'Focus'}</span>
+                    <span className="font-medium text-foreground">Web & Mobile Dev</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">{id ? 'Semester' : 'Semester'}</span>
+                    <span className="font-medium text-foreground">{id ? 'Semester 1' : '1st Semester'}</span>
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -126,6 +198,25 @@ export default function TentangPage() {
                 </div>
               </div>
               
+              {/* Quick Stats inside intro section */}
+              <div className="grid grid-cols-3 gap-4 pt-2">
+                <div className="text-center p-4 rounded-2xl bg-secondary/40 border border-border/60">
+                  <div className="flex justify-center mb-2"><FaLaptopCode className="text-cyan-400 text-lg" /></div>
+                  <div className="text-2xl font-heading font-extrabold text-foreground">{statsData.projects}+</div>
+                  <div className="text-[11px] text-muted-foreground font-medium">{id ? 'Proyek' : 'Projects'}</div>
+                </div>
+                <div className="text-center p-4 rounded-2xl bg-secondary/40 border border-border/60">
+                  <div className="flex justify-center mb-2"><FaTools className="text-emerald-400 text-lg" /></div>
+                  <div className="text-2xl font-heading font-extrabold text-foreground">{statsData.skills}+</div>
+                  <div className="text-[11px] text-muted-foreground font-medium">{id ? 'Keahlian' : 'Skills'}</div>
+                </div>
+                <div className="text-center p-4 rounded-2xl bg-secondary/40 border border-border/60">
+                  <div className="flex justify-center mb-2"><FaClock className="text-purple-400 text-lg" /></div>
+                  <div className="text-2xl font-heading font-extrabold text-foreground">3+</div>
+                  <div className="text-[11px] text-muted-foreground font-medium">{id ? 'Tahun IT' : 'Years IT'}</div>
+                </div>
+              </div>
+
               <div className="p-8 rounded-3xl bg-secondary/50 border border-border">
                 <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-foreground">
                   ✨ {id ? 'Visi Pribadi' : 'Personal Vision'}

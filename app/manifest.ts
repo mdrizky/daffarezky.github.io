@@ -1,6 +1,23 @@
 import { MetadataRoute } from "next";
+import { createClient } from "@/lib/supabase-server";
 
-export default function manifest(): MetadataRoute.Manifest {
+export default async function manifest(): Promise<MetadataRoute.Manifest> {
+  let logoUrl = "/logo.png";
+  try {
+    const supabase = await createClient();
+    const { data: profile } = await supabase
+      .from("profile")
+      .select("logo_url")
+      .limit(1)
+      .maybeSingle();
+
+    if (profile?.logo_url && profile.logo_url.trim()) {
+      logoUrl = profile.logo_url.trim();
+    }
+  } catch {
+    // fallback to /logo.png
+  }
+
   return {
     name: "Muhammad Daffa Rezky Adyra | Developer & Technology Enthusiast",
     short_name: "Daffa Rezky",
@@ -13,15 +30,15 @@ export default function manifest(): MetadataRoute.Manifest {
     orientation: "portrait",
     icons: [
       {
-        src: "/favicon.svg",
-        sizes: "any",
-        type: "image/svg+xml",
+        src: logoUrl,
+        sizes: "192x192",
+        type: "image/png",
         purpose: "any",
       },
       {
-        src: "/favicon.svg",
-        sizes: "192x192",
-        type: "image/svg+xml",
+        src: logoUrl,
+        sizes: "512x512",
+        type: "image/png",
         purpose: "maskable",
       },
     ],

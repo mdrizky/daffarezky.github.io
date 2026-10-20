@@ -202,17 +202,17 @@ export default function CertificateCard({
         <div 
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/85 backdrop-blur-md animate-fade-in"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/90 backdrop-blur-md animate-fade-in"
           onClick={() => setIsOpen(false)}
         >
           <div 
-            className="relative bg-[#11131B] border border-zinc-800 w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[92vh] animate-fade-in-up"
+            className="relative bg-[#11131B] border border-zinc-800 w-full max-w-5xl rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[95vh] animate-fade-in-up"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Modal Header */}
-            <div className="p-4 sm:p-6 border-b border-zinc-800 flex items-center justify-between bg-zinc-900/50">
+            {/* Compact Modal Header */}
+            <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-zinc-800 flex items-center justify-between bg-zinc-900/50 shrink-0">
               <div className="min-w-0 pr-4">
-                <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                <div className="flex flex-wrap items-center gap-2 mb-1">
                   <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
                     isReligious 
                       ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40' 
@@ -226,7 +226,7 @@ export default function CertificateCard({
                   <span className="text-xs text-zinc-500">•</span>
                   <span className="text-xs text-zinc-400">{dateIssued}</span>
                 </div>
-                <h3 className="text-base sm:text-xl font-bold font-heading text-white truncate">
+                <h3 className="text-sm sm:text-lg font-bold font-heading text-white truncate">
                   {title}
                 </h3>
               </div>
@@ -240,66 +240,71 @@ export default function CertificateCard({
               </button>
             </div>
 
-            {/* Modal Body */}
-            <div className="p-4 sm:p-6 overflow-y-auto flex flex-col items-center">
-              {previewImage ? (
-                <div className="relative w-full aspect-[16/10] sm:aspect-[4/3] max-h-[55vh] rounded-xl overflow-hidden border border-zinc-800 shadow-xl bg-black">
-                  <Image
-                    src={previewImage}
-                    alt={title}
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-              ) : isPdf && fileUrl ? (
-                <div className="w-full h-[55vh] rounded-xl overflow-hidden border border-zinc-800 shadow-xl bg-zinc-950">
-                  <iframe
-                    src={`${fileUrl}#toolbar=1`}
-                    title={title}
-                    className="w-full h-full border-0"
-                  />
-                </div>
-              ) : (
-                <div className="w-full aspect-[16/10] bg-zinc-900 rounded-xl p-8 border border-zinc-800 flex flex-col items-center justify-center text-center">
-                  <FaAward className="text-5xl text-cyan-400 mb-4" />
-                  <h4 className="text-xl font-bold text-white mb-2">{title}</h4>
-                  <p className="text-sm text-zinc-400 max-w-md">{description}</p>
-                </div>
-              )}
-
-              {/* Information Row */}
-              <div className="w-full mt-4 p-4 rounded-xl bg-zinc-900/60 border border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-zinc-400">
-                <div className="flex items-center gap-2">
-                  <FaCheckCircle className="text-emerald-400 text-sm flex-shrink-0" />
-                  <span>{id ? 'Institusi Penerbit' : 'Issuing Organization'}: <strong className="text-white">{issuer}</strong></span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span>{id ? 'Kategori' : 'Category'}: <strong className="text-white">{resolvedCategory}</strong></span>
-                  <span>•</span>
-                  <span>{id ? 'Tanggal' : 'Date'}: <strong className="text-white">{dateIssued}</strong></span>
-                </div>
+            {/* Modal Body — Maximized preview area */}
+            <div className="flex-1 min-h-0 overflow-y-auto flex flex-col">
+              <div className="flex-1 min-h-0 p-3 sm:p-5">
+                {previewImage ? (
+                  <div className="relative w-full h-[62vh] sm:h-[72vh] rounded-xl overflow-hidden border border-zinc-800 shadow-xl bg-black flex items-center justify-center">
+                    <Image
+                      src={previewImage}
+                      alt={title}
+                      fill
+                      className="object-contain p-2 sm:p-4"
+                      priority
+                      sizes="(max-width: 1024px) 95vw, 1000px"
+                    />
+                  </div>
+                ) : isPdf && fileUrl ? (
+                  <div className="w-full h-[62vh] sm:h-[72vh] rounded-xl overflow-hidden border border-zinc-800 shadow-xl bg-zinc-950">
+                    <iframe
+                      src={`${fileUrl}#page=1&view=Fit&toolbar=0&navpanes=0`}
+                      title={title}
+                      className="w-full h-full border-0"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full h-[50vh] bg-zinc-900 rounded-xl p-8 border border-zinc-800 flex flex-col items-center justify-center text-center">
+                    <FaAward className="text-5xl text-cyan-400 mb-4" />
+                    <h4 className="text-xl font-bold text-white mb-2">{title}</h4>
+                    <p className="text-sm text-zinc-400 max-w-md">{description}</p>
+                  </div>
+                )}
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-3 mt-5 w-full justify-end">
-                {fileUrl && (
-                  <a
-                    href={fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95"
+              {/* Compact footer info + actions */}
+              <div className="px-3 sm:px-5 pb-3 sm:pb-5 space-y-3 shrink-0">
+                <div className="p-3 rounded-xl bg-zinc-900/60 border border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-zinc-400">
+                  <div className="flex items-center gap-2">
+                    <FaCheckCircle className="text-emerald-400 text-sm flex-shrink-0" />
+                    <span>{id ? 'Penerbit' : 'Issuer'}: <strong className="text-white">{issuer}</strong></span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span>{id ? 'Kategori' : 'Category'}: <strong className="text-white">{resolvedCategory}</strong></span>
+                    <span>•</span>
+                    <span>{id ? 'Tanggal' : 'Date'}: <strong className="text-white">{dateIssued}</strong></span>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3 w-full justify-end">
+                  {fileUrl && (
+                    <a
+                      href={fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95"
+                    >
+                      <FaExternalLinkAlt size={12} />
+                      <span>{id ? 'Buka Dokumen Asli (PDF/File)' : 'Open Original Document'}</span>
+                    </a>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setIsOpen(false)}
+                    className="px-5 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-semibold text-xs sm:text-sm transition-colors active:scale-95"
                   >
-                    <FaExternalLinkAlt size={12} />
-                    <span>{id ? 'Buka Dokumen Asli (PDF/File)' : 'Open Original Document'}</span>
-                  </a>
-                )}
-                <button
-                  type="button"
-                  onClick={() => setIsOpen(false)}
-                  className="px-5 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-semibold text-xs sm:text-sm transition-colors active:scale-95"
-                >
-                  {id ? 'Tutup' : 'Close'}
-                </button>
+                    {id ? 'Tutup' : 'Close'}
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -19,29 +19,61 @@ const dmSans = DM_Sans({
   weight: ["400", "500", "700"]
 });
 
+function resolveAbsoluteUrl(
+  pathOrUrl?: string | null, 
+  fallback = "/logo.png", 
+  siteUrl = "https://portofolio-daffarezky.vercel.app"
+): string {
+  if (!pathOrUrl || !pathOrUrl.trim()) {
+    return `${siteUrl}${fallback.startsWith('/') ? fallback : `/${fallback}`}`;
+  }
+  const clean = pathOrUrl.trim();
+  if (clean.startsWith('http://') || clean.startsWith('https://')) {
+    return clean;
+  }
+  return `${siteUrl}${clean.startsWith('/') ? clean : `/${clean}`}`;
+}
+
 export async function generateMetadata(): Promise<Metadata> {
   const supabase = await createClient();
   
-  // Ambil data Profile
+  // Ambil data Profile dari Supabase
   const { data: profile } = await supabase
     .from('profile')
     .select('*')
-    .single();
+    .limit(1)
+    .maybeSingle();
 
-  // Paksa identitas baru untuk menghindari data lama dari database
   const siteTitle = "Muhammad Daffa Rezky Adyra | Developer & Technology Enthusiast";
-  const siteDesc = "Butuh web yang cepat, responsif, dan siap pakai? Saya di sini untuk membantu Anda mengubah ide bisnis menjadi aplikasi web modern yang fungsional. Mari berkolaborasi untuk membangun solusi digital terbaik bagi bisnis Anda. Jelajahi proyek saya di bawah ini dan hubungi saya untuk mulai berdiskusi!";
-  const siteUrl = "https://portofolio-daffarezky.vercel.app";
-  const sitePhoto = profile?.photo_url || "/logo.png";
+  const siteDesc = profile?.bio_id || "Web & Mobile Developer yang berfokus pada pengembangan teknologi, inovasi digital, dan solusi yang memberikan dampak positif bagi masyarakat.";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://portofolio-daffarezky.vercel.app";
+
+  // LOGO DARI DATABASE SUPABASE (profile.logo_url) — Tampil sebagai Favicon / Icon di Google Search
+  const siteLogo = resolveAbsoluteUrl(profile?.logo_url, "/logo.png", siteUrl);
+
+  // FOTO WAJAH DARI DATABASE SUPABASE (profile.photo_url) — Tampil sebagai Thumbnail di samping hasil pencarian Google
+  const sitePhoto = resolveAbsoluteUrl(profile?.photo_url || profile?.about_photo_url, "/logo.png", siteUrl);
 
   return {
     title: {
       default: siteTitle,
-      template: `%s | ${profile?.name || 'Daffa Rezky'}`,
+      template: `%s | ${profile?.name || 'Muhammad Daffa Rezky Adyra'}`,
     },
     description: siteDesc,
     metadataBase: new URL(siteUrl),
-    keywords: ["Muhammad Daffa Rezky Adyra", "Daffa Rizky", "Developer", "Technology Enthusiast", "Web Developer", "Mobile Developer", "Next.js", "Indonesia"],
+    keywords: [
+      "Muhammad Daffa Rezky Adyra", 
+      "Muhammad Daffa Rezky",
+      "Daffa Rezky", 
+      "Daffa Rizky", 
+      "Developer", 
+      "Technology Enthusiast", 
+      "Web Developer", 
+      "Mobile Developer", 
+      "Next.js", 
+      "Indonesia",
+      "Portofolio Daffa Rezky"
+    ],
     authors: [{ name: profile?.name || "Muhammad Daffa Rezky Adyra", url: siteUrl }],
     creator: profile?.name || "Muhammad Daffa Rezky Adyra",
     publisher: profile?.name || "Muhammad Daffa Rezky Adyra",
@@ -62,7 +94,7 @@ export async function generateMetadata(): Promise<Metadata> {
     verification: {
       google: "googlead59726551d000c1",
     },
-    manifest: "/manifest.json",
+    manifest: "/manifest.webmanifest",
     appleWebApp: {
       capable: true,
       statusBarStyle: "default",
@@ -75,17 +107,17 @@ export async function generateMetadata(): Promise<Metadata> {
       title: siteTitle,
       description: siteDesc,
       url: siteUrl,
-      siteName: siteTitle,
+      siteName: profile?.name || "Muhammad Daffa Rezky Adyra",
       images: [
         {
           url: sitePhoto,
           width: 1200,
           height: 630,
-          alt: siteTitle,
+          alt: profile?.name || "Muhammad Daffa Rezky Adyra",
         },
       ],
       locale: "id_ID",
-      type: "website",
+      type: "profile",
     },
     twitter: {
       card: "summary_large_image",
@@ -96,12 +128,17 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     icons: {
       icon: [
-        { url: sitePhoto },
+        { url: siteLogo, type: "image/png" },
+        { url: siteLogo, sizes: "32x32", type: "image/png" },
+        { url: siteLogo, sizes: "48x48", type: "image/png" },
+        { url: siteLogo, sizes: "96x96", type: "image/png" },
+        { url: siteLogo, sizes: "192x192", type: "image/png" },
         { url: "/favicon.ico" },
-        { url: sitePhoto, sizes: "16x16", type: "image/png" },
-        { url: sitePhoto, sizes: "32x32", type: "image/png" },
       ],
-      apple: [{ url: sitePhoto }],
+      shortcut: [{ url: siteLogo }],
+      apple: [
+        { url: siteLogo, sizes: "180x180", type: "image/png" },
+      ],
     },
   };
 }
@@ -112,38 +149,74 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const supabase = await createClient();
-  const { data: profile } = await supabase.from('profile').select('photo_url').limit(1).single();
+  const { data: profile } = await supabase
+    .from('profile')
+    .select('*')
+    .limit(1)
+    .maybeSingle();
 
-  const siteDesc = "Butuh web yang cepat, responsif, dan siap pakai? Saya di sini untuk membantu Anda mengubah ide bisnis menjadi aplikasi web modern yang fungsional. Mari berkolaborasi untuk membangun solusi digital terbaik bagi bisnis Anda. Jelajahi proyek saya di bawah ini dan hubungi saya untuk mulai berdiskusi!";
+  const siteTitle = "Muhammad Daffa Rezky Adyra | Developer & Technology Enthusiast";
+  const siteDesc = profile?.bio_id || "Web & Mobile Developer yang berfokus pada pengembangan teknologi, inovasi digital, dan solusi yang memberikan dampak positif bagi masyarakat.";
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://portofolio-daffarezky.vercel.app";
-  const sitePhoto = profile?.photo_url || "/logo.png";
+
+  // LOGO DARI DATABASE SUPABASE (profile.logo_url) — Tampil sebagai Favicon / Logo di Google Search
+  const siteLogo = resolveAbsoluteUrl(profile?.logo_url, "/logo.png", siteUrl);
+
+  // FOTO WAJAH DARI DATABASE SUPABASE (profile.photo_url) — Tampil sebagai Thumbnail Foto di samping hasil pencarian Google
+  const sitePhoto = resolveAbsoluteUrl(profile?.photo_url || profile?.about_photo_url, "/logo.png", siteUrl);
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "Person",
-    name: "Muhammad Daffa Rezky Adyra",
-    url: siteUrl,
-    image: sitePhoto,
-    jobTitle: "Developer & Technology Enthusiast",
-    description: siteDesc,
-    sameAs: [
-      "https://github.com/daffarizky",
-      "https://linkedin.com/in/daffarizky",
-      "https://instagram.com/daffarizky",
-    ],
-    knowsAbout: [
-      "Web Development",
-      "Mobile Development",
-      "Next.js",
-      "React",
-      "TypeScript",
-      "Full Stack Development",
-      "Frontend Development",
-      "Backend Development",
-      "IoT",
-      "Networking",
-      "Cyber Security"
-    ],
+    "@graph": [
+      {
+        "@type": "ProfilePage",
+        "@id": `${siteUrl}/#profilepage`,
+        "url": siteUrl,
+        "name": siteTitle,
+        "description": siteDesc,
+        "primaryImageOfPage": {
+          "@type": "ImageObject",
+          "@id": `${siteUrl}/#primaryimage`,
+          "url": sitePhoto,
+          "contentUrl": sitePhoto,
+          "caption": profile?.name || "Muhammad Daffa Rezky Adyra"
+        },
+        "thumbnailUrl": sitePhoto,
+        "mainEntity": {
+          "@type": "Person",
+          "@id": `${siteUrl}/#person`,
+          "name": profile?.name || "Muhammad Daffa Rezky Adyra",
+          "alternateName": ["Daffa Rezky", "Daffa Rizky", "Muhammad Daffa Rezky"],
+          "url": siteUrl,
+          "image": {
+            "@type": "ImageObject",
+            "url": sitePhoto,
+            "contentUrl": sitePhoto,
+            "caption": profile?.name || "Muhammad Daffa Rezky Adyra"
+          },
+          "jobTitle": "Web & Mobile Developer",
+          "description": siteDesc,
+          "sameAs": [
+            profile?.github || "https://github.com/daffarezky",
+            profile?.linkedin || "https://linkedin.com/in/daffarezky",
+            profile?.instagram || "https://instagram.com/daffarezky",
+            profile?.youtube,
+            profile?.tiktok
+          ].filter(Boolean)
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${siteUrl}/#website`,
+        "url": siteUrl,
+        "name": profile?.name || "Muhammad Daffa Rezky Adyra",
+        "publisher": {
+          "@id": `${siteUrl}/#person`
+        },
+        "image": sitePhoto,
+        "thumbnailUrl": sitePhoto
+      }
+    ]
   };
 
   return (
@@ -153,8 +226,18 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href={sitePhoto} />
+        {/* Favicon & Icons: Diambil langsung dari Database Supabase (profile.logo_url) */}
+        <link rel="icon" href={siteLogo} />
+        <link rel="shortcut icon" href={siteLogo} />
+        <link rel="apple-touch-icon" href={siteLogo} />
+
+        {/* Thumbnail Preview: Diambil langsung dari Database Supabase (profile.photo_url) agar muncul di samping kanan hasil pencarian Google */}
+        <meta name="thumbnail" content={sitePhoto} />
+        <meta name="image" content={sitePhoto} />
+        <meta itemProp="image" content={sitePhoto} />
+        <link rel="image_src" href={sitePhoto} />
+
+        <link rel="manifest" href="/manifest.webmanifest" />
         <meta name="theme-color" content="#00FF88" />
       </head>
       <body

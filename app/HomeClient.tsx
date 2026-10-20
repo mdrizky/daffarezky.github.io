@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useLanguage } from "@/components/LanguageProvider";
 import SocialLinks from "@/components/SocialLinks";
 import ProjectCard from "@/components/ProjectCard";
-import ServiceCard from "@/components/ServiceCard";
+// ServiceCard removed from homepage — services only shown on /services page
 import BlogCard from "@/components/BlogCard";
 import CertificateCard from "@/components/CertificateCard";
 import { defaultCertificatesList, getCertificateCategory } from "@/lib/certificates-data";
@@ -105,7 +105,6 @@ interface HomeClientProps {
 export default function HomeClient({
   profile,
   projects,
-  servicesData,
   stats,
   reasons,
   testimonials,
@@ -336,30 +335,7 @@ export default function HomeClient({
         </Container>
       </section>
 
-      {/* 5. Services */}
-      {servicesData && servicesData.length > 0 && (
-        <section className="section-padding bg-card/40 border-y border-border">
-          <Container>
-            <SectionHeader 
-              eyebrow={id ? "Layanan" : "Services"} 
-              title={id ? "Paket Layanan Utama" : "Core Services"}
-              description={id ? "Solusi komprehensif mulai dari website kilat hingga aplikasi custom dan sistem cerdas." : "Comprehensive solutions from modern websites to custom systems."}
-            />
-            <div className="grid md:grid-cols-3 gap-8">
-              {servicesData.map((service) => (
-                <div key={service.id}>
-                  <ServiceCard service={service} />
-                </div>
-              ))}
-            </div>
-            <div className="mt-12 text-center">
-              <Button href="/services" variant="outline">
-                {id ? "Lihat Rincian Seluruh Layanan & Tips Harga →" : "View All Services & Pricing Tips →"}
-              </Button>
-            </div>
-          </Container>
-        </section>
-      )}
+      {/* Services section removed from homepage — available at /services */}
 
       {/* 6. Why Hire Me */}
       {reasons && reasons.length > 0 && (
