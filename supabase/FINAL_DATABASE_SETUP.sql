@@ -692,6 +692,7 @@ ALTER TABLE public.blog_posts ALTER COLUMN excerpt_en DROP NOT NULL;
 ALTER TABLE public.skills ALTER COLUMN icon DROP NOT NULL;
 ALTER TABLE public.skills ALTER COLUMN category DROP NOT NULL;
 ALTER TABLE public.skills ALTER COLUMN level DROP NOT NULL;
+ALTER TABLE public.skills DROP CONSTRAINT IF EXISTS skills_level_check;
 
 -- Profile: banyak field sekarang punya default, bukan NOT NULL
 ALTER TABLE public.profile ALTER COLUMN name DROP NOT NULL;
@@ -1117,7 +1118,7 @@ FROM (VALUES
   ('Next.js', 'Frontend', 'Advanced', 'nextjs', true, 2, true),
   ('TypeScript', 'Frontend', 'Advanced', 'js', true, 3, true),
   ('Tailwind CSS', 'Frontend', 'Advanced', 'css', true, 4, true),
-  ('HTML5 & CSS3', 'Frontend', 'Expert', 'html', true, 5, true),
+  ('HTML5 & CSS3', 'Frontend', 'Advanced', 'html', true, 5, true),
   ('JavaScript (ES6+)', 'Frontend', 'Advanced', 'js', true, 6, true),
   ('Node.js', 'Backend', 'Intermediate', 'js', true, 7, true),
   ('PostgreSQL', 'Backend', 'Advanced', 'tools', true, 8, true),
