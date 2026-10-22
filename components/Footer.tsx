@@ -19,6 +19,7 @@ export default function Footer() {
     bio_en?: string;
     footer_bio_id?: string;
     footer_bio_en?: string;
+    work_hours?: string;
   } | null>(null);
 
   useEffect(() => {
@@ -132,6 +133,17 @@ export default function Footer() {
                 : "Let's build something great together."}
             </p>
             <SocialLinks variant="icon-only" />
+            {profile?.work_hours && (
+              <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+                <span className="text-primary text-base">🕐</span>
+                <div className="flex flex-col">
+                  <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/70">
+                    {language === 'id' ? 'Jam Kerja' : 'Work Hours'}
+                  </span>
+                  <span className="font-medium text-foreground/80">{profile.work_hours}</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
