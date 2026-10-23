@@ -309,11 +309,14 @@ export default function ProjectForm() {
         saveError = error
       }
 
-      // Fallback if columns are missing in database schema (e.g. target_audience, workflow, hours)
+      // Fallback if columns are missing or check constraint is violated
       let columnFallbackApplied = false
+      let statusConstraintNotice = false
+
       if (saveError) {
         const errMsg = String(saveError.message || '').toLowerCase()
         const code = String(saveError.code || '')
+        const isCheckViolation = code === '23514' || errMsg.includes('check constraint') || errMsg.includes('projects_status_check')
         const isMissingCol =
           code === '42703' ||
           code === 'PGRST204' ||
@@ -321,10 +324,31 @@ export default function ProjectForm() {
           errMsg.includes('schema cache') ||
           errMsg.includes('could not find')
 
-        if (isMissingCol) {
+        // 1. Handle projects_status_check constraint (legacy constraint only accepting English status)
+        if (isCheckViolation && errMsg.includes('status')) {
+          console.warn('Check constraint projects_status_check triggered, retrying with status: "Completed":', saveError.message)
+          const safeStatusPayload = { ...payload, status: 'Completed' }
+          let retryError: { message?: string; details?: string; code?: string } | null = null
+          if (isNew) {
+            const retryRes = await supabase.from('projects').insert([safeStatusPayload]).select('id').single()
+            if (retryRes.data?.id) savedProjectId = retryRes.data.id
+            retryError = retryRes.error
+          } else {
+            const retryRes = await supabase.from('projects').update(safeStatusPayload).eq('id', id)
+            retryError = retryRes.error
+          }
+
+          if (!retryError) {
+            saveError = null
+            statusConstraintNotice = true
+          }
+        }
+
+        // 2. Handle missing columns
+        if (saveError && isMissingCol) {
           console.warn('Column missing in projects table, attempting safe fallback save:', saveError.message)
 
-          // 1. Strip the 6 newest fields
+          // 2a. Strip the 6 newest fields
           const safePayload: Record<string, unknown> = { ...payload }
           delete safePayload.target_audience_id
           delete safePayload.target_audience_en
@@ -347,7 +371,7 @@ export default function ProjectForm() {
             saveError = null
             columnFallbackApplied = true
           } else {
-            // 2. Strip extended fields down to core fields
+            // 2b. Strip extended fields down to core fields
             const extendedCols = [
               'bottom_flyer_id',
               'bottom_flyer_en',
@@ -407,12 +431,19 @@ export default function ProjectForm() {
         }
       }
 
-      if (columnFallbackApplied) {
+      if (statusConstraintNotice) {
+        alert(
+          'Project BERHASIL disimpan ke database!\n\n' +
+          'CATATAN STATUS:\n' +
+          'Status sementara disimpan sebagai "Completed" karena database Supabase memiliki batasan lama (projects_status_check).\n\n' +
+          'Untuk bisa memilih status Bahasa Indonesia bebas ("Selesai 100%", "Tahap Pengembangan", dll.), silakan jalankan file DATABASE_SCHEMA_ONLY.sql terbaru di Supabase SQL Editor.'
+        )
+      } else if (columnFallbackApplied) {
         alert(
           'Project berhasil disimpan ke database!\n\n' +
           'CATATAN PENTING:\n' +
           'Kolom baru (Target Pengguna, Workflow/Arsitektur, Jam Kerja) belum ada di tabel "projects" Supabase Anda.\n\n' +
-          'Silakan jalankan file FIX_PROJECTS_COLUMNS.sql di Supabase SQL Editor agar kolom-kolom baru tersebut tersimpan permanen di cloud.'
+          'Silakan jalankan file DATABASE_SCHEMA_ONLY.sql di Supabase SQL Editor agar kolom-kolom baru tersebut tersimpan permanen di cloud.'
         )
       } else {
         alert('Project berhasil disimpan!')

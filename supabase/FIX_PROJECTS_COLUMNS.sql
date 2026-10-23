@@ -47,6 +47,12 @@ ALTER TABLE public.projects ALTER COLUMN description_id DROP NOT NULL;
 ALTER TABLE public.projects ALTER COLUMN description_en DROP NOT NULL;
 ALTER TABLE public.projects ALTER COLUMN image_url DROP NOT NULL;
 
+-- Hapus batasan check constraint lama yang memblokir status custom (misal: "Selesai 100%")
+ALTER TABLE public.projects DROP CONSTRAINT IF EXISTS projects_status_check;
+ALTER TABLE public.projects DROP CONSTRAINT IF EXISTS projects_difficulty_check;
+ALTER TABLE public.projects DROP CONSTRAINT IF EXISTS projects_category_check;
+ALTER TABLE public.projects DROP CONSTRAINT IF EXISTS projects_progress_check;
+
 -- 2. Pastikan tabel galeri multi-foto project_images ada
 CREATE TABLE IF NOT EXISTS public.project_images (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,

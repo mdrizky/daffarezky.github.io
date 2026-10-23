@@ -759,6 +759,10 @@ ALTER TABLE public.profile ALTER COLUMN photo_url DROP NOT NULL;
 ALTER TABLE public.projects ALTER COLUMN description_id DROP NOT NULL;
 ALTER TABLE public.projects ALTER COLUMN description_en DROP NOT NULL;
 ALTER TABLE public.projects ALTER COLUMN image_url DROP NOT NULL;
+ALTER TABLE public.projects DROP CONSTRAINT IF EXISTS projects_status_check;
+ALTER TABLE public.projects DROP CONSTRAINT IF EXISTS projects_difficulty_check;
+ALTER TABLE public.projects DROP CONSTRAINT IF EXISTS projects_category_check;
+ALTER TABLE public.projects DROP CONSTRAINT IF EXISTS projects_progress_check;
 
 -- =============================================================================
 -- 4. AUTHORIZATION HELPERS
