@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import type { Certificate } from '@/types';
 import CertificateCard from './CertificateCard';
-import { defaultCertificatesList, getCertificateCategory } from '@/lib/certificates-data';
+import { getCertificateCategory } from '@/lib/certificates-data';
 import { FaCertificate, FaLayerGroup, FaMosque, FaLaptopCode } from 'react-icons/fa';
 
 interface CertificateGalleryProps {
@@ -22,9 +22,9 @@ export default function CertificateGallery({
   const [activeFilter, setActiveFilter] = useState<FilterCategory>('all');
   const id = language === 'id';
 
-  // Base list of certificates (DB published items or default list)
+  // Base list of certificates (DB published items)
   const allCertificates = useMemo(() => {
-    const list = (certificates && certificates.length > 0) ? certificates : defaultCertificatesList;
+    const list = certificates || [];
     return list.filter(item => item.is_published !== false);
   }, [certificates]);
 

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
-import { FaArrowLeft, FaSave, FaImage, FaPlus, FaTrash, FaStar, FaUpload } from 'react-icons/fa'
+import { FaArrowLeft, FaSave, FaImage, FaTrash, FaStar, FaUpload } from 'react-icons/fa'
 
 export default function ProjectForm() {
   const router = useRouter()
@@ -294,18 +294,99 @@ export default function ProjectForm() {
       }
 
       let savedProjectId = id
+      let saveError: { message?: string; details?: string; code?: string } | null = null
+
       if (isNew) {
         const { data: inserted, error } = await supabase
           .from('projects')
           .insert([payload])
           .select('id')
           .single()
-        if (error) throw error
-        savedProjectId = inserted.id
+        saveError = error
+        if (inserted?.id) savedProjectId = inserted.id
       } else {
         const { error } = await supabase.from('projects').update(payload).eq('id', id)
-        if (error) throw error
+        saveError = error
       }
+
+      // Fallback if columns are missing in database schema (e.g. target_audience, workflow, hours)
+      let columnFallbackApplied = false
+      if (saveError) {
+        const errMsg = String(saveError.message || '').toLowerCase()
+        const code = String(saveError.code || '')
+        const isMissingCol =
+          code === '42703' ||
+          code === 'PGRST204' ||
+          errMsg.includes('does not exist') ||
+          errMsg.includes('schema cache') ||
+          errMsg.includes('could not find')
+
+        if (isMissingCol) {
+          console.warn('Column missing in projects table, attempting safe fallback save:', saveError.message)
+
+          // 1. Strip the 6 newest fields
+          const safePayload: Record<string, unknown> = { ...payload }
+          delete safePayload.target_audience_id
+          delete safePayload.target_audience_en
+          delete safePayload.workflow_id
+          delete safePayload.workflow_en
+          delete safePayload.estimated_hours
+          delete safePayload.actual_hours
+
+          let retryError: { message?: string; details?: string; code?: string } | null = null
+          if (isNew) {
+            const retryRes = await supabase.from('projects').insert([safePayload]).select('id').single()
+            if (retryRes.data?.id) savedProjectId = retryRes.data.id
+            retryError = retryRes.error
+          } else {
+            const retryRes = await supabase.from('projects').update(safePayload).eq('id', id)
+            retryError = retryRes.error
+          }
+
+          if (!retryError) {
+            saveError = null
+            columnFallbackApplied = true
+          } else {
+            // 2. Strip extended fields down to core fields
+            const extendedCols = [
+              'bottom_flyer_id',
+              'bottom_flyer_en',
+              'current_features_id',
+              'current_features_en',
+              'problem_id',
+              'problem_en',
+              'solution_id',
+              'solution_en',
+              'result_id',
+              'result_en',
+              'duration',
+              'difficulty',
+              'is_current',
+              'start_date',
+              'completion_date',
+            ]
+            const corePayload: Record<string, unknown> = { ...safePayload }
+            for (const col of extendedCols) {
+              delete corePayload[col]
+            }
+
+            if (isNew) {
+              const coreRetry = await supabase.from('projects').insert([corePayload]).select('id').single()
+              if (coreRetry.data?.id) savedProjectId = coreRetry.data.id
+              saveError = coreRetry.error
+            } else {
+              const coreRetry = await supabase.from('projects').update(corePayload).eq('id', id)
+              saveError = coreRetry.error
+            }
+
+            if (!saveError) {
+              columnFallbackApplied = true
+            }
+          }
+        }
+      }
+
+      if (saveError) throw saveError
 
       // Sync gallery images into project_images table
       if (savedProjectId) {
@@ -326,11 +407,29 @@ export default function ProjectForm() {
         }
       }
 
+      if (columnFallbackApplied) {
+        alert(
+          'Project berhasil disimpan ke database!\n\n' +
+          'CATATAN PENTING:\n' +
+          'Kolom baru (Target Pengguna, Workflow/Arsitektur, Jam Kerja) belum ada di tabel "projects" Supabase Anda.\n\n' +
+          'Silakan jalankan file FIX_PROJECTS_COLUMNS.sql di Supabase SQL Editor agar kolom-kolom baru tersebut tersimpan permanen di cloud.'
+        )
+      } else {
+        alert('Project berhasil disimpan!')
+      }
+
       router.push('/admin/projects')
       router.refresh()
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error saving project:', error)
-      alert('Gagal menyimpan project')
+      const errObj = error as { message?: string; details?: string; code?: string } | undefined
+      const errorMsg = errObj?.message || errObj?.details || (error instanceof Error ? error.message : JSON.stringify(error))
+      const errorCode = errObj?.code || ''
+      alert(
+        `Gagal menyimpan project:\n\n${errorMsg}` +
+        (errorCode ? `\n(Kode Error: ${errorCode})` : '') +
+        `\n\nSolusi: Buka Supabase SQL Editor dan jalankan file FIX_PROJECTS_COLUMNS.sql untuk menambahkan kolom yang belum ada.`
+      )
     } finally {
       setSaving(false)
     }

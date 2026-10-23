@@ -169,6 +169,12 @@ CREATE TABLE IF NOT EXISTS public.projects (
   future_plans_en TEXT,
   overview_id TEXT,
   overview_en TEXT,
+  target_audience_id TEXT,
+  target_audience_en TEXT,
+  workflow_id TEXT,
+  workflow_en TEXT,
+  estimated_hours TEXT,
+  actual_hours TEXT,
   role TEXT,
   categories TEXT[] DEFAULT '{}',
   sort_order INTEGER DEFAULT 0,
@@ -651,7 +657,50 @@ SELECT public._add_column_if_missing('services','badge_text','TEXT');
 SELECT public._add_column_if_missing('services','sort_order','INTEGER DEFAULT 0');
 SELECT public._add_column_if_missing('services','is_published','BOOLEAN DEFAULT true');
 
+-- Projects: pastikan semua kolom baru ada di database lama
+SELECT public._add_column_if_missing('projects','target_audience_id','TEXT');
+SELECT public._add_column_if_missing('projects','target_audience_en','TEXT');
+SELECT public._add_column_if_missing('projects','workflow_id','TEXT');
+SELECT public._add_column_if_missing('projects','workflow_en','TEXT');
+SELECT public._add_column_if_missing('projects','estimated_hours','TEXT');
+SELECT public._add_column_if_missing('projects','actual_hours','TEXT');
+SELECT public._add_column_if_missing('projects','bottom_flyer_id','TEXT');
+SELECT public._add_column_if_missing('projects','bottom_flyer_en','TEXT');
+SELECT public._add_column_if_missing('projects','current_features_id','TEXT');
+SELECT public._add_column_if_missing('projects','current_features_en','TEXT');
+SELECT public._add_column_if_missing('projects','problem_id','TEXT');
+SELECT public._add_column_if_missing('projects','problem_en','TEXT');
+SELECT public._add_column_if_missing('projects','solution_id','TEXT');
+SELECT public._add_column_if_missing('projects','solution_en','TEXT');
+SELECT public._add_column_if_missing('projects','result_id','TEXT');
+SELECT public._add_column_if_missing('projects','result_en','TEXT');
+SELECT public._add_column_if_missing('projects','architecture_id','TEXT');
+SELECT public._add_column_if_missing('projects','architecture_en','TEXT');
+SELECT public._add_column_if_missing('projects','future_plans_id','TEXT');
+SELECT public._add_column_if_missing('projects','future_plans_en','TEXT');
+SELECT public._add_column_if_missing('projects','overview_id','TEXT');
+SELECT public._add_column_if_missing('projects','overview_en','TEXT');
+SELECT public._add_column_if_missing('projects','role','TEXT');
+SELECT public._add_column_if_missing('projects','slug','TEXT');
+SELECT public._add_column_if_missing('projects','duration','TEXT');
+SELECT public._add_column_if_missing('projects','year','INTEGER DEFAULT 2025');
+SELECT public._add_column_if_missing('projects','status','TEXT DEFAULT ''Completed''');
+SELECT public._add_column_if_missing('projects','start_date','TEXT');
+SELECT public._add_column_if_missing('projects','completion_date','TEXT');
+SELECT public._add_column_if_missing('projects','is_current','BOOLEAN DEFAULT false');
+SELECT public._add_column_if_missing('projects','difficulty','TEXT DEFAULT ''Medium''');
+SELECT public._add_column_if_missing('projects','progress','INTEGER DEFAULT 100');
+SELECT public._add_column_if_missing('projects','categories','TEXT[] DEFAULT ''{}''');
+SELECT public._add_column_if_missing('projects','sort_order','INTEGER DEFAULT 0');
 SELECT public._add_column_if_missing('projects','is_published','BOOLEAN DEFAULT true');
+
+ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS target_audience_id TEXT;
+ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS target_audience_en TEXT;
+ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS workflow_id TEXT;
+ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS workflow_en TEXT;
+ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS estimated_hours TEXT;
+ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS actual_hours TEXT;
+
 SELECT public._add_column_if_missing('skills','is_published','BOOLEAN DEFAULT true');
 SELECT public._add_column_if_missing('experience','is_published','BOOLEAN DEFAULT true');
 SELECT public._add_column_if_missing('testimonials','is_published','BOOLEAN DEFAULT true');

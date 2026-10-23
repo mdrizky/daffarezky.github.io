@@ -8,7 +8,7 @@ import ProjectCard from "@/components/ProjectCard";
 // ServiceCard removed from homepage — services only shown on /services page
 import BlogCard from "@/components/BlogCard";
 import CertificateCard from "@/components/CertificateCard";
-import { defaultCertificatesList, getCertificateCategory } from "@/lib/certificates-data";
+import { getCertificateCategory } from "@/lib/certificates-data";
 import dynamic from "next/dynamic";
 import type { Profile, Project, Service, ReasonsToHire, Testimonial, BlogPost, FocusArea, Certificate } from "@/types";
 import { Button } from "@/components/ui/Button";
@@ -403,11 +403,21 @@ export default function HomeClient({
           />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {(() => {
-              const baseList = (certificates && certificates.length > 0) ? certificates : defaultCertificatesList;
+              const baseList = certificates || [];
               // Sesuai permintaan: di halaman home HANYA tampilkan sertifikat Umum & Teknologi
               const generalCerts = baseList
                 .filter(cert => cert.is_published !== false && getCertificateCategory(cert) === 'Umum & Teknologi')
                 .slice(0, 3);
+
+              if (generalCerts.length === 0) {
+                return (
+                  <div className="col-span-full text-center py-12 px-4 bg-zinc-900/20 border border-zinc-800/60 rounded-2xl">
+                    <p className="text-zinc-500 text-sm">
+                      {id ? "Belum ada sertifikat yang ditampilkan. Tambahkan melalui Admin Dashboard." : "No certificates to display yet. Add via Admin Dashboard."}
+                    </p>
+                  </div>
+                );
+              }
 
               return generalCerts.map((cert) => (
                 <CertificateCard key={cert.id} certificate={cert} language={language} />
